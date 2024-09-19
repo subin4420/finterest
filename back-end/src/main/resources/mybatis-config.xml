@@ -9,7 +9,7 @@
     </settings>
 
     <typeAliases>
-        <package name="org.scoula.security.account.domain" />
+        <package name="org.finterest.security.account.domain" />
     </typeAliases>
 
 </configuration>
