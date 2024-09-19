@@ -10,7 +10,7 @@ body {
   }
   
   button {
-    background-color: #4CAF50;
+    background-color: #00C4D1;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -19,6 +19,6 @@ body {
   }
   
   button:hover {
-    background-color: #45a049;
+    opacity: 0.8;
   }
   
