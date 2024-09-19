@@ -11,7 +11,7 @@
     </appender>
 
     <!-- Application Loggers -->
-    <logger name="org.scoula">
+    <logger name="org.finterest">
         <level value="info" />
     </logger>
 
