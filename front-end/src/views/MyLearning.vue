@@ -33,7 +33,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 /* 기본 스타일 */
 .container {
   display: flex;
