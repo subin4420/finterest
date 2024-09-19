@@ -3,22 +3,64 @@
     <div class="change-password-container">
       <div class="title">비밀번호 변경</div>
       <div class="input-group">
-        <input type="text" placeholder="인증번호" required />
-        <button class="btn-small">인증</button>
+        <input
+          type="text"
+          placeholder="인증번호"
+          v-model="verificationCode"
+          required
+        />
+        <button class="btn-small" @click="verifyCode">인증</button>
       </div>
       <div class="input-group">
-        <input type="password" placeholder="새로운 비밀번호" required />
+        <input
+          type="password"
+          placeholder="새로운 비밀번호"
+          v-model="newPassword"
+          required
+        />
       </div>
       <div class="input-group">
-        <input type="password" placeholder="비밀번호 확인" required />
+        <input
+          type="password"
+          placeholder="비밀번호 확인"
+          v-model="confirmPassword"
+          required
+        />
       </div>
-      <button class="btn">비밀번호 변경</button>
+      <button class="btn" @click="changePassword">비밀번호 변경</button>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      verificationCode: "",
+      newPassword: "",
+      confirmPassword: "",
+      errorMessage: "",
+    };
+  },
+  methods: {
+    verifyCode() {
+      if (this.verificationCode !== "123456") {
+        this.errorMessage = "인증번호가 올바르지 않습니다.";
+      } else {
+        this.errorMessage = "";
+      }
+    },
+    changePassword() {
+      if (this.newPassword !== this.confirmPassword) {
+        this.errorMessage = "비밀번호가 일치하지 않습니다.";
+      } else {
+        this.errorMessage = "";
+        console.log("비밀번호 변경 완료");
+      }
+    },
+  },
+};
 </script>
 
 <style>
@@ -44,16 +86,14 @@ export default {};
 .title {
   color: #00c4d1;
   margin-bottom: 40px;
-  /* 제목과 입력 필드 사이의 간격 늘림 */
   font-size: 28px;
-  /* 글자 크기를 더 크게 설정 */
   font-weight: bold;
-  /* 글자 굵기 추가 */
 }
 
 .input-group {
   width: 100%;
   display: flex;
+  align-items: center;
   margin: 8px 0;
 }
 
@@ -63,30 +103,31 @@ input[type="password"] {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
-  flex-grow: 1;
-  /* Allows input to fill space */
+  width: calc(100% - 80px); /* 버튼 크기와 여백을 고려하여 input 너비 설정 */
 }
 
-.btn,
 .btn-small {
   background-color: #00c4d1;
   color: white;
-  padding: 12px 15px;
+  padding: 12px;
   border: none;
   cursor: pointer;
   font-size: 14px;
   border-radius: 4px;
   margin-left: 10px;
-  /* Adds space between inputs and button */
+  width: 70px; /* 버튼의 고정된 너비 */
 }
 
 .btn {
   width: 100%;
-  /* Matches the full width of input groups */
   margin-left: 0;
-  /* No margin for the main button */
   padding: 12px 0;
-  /* Larger padding for better touch area */
+  background-color: #00c4d1;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 4px;
 }
 
 .btn:hover,
@@ -94,18 +135,9 @@ input[type="password"] {
   opacity: 0.9;
 }
 
-.link {
-  text-align: center;
+.error-message {
+  color: red;
+  margin-top: 20px;
   font-size: 14px;
-  color: #00c4d1;
-}
-
-.link a {
-  color: #00c4d1;
-  text-decoration: none;
-}
-
-.link a:hover {
-  text-decoration: underline;
 }
 </style>

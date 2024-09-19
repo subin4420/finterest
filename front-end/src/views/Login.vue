@@ -15,7 +15,7 @@
 
 <script setup></script>
 
-<style>
+<style scoped>
 .login-body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;

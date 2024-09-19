@@ -20,7 +20,7 @@ export default {
   data() {
     return {
       // 헤더와 푸터를 숨길 경로
-      hideOnRoutes: ["/login", "/find-password", "/signup"], // 로그인, 비밀번호 찾기 경로에서 숨김
+      hideOnRoutes: ["/login", "/change-password", "/find-password", "/signup"], // 로그인, 비밀번호 찾기 경로에서 숨김
     };
   },
   computed: {
