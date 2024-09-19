@@ -5,7 +5,7 @@
       <input type="text" placeholder="아이디" required />
       <input type="text" placeholder="이름" required />
       <input type="email" placeholder="이메일" required />
-      <button class="btn">비밀번호 찾기</button>
+      <button class="btn" @click="handlePasswordReset">비밀번호 찾기</button>
       <div class="links">
         <router-link to="/login">로그인 </router-link> |
         <router-link to="/signup"> 회원가입</router-link>
@@ -15,7 +15,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    handlePasswordReset() {
+      // ChangePassword.vue로 이동
+      this.$router.push("/change-password");
+    },
+  },
+};
 </script>
 
 <style scoped>
