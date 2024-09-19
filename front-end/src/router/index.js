@@ -6,7 +6,9 @@ import Learning from '@/views/Learning.vue';
 import Trading from '@/views/Trading.vue';
 import Login from '@/views/Login.vue';
 import FindPassword from '@/views/FindPassword.vue';
+import ChangePassword from '@/views/ChangePassword.vue';
 import SignUp from '@/views/SignUp.vue';
+
 
 
 const routes = [
@@ -17,6 +19,7 @@ const routes = [
     { path: '/trading', component: Trading },
     { path: '/login', component: Login },
     { path: '/find-password', name: 'FindPassword', component: FindPassword, },
+    { path: '/change-password', name: 'ChangePassword', component: ChangePassword, },
     { path: '/signup', name: 'SignUp', component: SignUp, },
 ];
 

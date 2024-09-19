@@ -1,18 +1,15 @@
 <template>
-  <div class="changePW-body">
-    <div class="change-password-container">
-      <div class="title">비밀번호 변경</div>
-      <div class="input-group">
-        <input type="text" placeholder="인증번호" required />
-        <button class="btn-small">인증</button>
+  <div class="reset-body">
+    <div class="password-reset-container">
+      <div class="title">비밀번호 찾기</div>
+      <input type="text" placeholder="아이디" required />
+      <input type="text" placeholder="이름" required />
+      <input type="email" placeholder="이메일" required />
+      <button class="btn">비밀번호 찾기</button>
+      <div class="links">
+        <router-link to="/login">로그인 </router-link> |
+        <router-link to="/signup"> 회원가입</router-link>
       </div>
-      <div class="input-group">
-        <input type="password" placeholder="새로운 비밀번호" required />
-      </div>
-      <div class="input-group">
-        <input type="password" placeholder="비밀번호 확인" required />
-      </div>
-      <button class="btn">비밀번호 변경</button>
     </div>
   </div>
 </template>
@@ -22,7 +19,7 @@ export default {};
 </script>
 
 <style>
-.changePW-body {
+.reset-body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
@@ -32,8 +29,9 @@ export default {};
   height: 100vh;
 }
 
-.change-password-container {
+.password-reset-container {
   padding: 60px 70px;
+  background: #ffffff;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -51,61 +49,50 @@ export default {};
   /* 글자 굵기 추가 */
 }
 
-.input-group {
-  width: 100%;
-  display: flex;
-  margin: 8px 0;
-}
-
 input[type="text"],
-input[type="password"] {
-  padding: 12px;
+input[type="email"] {
+  width: 100%;
+  padding: 15px;
+  /* 입력 필드의 패딩 늘림 */
+  margin-bottom: 12px;
+  /* 입력 필드 사이의 간격 늘림 */
   border: 1px solid #ccc;
+  box-sizing: border-box;
   border-radius: 4px;
   font-size: 14px;
-  flex-grow: 1;
-  /* Allows input to fill space */
-}
-
-.btn,
-.btn-small {
-  background-color: #00c4d1;
-  color: white;
-  padding: 12px 15px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-  border-radius: 4px;
-  margin-left: 10px;
-  /* Adds space between inputs and button */
 }
 
 .btn {
+  background-color: #00c4d1;
+  color: white;
+  padding: 14px 20px;
+  margin-top: 20px;
+  /* 버튼과 입력 필드 사이의 간격 늘림 */
+  border: none;
+  cursor: pointer;
   width: 100%;
-  /* Matches the full width of input groups */
-  margin-left: 0;
-  /* No margin for the main button */
-  padding: 12px 0;
-  /* Larger padding for better touch area */
+  border-radius: 4px;
+  font-size: 16px;
 }
 
-.btn:hover,
-.btn-small:hover {
+.btn:hover {
   opacity: 0.9;
 }
 
-.link {
+.links {
   text-align: center;
   font-size: 14px;
   color: #00c4d1;
+  margin-top: 12px;
+  /* 링크와 버튼 사이의 간격 늘림 */
 }
 
-.link a {
+.links a {
   color: #00c4d1;
   text-decoration: none;
 }
 
-.link a:hover {
+.links a:hover {
   text-decoration: underline;
 }
 </style>
