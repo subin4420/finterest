@@ -1,7 +1,7 @@
 package org.scoula.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.scoula.member.exception.PasswordMissmatchException;
+import org.scoula.common.exception.PasswordMissmatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
