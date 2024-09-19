@@ -14,7 +14,7 @@
     "router": "^2.0.0",
     "vue": "^3.4.29",
     "vue-router": "^4.4.5",
-    "vuetify": "^3.7.0-beta.1"
+    "vuetify": "^3.7.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",
