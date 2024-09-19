@@ -19,14 +19,20 @@ export default {
   },
   data() {
     return {
-      //해터 푸터 숨길때 여기다 추가
-      hideOnRoutes: ['/login'], // 로그인 페이지에서 헤더와 푸터 숨기기
+      // 헤더와 푸터를 숨길 경로
+      hideOnRoutes: ["/login", "/find-password", "/signup"], // 로그인, 비밀번호 찾기 경로에서 숨김
     };
   },
   computed: {
     showHeaderFooter() {
-      // 현재 경로가 hideOnRoutes에 포함되지 않는 경우에만 헤더와 푸터를 보여줌
+      // hideOnRoutes에 현재 경로가 포함되지 않으면 헤더와 푸터를 보여줌
       return !this.hideOnRoutes.includes(this.$route.path);
+    },
+  },
+  watch: {
+    // 라우트 변경 시 헤더와 푸터 상태를 업데이트
+    $route() {
+      this.showHeaderFooter = !this.hideOnRoutes.includes(this.$route.path);
     },
   },
 };
