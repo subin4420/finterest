@@ -6,8 +6,8 @@
       <input type="password" placeholder="비밀번호" required />
       <button class="btn">로그인</button>
       <div class="links">
-        <router-link to="/find-password">비밀번호 찾기</router-link> |
-        <router-link to="/signup">회원가입</router-link>
+        <router-link to="/find-password">비밀번호 찾기 </router-link> |
+        <router-link to="/signup"> 회원가입</router-link>
       </div>
     </div>
   </div>
@@ -24,7 +24,6 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f0f0;
 }
 
 .login-container {
