@@ -5,10 +5,13 @@
         <router-link to="/">MyApp</router-link>
       </div>
       <ul class="nav-links">
-        <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/learning">학습</router-link></li>
+        <li><router-link to="/">home</router-link></li>
+        <li><router-link to="/archive">아카이브</router-link></li>
         <li><router-link to="/quiz">퀴즈</router-link></li>
-        <li><router-link to="/trading">거래</router-link></li>
+        <li><router-link to="/trading">모의투자</router-link></li>
+        <li><router-link to="/my-learning">나의학습</router-link></li>
+        <li><router-link to="/notice">소식</router-link></li>
+        <li><router-link to="/profile-settings">프로필</router-link></li>
         <li><router-link to="/login">로그인</router-link></li>
       </ul>
     </nav>
