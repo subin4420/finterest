@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.quiz.mapper.QuizMapper">
+    <!-- 공통 칼럼 정의 -->
+    <sql id="QuizColumns">
+        qs.set_id,
+        qs.set_name,
+        qs.set_img,
+        c.category_name,
+        qs.created_at,
+        qs.updated_at
+    </sql>
+
+    <!-- 기본 쿼리 구조 -->
+    <sql id="BaseQuery">
+        FROM quiz_sets qs
+        JOIN categories c ON qs.category_id = c.category_id
+    </sql>
+
+    <!-- 모든 항목 조회 -->
+    <select id="quizSetsAll" resultType="org.finterest.quiz.domain.QuizVO">
+        SELECT
+        <include refid="QuizColumns"/>
+        <include refid="BaseQuery"/>
+    </select>
+</mapper>
