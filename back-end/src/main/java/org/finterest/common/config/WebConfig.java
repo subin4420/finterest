@@ -2,6 +2,7 @@ package org.finterest.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.MultipartConfigElement;
@@ -56,4 +57,5 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
                 );
         registration.setMultipartConfig(multipartConfig);
     }
+
 }

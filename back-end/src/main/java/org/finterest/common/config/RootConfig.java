@@ -21,11 +21,11 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
-        "org.finterest.board.mapper",
+        "org.finterest.achieve.mapper",
         "org.finterest.member.mapper"
 })
 @ComponentScan(basePackages = {
-        "org.finterest.board.service",
+        "org.finterest.achieve.service",
         "org.finterest.member.service"
 })
 @Slf4j
