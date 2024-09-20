@@ -15,5 +15,6 @@
 
     <mappers>
         <mapper resource="org/finterest/achieve.mapper/achieveMapper.xml"/>
+        <mapper resource="org/finterest/quiz.mapper/quizMapper.xml"/>
     </mappers>
 </configuration>
