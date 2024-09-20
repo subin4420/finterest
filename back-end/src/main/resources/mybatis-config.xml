@@ -10,6 +10,10 @@
 
     <typeAliases>
         <package name="org.finterest.security.account.domain" />
+        <package name="org.finterest.achieve.domain"/>
     </typeAliases>
 
+    <mappers>
+        <mapper resource="achieve/mapper/achieveMapper.xml"/>
+    </mappers>
 </configuration>
