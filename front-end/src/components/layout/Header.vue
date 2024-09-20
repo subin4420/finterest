@@ -6,7 +6,7 @@
       </div>
       <ul class="nav-links">
         <li><router-link to="/">home</router-link></li>
-        <li><router-link to="/archive">아카이브</router-link></li>
+        <li><router-link to="/achieve">아카이브</router-link></li>
         <li><router-link to="/quiz">퀴즈</router-link></li>
         <li><router-link to="/trading">모의투자</router-link></li>
         <li><router-link to="/my-learning">나의학습</router-link></li>
