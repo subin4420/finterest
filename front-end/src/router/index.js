@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
 import Profile from '@/views/Profile.vue';
 import Quiz from '@/views/Quiz.vue';
-import Archive from '@/views/Archive.vue';
+import Achieve from '@/views/Achieve.vue';
 import Trading from '@/views/Trading.vue';
 import Login from '@/views/Login.vue';
 import FindPassword from '@/views/FindPassword.vue';
@@ -16,7 +16,7 @@ import NoticeBoard from '@/views/NoticeBoard.vue';
 const routes = [
     { path: '/', component: Home },
     { path: '/profile', component: Profile },
-    { path: '/archive', component: Archive },
+    { path: '/achieve', component: Achieve },
     { path: '/quiz', component: Quiz },
     { path: '/trading', component: Trading },
     { path: '/login', component: Login },
