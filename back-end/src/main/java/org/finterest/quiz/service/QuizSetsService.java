@@ -9,14 +9,22 @@ import java.util.List;
 
 @Service
 public class QuizSetsService {
-    private final QuizSetsDAO quizDAO;
+    private final QuizSetsDAO quizSetsDAO;
 
     @Autowired
-    public QuizSetsService(QuizSetsDAO quizDAO) {
-        this.quizDAO = quizDAO;
+    public QuizSetsService(QuizSetsDAO quizSetsDAO) {
+        this.quizSetsDAO = quizSetsDAO;
     }
 
-    public List<QuizSetsVO> quizSetsAll(){
-        return quizDAO.quizSetsAll();
+    public List<QuizSetsVO> selectAllQuizSets(){
+        return quizSetsDAO.selectAllQuizSets();
+    }
+
+    public List<QuizSetsVO> selectQuizSetsByCategory(int categoryId){
+        return quizSetsDAO.selectQuizSetsByCategory(categoryId);
+    }
+
+    public QuizSetsVO selectQuizSetById(int id){
+        return quizSetsDAO.selectQuizSetById(id);
     }
 }
