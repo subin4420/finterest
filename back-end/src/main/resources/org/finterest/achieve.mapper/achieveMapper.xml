@@ -9,7 +9,7 @@
         lm.material_img AS material_img,
         lm.link AS link,
         lm.description AS description,
-        lm.content AS content_summary,  -- content의 앞 10자에 '...' 추가
+        lm.content AS content,
         lm.created_at AS createdAt,
         lm.updated_at AS updatedAt,
         c.category_name AS categoryName  -- 카테고리 이름을 가져옴
