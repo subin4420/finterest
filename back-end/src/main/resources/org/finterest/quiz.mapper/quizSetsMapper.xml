@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.finterest.quiz.mapper.QuizMapper">
+<mapper namespace="org.finterest.quiz.mapper.QuizSetsMapper">
     <!-- 공통 칼럼 정의 -->
     <sql id="QuizColumns">
         qs.set_id,
@@ -18,7 +18,7 @@
     </sql>
 
     <!-- 모든 항목 조회 -->
-    <select id="quizSetsAll" resultType="org.finterest.quiz.domain.QuizVO">
+    <select id="quizSetsAll" resultType="org.finterest.quiz.domain.QuizSetsVO">
         SELECT
         <include refid="QuizColumns"/>
         <include refid="BaseQuery"/>

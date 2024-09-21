@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.quiz.mapper.QuizSubmitMapper">
+
+    <!-- 퀴즈 세트의 총점 계산 -->
+    <select id="getMaxScoreForQuizSet" resultType="int" parameterType="int">
+        SELECT COUNT(*) * 10
+        FROM quiz_set_questions
+        WHERE set_id = #{setId}
+    </select>
+
+    <!-- 특정 퀴즈 문제 가져오기 -->
+    <select id="getQuizById" resultType="org.finterest.quiz.domain.QuizVO" parameterType="int">
+        SELECT *
+        FROM quizzes
+        WHERE quiz_id = #{quizId}
+    </select>
+
+    <!-- 사용자 답변 기록 -->
+    <insert id="saveUserAnswer" parameterType="map">
+        INSERT INTO user_answers (result_id, quiz_id, user_id, user_answer, is_correct)
+        VALUES (#{resultId}, #{quizId}, #{userId}, #{selectedChoice}, #{isCorrect})
+    </insert>
+
+    <!-- 퀴즈 결과 저장 -->
+    <insert id="saveQuizResult" parameterType="map" useGeneratedKeys="true" keyProperty="resultId">
+        INSERT INTO quiz_sets_results (user_id, set_id, total_score, max_score, completed_at)
+        VALUES (#{userId}, #{setId}, #{totalScore}, #{maxScore}, NOW())
+    </insert>
+
+</mapper>
