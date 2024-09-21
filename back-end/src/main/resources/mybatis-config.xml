@@ -11,10 +11,13 @@
     <typeAliases>
         <package name="org.finterest.security.account.domain" />
         <package name="org.finterest.achieve.domain"/>
+        <package name="org.finterest.quiz.domain"/>
     </typeAliases>
 
     <mappers>
         <mapper resource="org/finterest/achieve.mapper/achieveMapper.xml"/>
-        <mapper resource="org/finterest/quiz.mapper/quizMapper.xml"/>
+        <mapper resource="org/finterest/quiz.mapper/quizSetsMapper.xml"/>
+        <mapper resource="org/finterest/quiz.mapper/quizSetDetailsMapper.xml"/>
+        <mapper resource="org/finterest/quiz.mapper/quizSubmitMapper.xml"/>
     </mappers>
 </configuration>
