@@ -7,7 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface AchieveMapper {
-    List<AchieveVO> all();
-    AchieveVO one(int id);
-    List<AchieveVO> categoryFilter(int category_id);
+    List<AchieveVO> selectAllAchieve();
+    AchieveVO selectAchieveById(int id);
+    List<AchieveVO> selectAchieveByCategory(int category_id);
 }

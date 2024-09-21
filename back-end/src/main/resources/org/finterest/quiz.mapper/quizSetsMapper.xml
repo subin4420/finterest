@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.finterest.quiz.mapper.QuizSetsMapper">
-    <!-- 공통 칼럼 정의 -->
-    <sql id="QuizColumns">
+
+    <!-- 공통 필드 정의 -->
+    <sql id="QuizSetFields">
         qs.set_id,
         qs.set_name,
         qs.set_img,
@@ -11,16 +12,35 @@
         qs.updated_at
     </sql>
 
-    <!-- 기본 쿼리 구조 -->
-    <sql id="BaseQuery">
-        FROM quiz_sets qs
-        JOIN categories c ON qs.category_id = c.category_id
+    <!-- 공통 FROM 및 JOIN 정의 -->
+    <sql id="QuizSetFromJoin">
+        FROM Quiz_Sets qs
+        JOIN Categories c ON qs.category_id = c.category_id
     </sql>
 
-    <!-- 모든 항목 조회 -->
-    <select id="quizSetsAll" resultType="org.finterest.quiz.domain.QuizSetsVO">
+    <!-- 전체 조회 -->
+    <select id="selectAllQuizSets" resultType="org.finterest.quiz.domain.QuizSetsVO">
         SELECT
-        <include refid="QuizColumns"/>
-        <include refid="BaseQuery"/>
+        <include refid="QuizSetFields" />
+        <include refid="QuizSetFromJoin" />
     </select>
+
+    <!-- 카테고리별 조회 -->
+    <select id="selectQuizSetsByCategory" parameterType="int" resultType="org.finterest.quiz.domain.QuizSetsVO">
+        SELECT
+        <include refid="QuizSetFields" />
+        <include refid="QuizSetFromJoin" />
+        WHERE
+        qs.category_id = #{category_id}
+    </select>
+
+    <!-- set_id로 단일 조회 -->
+    <select id="selectQuizSetById" parameterType="int" resultType="org.finterest.quiz.domain.QuizSetsVO">
+        SELECT
+        <include refid="QuizSetFields" />
+        <include refid="QuizSetFromJoin" />
+        WHERE
+        qs.set_id = #{set_id}
+    </select>
+
 </mapper>

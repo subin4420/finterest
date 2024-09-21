@@ -16,15 +16,16 @@ public class AchieveService {
         this.achieveDAO = achieveDAO;
     }
 
-    public AchieveVO one(int id){
-        return achieveDAO.one(id);
+    public List<AchieveVO> selectAllAchieve(){
+        return achieveDAO.selectAllAchieve();
     }
 
-    public List<AchieveVO> all(){
-        return achieveDAO.all();
+    public AchieveVO selectAchieveById(int id){
+        return achieveDAO.selectAchieveById(id);
     }
 
-    public List<AchieveVO> categoryFilter(int category_id){
-        return achieveDAO.categoryFilter(category_id);
+    public List<AchieveVO> selectAchieveByCategory(int categoryId){
+        return achieveDAO.selectAchieveByCategory(categoryId);
     }
+
 }

@@ -22,14 +22,14 @@
     </sql>
 
     <!-- 모든 항목 조회 -->
-    <select id="all" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectAllAchieve" resultType="org.finterest.achieve.domain.AchieveVO">
         SELECT
         <include refid="AchieveColumns" />
         <include refid="BaseQuery" />
     </select>
 
     <!-- 특정 ID로 조회 -->
-    <select id="one" parameterType="int" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectAchieveById" parameterType="int" resultType="org.finterest.achieve.domain.AchieveVO">
         SELECT
         <include refid="AchieveColumns" />
         <include refid="BaseQuery" />
@@ -37,7 +37,7 @@
     </select>
 
     <!-- 카테고리로 필터링 -->
-    <select id="categoryFilter" parameterType="int" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectAchieveByCategory" parameterType="int" resultType="org.finterest.achieve.domain.AchieveVO">
         SELECT
         <include refid="AchieveColumns" />
         <include refid="BaseQuery" />

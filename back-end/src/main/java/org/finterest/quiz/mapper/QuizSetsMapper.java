@@ -7,5 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface QuizSetsMapper {
-    List<QuizSetsVO> quizSetsAll();
+    List<QuizSetsVO> selectAllQuizSets();
+    List<QuizSetsVO> selectQuizSetsByCategory(int categoryId);
+    QuizSetsVO selectQuizSetById(int id);
 }

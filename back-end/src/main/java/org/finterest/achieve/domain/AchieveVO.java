@@ -11,10 +11,10 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AchieveVO {
-    private int material_id;       // 학습 자료 ID
-    //private int categoryId;       // 카테고리 ID (FK)
+    private int materialId;       // 학습 자료 ID
+    //private int categoryId;     // 카테고리 ID (FK)
     private String title;         // 학습 자료 제목
-    private String material_img;   // 썸네일 이미지
+    private String materialImg;   // 썸네일 이미지
     private String link;          // 유튜브 링크
     private String description;   // 학습 자료 설명
     private String content;       // 학습 자료 내용

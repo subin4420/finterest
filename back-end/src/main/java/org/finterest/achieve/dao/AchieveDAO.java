@@ -17,16 +17,17 @@ public class AchieveDAO {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
 
-    public AchieveVO one(int id){
-        return sqlSessionTemplate.getMapper(AchieveMapper.class).one(id);
+    public List<AchieveVO> selectAllAchieve(){
+        return sqlSessionTemplate.getMapper(AchieveMapper.class).selectAllAchieve();
     }
 
-    public List<AchieveVO> all(){
-        return sqlSessionTemplate.getMapper(AchieveMapper.class).all();
+    public AchieveVO selectAchieveById(int id){
+        return sqlSessionTemplate.getMapper(AchieveMapper.class).selectAchieveById(id);
     }
 
-    public List<AchieveVO> categoryFilter(int category_id){
-        return sqlSessionTemplate.getMapper(AchieveMapper.class).categoryFilter(category_id);
+    public List<AchieveVO> selectAchieveByCategory(int categoryId){
+        return sqlSessionTemplate.getMapper(AchieveMapper.class).selectAchieveByCategory(categoryId);
     }
+
 
 }

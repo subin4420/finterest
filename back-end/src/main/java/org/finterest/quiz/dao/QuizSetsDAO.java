@@ -17,7 +17,15 @@ public class QuizSetsDAO {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
 
-    public List<QuizSetsVO> quizSetsAll(){
-        return sqlSessionTemplate.getMapper(QuizSetsMapper.class).quizSetsAll();
+    public List<QuizSetsVO> selectAllQuizSets(){
+        return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectAllQuizSets();
+    }
+
+    public List<QuizSetsVO> selectQuizSetsByCategory(int categoryId){
+        return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectQuizSetsByCategory(categoryId);
+    }
+
+    public QuizSetsVO selectQuizSetById(int id){
+        return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectQuizSetById(id);
     }
 }
