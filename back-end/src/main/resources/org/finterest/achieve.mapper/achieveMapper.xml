@@ -15,10 +15,25 @@
         c.category_name AS categoryName  -- 카테고리 이름을 가져옴
     </sql>
 
+    <sql id="ProgressFields">
+        lp.progress_id AS progressId,
+        lm.material_id AS materialId,
+        lm.title AS title,
+        lp.status AS status,
+        lp.started_at AS startedAt,
+        lp.completed_at AS completedAt
+    </sql>
+
     <!-- 기본 쿼리 구조 -->
     <sql id="BaseQuery">
         FROM learning_materials lm
         JOIN categories c ON lm.category_id = c.category_id
+    </sql>
+
+    <sql id="ProgressFromJoin">
+        FROM Learning_Progress lp
+        JOIN Learning_Materials lm ON lp.material_id = lm.material_id
+        WHERE lp.user_id = #{userId}
     </sql>
 
     <!-- 모든 항목 조회 -->
@@ -43,4 +58,56 @@
         <include refid="BaseQuery" />
         WHERE c.category_id = #{category_id}
     </select>
+
+    <!-- 텍스트 자료만 조회 (link가 NULL) -->
+    <select id="selectTextAchieve" resultType="org.finterest.achieve.domain.AchieveVO">
+        SELECT
+        <include refid="AchieveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.link IS NULL
+    </select>
+
+    <!-- 영상 자료만 조회 (link가 NULL이 아닌 경우) -->
+    <select id="selectVideoAchieve" resultType="org.finterest.achieve.domain.AchieveVO">
+        SELECT
+        <include refid="AchieveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.link IS NOT NULL
+    </select>
+
+    <!-- 즐겨찾기 추가 -->
+    <insert id="insertFavorite">
+        INSERT INTO favorites (user_id, material_id, added_at)
+        VALUES (#{userId}, #{materialId}, NOW())
+    </insert>
+
+    <!-- 즐겨찾기 삭제 -->
+    <delete id="deleteFavorite">
+        DELETE FROM favorites
+        WHERE user_id = #{userId} AND material_id = #{materialId}
+    </delete>
+
+    <!-- 전체 학습 진행 상태 조회 -->
+    <select id="selectAllProgress" parameterType="int" resultType="org.finterest.achieve.domain.ProgressVO">
+        SELECT
+        <include refid="ProgressFields" />
+        <include refid="ProgressFromJoin" />
+    </select>
+
+    <!-- 학습 상태별 조회 (완료/미완료) -->
+    <select id="selectProgressByStatus" parameterType="map" resultType="org.finterest.achieve.domain.ProgressVO">
+        SELECT
+        <include refid="ProgressFields" />
+        <include refid="ProgressFromJoin" />
+        AND lp.status = #{status}
+    </select>
+
+    <!-- 학습 진행 상태 업데이트 -->
+    <update id="updateProgressStatus">
+        UPDATE Learning_Progress
+        SET status = #{status},
+            completed_at = CASE WHEN #{status} = 'completed' THEN NOW() ELSE NULL END
+        WHERE user_id = #{userId}
+          AND material_id = #{materialId}
+    </update>
 </mapper>
