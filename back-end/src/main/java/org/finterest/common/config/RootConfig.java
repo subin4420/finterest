@@ -24,13 +24,17 @@ import javax.sql.DataSource;
 @MapperScan(basePackages  = {
         "org.finterest.achieve.mapper",
         "org.finterest.quiz.mapper",
-        "org.finterest.member.mapper"
+        "org.finterest.member.mapper",
+        "org.finterest.user.mapper",
+        
 })
 @ComponentScan(basePackages = {
+        "org.finterest.security.config",
         "org.finterest.achieve",
         "org.finterest.common.config",
         "org.finterest.quiz",
-        "org.finterest.member.service"
+        //"org.finterest.member.service",
+        "org.finterest.user"
 })
 @Slf4j
 @EnableTransactionManagement
