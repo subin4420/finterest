@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.finterest.member.controller",
         "org.finterest.quiz.controller",
         "org.finterest.achieve.controller",
+        "org.finterest.user.controller",
 })
 public class ServletConfig  implements WebMvcConfigurer {
 

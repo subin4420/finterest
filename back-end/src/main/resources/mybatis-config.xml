@@ -6,16 +6,20 @@
 <configuration>
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true" />
+        <setting name="logImpl" value="SLF4J"/> <!-- 로그 설정 -->
+        <setting name="cacheEnabled" value="true"/> <!-- 캐시 설정 -->
     </settings>
 
     <typeAliases>
         <package name="org.finterest.security.account.domain" />
         <package name="org.finterest.achieve.domain"/>
         <package name="org.finterest.quiz.domain"/>
+        <package name="org.finterest.user.domain"/> <!-- User 관련 패키지 추가 -->
     </typeAliases>
 
     <mappers>
-        <mapper resource="org/finterest/achieve.mapper/achieveMapper.xml"/>
-        <mapper resource="org/finterest/quiz.mapper/quizSetsMapper.xml"/>
+        <mapper resource="org/finterest/achieve/mapper/achieveMapper.xml"/>
+        <mapper resource="org/finterest/quiz/mapper/quizSetsMapper.xml"/>
+        <mapper resource="org/finterest/user/mapper/userMapper.xml"/> <!-- User 매퍼 추가 -->
     </mappers>
 </configuration>
