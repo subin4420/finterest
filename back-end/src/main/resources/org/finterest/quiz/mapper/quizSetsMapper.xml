@@ -12,11 +12,13 @@
         qs.updated_at
     </sql>
 
+
     <!-- 공통 FROM 및 JOIN 정의 -->
     <sql id="QuizSetFromJoin">
         FROM Quiz_Sets qs
         JOIN Categories c ON qs.category_id = c.category_id
     </sql>
+
 
     <!-- 전체 조회 -->
     <select id="selectAllQuizSets" resultType="org.finterest.quiz.domain.QuizSetsVO">

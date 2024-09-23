@@ -21,5 +21,6 @@
         <mapper resource="org/finterest/achieve/mapper/achieveMapper.xml"/>
         <mapper resource="org/finterest/quiz/mapper/quizSetsMapper.xml"/>
         <mapper resource="org/finterest/user/mapper/userMapper.xml"/> <!-- User 매퍼 추가 -->
+        <mapper resource="org/finterest/achieve/mapper/adminAchieveMapper.xml"/>
     </mappers>
 </configuration>
