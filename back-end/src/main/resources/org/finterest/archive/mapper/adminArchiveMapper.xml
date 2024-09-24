@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.finterest.achieve.mapper.AdminAchieveMapper">
+<mapper namespace="org.finterest.archive.mapper.AdminArchiveMapper">
     <!-- 카테고리 이름으로 category_id 가져오기 -->
     <select id="selectCategoryIdByName" parameterType="string" resultType="int">
         SELECT category_id
@@ -9,13 +9,13 @@
     </select>
 
     <!-- 학습 자료 삽입 -->
-    <insert id="insertAchieve">
+    <insert id="insertArchive">
         INSERT INTO Learning_Materials (category_id, title, material_img, link, description, content, created_at)
         VALUES (#{categoryId}, #{title}, #{materialImg}, #{link}, #{description}, #{content}, NOW())
     </insert>
 
     <!-- 학습 자료 컬럼 정의 -->
-    <sql id="AchieveColumns">
+    <sql id="ArchiveColumns">
         lm.material_id AS material_id,
         lm.title AS title,
         lm.material_img AS material_img,
@@ -34,17 +34,17 @@
     </sql>
 
     <!-- 전체 학습 자료 목록 조회 -->
-    <select id="selectAllAchieve" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectAllArchive" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="AchieveColumns" />
+        <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
         ORDER BY lm.created_at DESC
     </select>
 
     <!-- 즐겨찾기된 학습 자료 조회 (특정 사용자) -->
-    <select id="selectFavoritesByUser" parameterType="int" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectFavoritesByUser" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="AchieveColumns" />
+        <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
         JOIN Favorites f ON lm.material_id = f.material_id
         WHERE f.user_id = #{userId}  <!-- userId 필터링 -->
@@ -53,9 +53,9 @@
 
 
     <!-- 카테고리 이름 및 즐겨찾기 필터링이 적용된 학습 자료 조회 -->
-    <select id="selectAchieveByCategoryAndFavorites" parameterType="map" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectArchiveByCategoryAndFavorites" parameterType="map" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="AchieveColumns" />
+        <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
         JOIN Favorites f ON lm.material_id = f.material_id
         WHERE 1=1
@@ -69,7 +69,7 @@
     </select>
 
     <!-- 학습 자료 수정 (카테고리명을 기반으로 업데이트) -->
-    <update id="updateAchieve">
+    <update id="updateArchive">
         UPDATE Learning_Materials
         SET
             category_id = (SELECT category_id FROM Categories WHERE category_name = #{categoryName}),
@@ -83,7 +83,7 @@
     </update>
 
     <!-- 학습 자료 삭제 -->
-    <delete id="deleteAchieve" parameterType="int">
+    <delete id="deleteArchive" parameterType="int">
         DELETE FROM Learning_Materials
         WHERE material_id = #{materialId}
     </delete>
