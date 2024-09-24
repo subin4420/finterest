@@ -1,19 +1,19 @@
-package org.finterest.achieve.mapper;
+package org.finterest.archive.mapper;
 
 import org.apache.ibatis.annotations.Param;
-import org.finterest.achieve.domain.ProgressVO;
-import org.finterest.achieve.domain.AchieveVO;
+import org.finterest.archive.domain.ArchiveVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.finterest.archive.domain.ProgressVO;
 
 import java.util.List;
 
 @Mapper
-public interface AchieveMapper {
-    List<AchieveVO> selectAllAchieve();
-    AchieveVO selectAchieveById(int id);
-    List<AchieveVO> selectAchieveByCategory(int category_id);
-    List<AchieveVO> selectTextAchieve();
-    List<AchieveVO> selectVideoAchieve();
+public interface ArchiveMapper {
+    List<ArchiveVO> selectAllArchive();
+    ArchiveVO selectArchiveById(int id);
+    List<ArchiveVO> selectArchiveByCategory(int category_id);
+    List<ArchiveVO> selectTextArchive();
+    List<ArchiveVO> selectVideoArchive();
     //void insertFavorite(int userId, int materialId);
     //void deleteFavorite(int userId, int materialId);
 

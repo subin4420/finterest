@@ -22,17 +22,20 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
-        "org.finterest.achieve.mapper",
+        "org.finterest.archive.mapper",
         "org.finterest.quiz.mapper",
         "org.finterest.member.mapper",
         "org.finterest.user.mapper",
+        "org.finterest.point.mapper",
+
         
 })
 @ComponentScan(basePackages = {
         "org.finterest.security.config",
-        "org.finterest.achieve",
+        "org.finterest.archive",
         "org.finterest.common.config",
         "org.finterest.quiz",
+        "org.finterest.point",
         //"org.finterest.member.service",
         "org.finterest.user"
 })
