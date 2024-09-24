@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.finterest.invest.board.mapper.BoardMapper">
+
+
+    <insert id="insertBoard" useGeneratedKeys="true" keyProperty="boardId">
+        INSERT INTO Boards (title, content, user_Id)
+        VALUES (#{title}, #{content}, #{userId})
+    </insert>
+
+    <update id="updateBoard">
+        UPDATE Boards
+        SET title = #{title}, content = #{content}, updatedAt = CURRENT_TIMESTAMP
+        WHERE board_Id = #{boardId}
+    </update>
+
+    <select id="selectBoardById" resultType="org.finterest.invest.board.domain.BoardVO">
+        SELECT * FROM Boards WHERE board_Id = #{boardId}
+    </select>
+
+    <select id="selectAllBoards" resultType="org.finterest.invest.board.domain.BoardVO">
+        SELECT * FROM Boards
+    </select>
+
+    <delete id="deleteBoard">
+        DELETE FROM Boards WHERE board_Id = #{boardId}
+    </delete>
+</mapper>

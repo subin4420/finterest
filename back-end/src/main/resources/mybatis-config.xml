@@ -12,4 +12,10 @@
         <package name="org.scoula.security.account.domain" />
     </typeAliases>
 
+    <mappers>
+        <mapper resource="org/scoula/stock/overall/mapper/OverallMapper.xml"/>
+        <mapper resource="org/scoula/conversion/mapper/ConversionMapper.xml"/>
+        <mapper resource="org/scoula/board/mapper/BoardMapper.xml"/>
+    </mappers>
+
 </configuration>
