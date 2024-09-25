@@ -1,35 +1,58 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap'); */
+@import url('//fonts.googleapis.com/earlyaccess/notosanskr.css');
+* {
+  font-family: 'Noto Sans KR';
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+.avatar {
+  border-radius: 50%;
+  border-color: gray;
+  background-color: #d8d8d8;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+.avatar-sm {
+  width: 20px;
+  height: 20px;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.avatar-md {
+  width: 40px;
+  height: 40px;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+.avatar-lg {
+  width: 80px;
+  height: 80px;
+}
+/* 페이지 네이션 */
+
+.pagination-container {
+  display: flex;
+  /* column-gap: 10px; */
+}
+
+.paginate-buttons {
+  height: 40px;
+  width: 40px;
+  /* border-radius: 20px; */
+  cursor: pointer;
+  background-color: white; /*rgb(242, 242, 242);*/
+  border: 1px solid white; /* rgb(217, 217, 217);*/
+  color: black;
+}
+
+.paginate-buttons:hover {
+  border-radius: 20px;
+  background-color: #d8d8d8;
+}
+
+.active-page {
+  border-radius: 20px;
+  background-color: #3498db;
+  border: 1px solid #3498db;
+  color: white;
+}
+
+.active-page:hover {
+  background-color: #2988c8;
 }
