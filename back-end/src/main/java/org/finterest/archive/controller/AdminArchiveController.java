@@ -1,7 +1,7 @@
-package org.finterest.achieve.controller;
+package org.finterest.archive.controller;
 
-import org.finterest.achieve.domain.AchieveVO;
-import org.finterest.achieve.service.AdminAchieveService;
+import org.finterest.archive.domain.ArchiveVO;
+import org.finterest.archive.service.AdminArchiveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,19 +11,19 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin/achieve")
-public class AdminAchieveController {
-    private final AdminAchieveService adminAchieveService;
+@RequestMapping("/api/admin/archive")
+public class AdminArchiveController {
+    private final AdminArchiveService adminArchiveService;
 
     @Autowired
-    public AdminAchieveController(AdminAchieveService adminAchieveService) {
-        System.out.println("AdminAchieveController created");
-        this.adminAchieveService = adminAchieveService;
+    public AdminArchiveController(AdminArchiveService adminArchiveService) {
+        System.out.println("AdminArchiveController created");
+        this.adminArchiveService = adminArchiveService;
     }
 
     // 학습 자료 생성
     @PostMapping
-    public ResponseEntity<Map<String, String>> createAchieve(
+    public ResponseEntity<Map<String, String>> createArchive(
             @RequestBody Map<String, String> requestBody,
             @RequestHeader("Authorization") String token) {
         // Request Body에서 데이터 가져오기
@@ -35,7 +35,7 @@ public class AdminAchieveController {
         String materialImg = requestBody.get("materialImg");
 
         // 학습 자료 생성
-        adminAchieveService.insertAchieve(title, description, content, link, categoryName, materialImg);
+        adminArchiveService.insertArchive(title, description, content, link, categoryName, materialImg);
 
         // 성공 응답
         Map<String, String> response = new HashMap<>();
@@ -45,32 +45,32 @@ public class AdminAchieveController {
 
     // 전체 학습 자료 목록 조회 (카테고리 및 즐겨찾기 및 userId 필터링 가능)
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAchieveList(
+    public ResponseEntity<Map<String, Object>> getArchiveList(
             @RequestParam(value = "categoryName", required = false) String categoryName,
             @RequestParam(value = "favorites", required = false) Boolean favorites,
             @RequestParam(value = "userId", required = false) Integer userId,  // userId 필터 추가
             @RequestHeader("Authorization") String token) {
 
-        List<AchieveVO> materials;
+        List<ArchiveVO> materials;
 
         // 즐겨찾기 필터가 적용된 경우
         if (favorites != null && favorites && userId != null) {
             // 특정 사용자의 즐겨찾기 자료 조회
-            materials = adminAchieveService.selectFavoritesByUser(userId);
+            materials = adminArchiveService.selectFavoritesByUser(userId);
         } else {
             // 카테고리 및 일반 자료 조회
-            materials = adminAchieveService.selectAchieveByCategoryAndFavorites(categoryName, favorites);
+            materials = adminArchiveService.selectArchiveByCategoryAndFavorites(categoryName, favorites);
         }
 
         // 응답 구성
         Map<String, Object> response = new HashMap<>();
-        response.put("materials", materials);
+        response.put("archives", materials);
         return ResponseEntity.ok(response);
     }
 
     // 학습 자료 수정
     @PutMapping("/{materialId}")
-    public ResponseEntity<Map<String, String>> updateAchieve(
+    public ResponseEntity<Map<String, String>> updateArchive(
             @PathVariable int materialId,
             @RequestBody Map<String, String> requestBody,
             @RequestHeader("Authorization") String token) {
@@ -83,7 +83,7 @@ public class AdminAchieveController {
         String materialImg = requestBody.get("materialImg");
 
         // 학습 자료 수정
-        adminAchieveService.updateAchieve(materialId, categoryName, title, materialImg, link, description, content);
+        adminArchiveService.updateArchive(materialId, categoryName, title, materialImg, link, description, content);
 
         // 성공 응답
         Map<String, String> response = new HashMap<>();
@@ -93,12 +93,12 @@ public class AdminAchieveController {
 
     // 학습 자료 삭제
     @DeleteMapping("/{materialId}")
-    public ResponseEntity<Map<String, String>> deleteAchieve(
+    public ResponseEntity<Map<String, String>> deleteArchive(
             @PathVariable int materialId,
             @RequestHeader("Authorization") String token) {
 
         // 학습 자료 삭제
-        adminAchieveService.deleteAchieve(materialId);
+        adminArchiveService.deleteArchive(materialId);
 
         // 성공 응답
         Map<String, String> response = new HashMap<>();

@@ -12,15 +12,17 @@
 
     <typeAliases>
         <package name="org.finterest.security.account.domain" />
-        <package name="org.finterest.achieve.domain"/>
+        <package name="org.finterest.archive.domain"/>
         <package name="org.finterest.quiz.domain"/>
+        <package name="org.finterest.point.domain"/>
         <package name="org.finterest.user.domain"/> <!-- User 관련 패키지 추가 -->
     </typeAliases>
 
     <mappers>
-        <mapper resource="org/finterest/achieve/mapper/achieveMapper.xml"/>
+        <mapper resource="org/finterest/archive/mapper/archiveMapper.xml"/>
         <mapper resource="org/finterest/quiz/mapper/quizSetsMapper.xml"/>
         <mapper resource="org/finterest/user/mapper/userMapper.xml"/> <!-- User 매퍼 추가 -->
-        <mapper resource="org/finterest/achieve/mapper/adminAchieveMapper.xml"/>
+        <mapper resource="org/finterest/archive/mapper/adminArchiveMapper.xml"/>
+        <mapper resource="org/finterest/point/mapper/pointMapper.xml"/>
     </mappers>
 </configuration>
