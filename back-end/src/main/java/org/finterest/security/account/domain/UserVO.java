@@ -1,5 +1,7 @@
 package org.finterest.security.account.domain;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +27,9 @@ public class UserVO {
     private String fullName;  // 실명
     private String accountStatus;  // 계정 상태 ('active' or 'inactive')
     private BigDecimal money;  // 보유 금액
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date signupDate;  // 가입일
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date lastLogin;  // 마지막 로그인 시간
     private int totalPoints;  // 누적 포인트
 

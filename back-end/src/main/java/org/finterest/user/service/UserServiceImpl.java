@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.finterest.security.account.domain.AuthVO;
 import org.finterest.security.account.domain.UserVO;
+import org.finterest.user.dto.ChangePasswordDTO;
 import org.finterest.user.dto.UserDTO;
 import org.finterest.user.dto.UserJoinDTO;
+import org.finterest.user.dto.UserVerificationDTO;
 import org.finterest.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,19 +26,12 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-
-//    @Autowired
-//    public UserService(UserMapper userMapper) {
-//        this.userMapper = userMapper;
-//    }
-
-    // 회원 가입 처리
-
     @Override
     public boolean checkDuplicate(String username) {
         UserVO member = userMapper.get(username);
         return member != null ? true : false;
     }
+    // 회원 가입 처리
     @Transactional
     @Override
     public UserDTO join(UserJoinDTO userJoinDTO) {
@@ -47,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
         AuthVO auth = new AuthVO();
         auth.setUsername(userVO.getUsername());
-        auth.setAuth("ROLE_MEMBER");
+        auth.setAuth("ROLE_USER");
 
         userMapper.insertAuth(auth);
         //saveAvatar(UserJoinDTO.getAvatar(), userVO.getUsername());
@@ -72,5 +67,15 @@ public class UserServiceImpl implements UserService {
         return userVOList.stream().map(UserDTO::of).collect(Collectors.toList());
     }
 
+    @Override
+    public boolean verifyUser(UserVerificationDTO request) {
+        UserVO user = userMapper.findUserByDetails(request);
+        return user != null; // 사용자 존재 여부 반환
+    }
+
+    @Override
+    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+        userMapper.updatePassword(changePasswordDTO); // DTO를 사용하여 비밀번호 업데이트
+    }
 
 }
