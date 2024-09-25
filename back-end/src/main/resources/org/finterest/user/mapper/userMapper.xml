@@ -78,11 +78,6 @@
                                 ON m.username = a.username
     </select>
 
-    <!-- 사용자 이름으로 사용자 찾기 -->
-    <select id="findByUsername" resultMap="userMap">
-        SELECT * FROM Users WHERE username = #{username}
-    </select>
-
     <!-- 권한 추가 -->
     <insert id="insertAuth">
         INSERT INTO Users_auth (username, auth)
@@ -94,5 +89,12 @@
         DELETE FROM Users_auth
         WHERE username = #{username} AND auth = #{auth}
     </delete>
+
+    <select id="findUserByDetails" resultType="org.finterest.security.account.domain.UserVO">
+        SELECT * FROM Users
+        WHERE username = #{username}
+          AND full_name = #{fullName}
+          AND email = #{email}
+    </select>
 
 </mapper>

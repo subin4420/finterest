@@ -26,7 +26,7 @@ public class UserDTO {
     private Date lastLogin;  // 마지막 로그인 시간
     private int totalPoints;  // 누적 포인트 (Default: 0)
 
-    MultipartFile avatar;  // 아바타 이미지
+    //MultipartFile avatar;  // 아바타 이미지
 
     private List<String> authList;  // 권한 목록, join 처리 필요
 
