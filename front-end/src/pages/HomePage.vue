@@ -4,7 +4,6 @@ import UpperContentRow from '@/components/home/UpperContentRow.vue';
 import LowerContentRow from '@/components/home/LowerContentRow.vue';
 </script>
 
-
 <template>
   <div class="home-page">
     <ImageSlider />
@@ -17,10 +16,10 @@ import LowerContentRow from '@/components/home/LowerContentRow.vue';
 <style scoped>
 .home-page {
   .home-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f5f5f5;
-}
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
 }
 </style>

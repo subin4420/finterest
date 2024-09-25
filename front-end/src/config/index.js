@@ -14,7 +14,7 @@ export default {
     },
     {
       title: '모의투자',
-      url: '/trade/TradePage',
+      url: '/trade',
       icon: 'fa-solid fa-chart-line', // 상승 차트 아이콘
     },
   ],
@@ -29,12 +29,14 @@ export default {
       url: '/auth/join',
       title: '회원가입',
       icon: 'fa-solid fa-user-plus',
- },
-    myLearning: { 
-      title: '나의학습', 
-      url: '/myLearning/MyLearningPage' },
-    news: { 
-      title: '소식', 
-      url: '/notice/NoticePage' }
+    },
+    myLearning: {
+      title: '나의학습',
+      url: '/myLearning/MyLearningPage',
+    },
+    news: {
+      title: '소식',
+      url: '/notice/NoticePage',
+    },
   },
 };
