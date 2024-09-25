@@ -1,4 +1,4 @@
-package org.finterest.achieve.domain;
+package org.finterest.archive.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,4 +16,5 @@ public class ProgressVO {
     private String status;
     private Date startedAt;
     private Date completedAt;
+
 }

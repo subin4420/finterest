@@ -12,8 +12,10 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.finterest.exception",
         "org.finterest.member.controller",
         "org.finterest.quiz.controller",
-        "org.finterest.achieve.controller",
+        "org.finterest.archive.controller",
         "org.finterest.user.controller",
+        "org.finterest.point.controller",
+
 })
 public class ServletConfig  implements WebMvcConfigurer {
 

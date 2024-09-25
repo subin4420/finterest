@@ -1,4 +1,4 @@
-package org.finterest.achieve.domain;
+package org.finterest.archive.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AchieveVO {
+public class ArchiveVO {
     private int materialId;       // 학습 자료 ID
     //private int categoryId;     // 카테고리 ID (FK)
     private String title;         // 학습 자료 제목

@@ -1,8 +1,9 @@
-package org.finterest.achieve.controller;
+package org.finterest.archive.controller;
 
-import org.finterest.achieve.domain.AchieveVO;
-import org.finterest.achieve.domain.ProgressVO;
-import org.finterest.achieve.service.AchieveService;
+import org.finterest.archive.domain.ArchiveVO;
+
+import org.finterest.archive.domain.ProgressVO;
+import org.finterest.archive.service.ArchiveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
@@ -12,54 +13,54 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/achieve")
-public class AchieveController {
-    private final AchieveService achieveService;
+@RequestMapping("/api/archive")
+public class ArchiveController {
+    private final ArchiveService archiveService;
 
     @Autowired
-    public AchieveController(AchieveService achieveService) {
-        System.out.println("AchieveController created");
-        this.achieveService = achieveService;
+    public ArchiveController(ArchiveService archiveService) {
+        System.out.println("ArchiveController created");
+        this.archiveService = archiveService;
     }
 
     // 모든 자료 조회
     @GetMapping
-    public Map<String, List<AchieveVO>> selectAllAchieve(@RequestParam(value = "type", required = false) String type) {
-        List<AchieveVO> achieveVOList;
+    public Map<String, List<ArchiveVO>> selectAllArchive(@RequestParam(value = "type", required = false) String type) {
+        List<ArchiveVO> archiveVOList;
 
         if (type != null) {
             if (type.equals("text")) {
-                achieveVOList = achieveService.selectTextAchieve(); // 텍스트 자료만
+                archiveVOList = archiveService.selectTextArchive(); // 텍스트 자료만
             } else if (type.equals("video")) {
-                achieveVOList = achieveService.selectVideoAchieve(); // 영상 자료만
+                archiveVOList = archiveService.selectVideoArchive(); // 영상 자료만
             } else {
                 throw new IllegalArgumentException("Invalid type: " + type);
             }
         } else {
-            achieveVOList = achieveService.selectAllAchieve(); // 모든 자료
+            archiveVOList = archiveService.selectAllArchive(); // 모든 자료
         }
 
-        Map<String, List<AchieveVO>> response = new HashMap<>();
-        response.put("achieves", achieveVOList);
+        Map<String, List<ArchiveVO>> response = new HashMap<>();
+        response.put("archives", archiveVOList);
         return response;
     }
 
     // 특정 ID로 자료 조회
     @GetMapping("/{id}")
-    public AchieveVO one(@PathVariable int id) {
-        AchieveVO achieveVO = achieveService.selectAchieveById(id);
-        System.out.println("---------------->>" + achieveVO);
-        return achieveVO;
+    public ArchiveVO one(@PathVariable int id) {
+        ArchiveVO archiveVO = archiveService.selectArchiveById(id);
+        System.out.println("---------------->>" + archiveVO);
+        return archiveVO;
     }
 
     // 특정 카테고리 ID로 자료 조회
     @GetMapping(params = "categoryId")
-    public Map<String, List<AchieveVO>> findByCategoryId(@RequestParam int categoryId) {
-        List<AchieveVO> achieveVOList = achieveService.selectAchieveByCategory(categoryId);
-        System.out.println("------------->>" + achieveVOList);
+    public Map<String, List<ArchiveVO>> findByCategoryId(@RequestParam int categoryId) {
+        List<ArchiveVO> archiveVOList = archiveService.selectArchiveByCategory(categoryId);
+        System.out.println("------------->>" + archiveVOList);
 
-        Map<String, List<AchieveVO>> response = new HashMap<>();
-        response.put("achieves", achieveVOList);
+        Map<String, List<ArchiveVO>> response = new HashMap<>();
+        response.put("archives", archiveVOList);
         return response;
     }
 
@@ -71,7 +72,7 @@ public class AchieveController {
         Map<String, String> response = new HashMap<>();
 
         try {
-            achieveService.insertFavorite(userId, materialId);
+            archiveService.insertFavorite(userId, materialId);
             response.put("message", "아카이브에 즐겨찾기가 추가되었습니다.");
         } catch (DuplicateKeyException e) {
             response.put("message", "이미 해당 학습 자료가 즐겨찾기에 추가되어 있습니다.");
@@ -86,7 +87,7 @@ public class AchieveController {
     public Map<String, String> removeFavorite(@PathVariable int materialId, @RequestHeader("Authorization") String token) {
         //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
         int userId = 1;     // 테스트용
-        achieveService.deleteFavorite(userId, materialId);
+        archiveService.deleteFavorite(userId, materialId);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "아카이브에 즐겨찾기가 삭제되었습니다.");
@@ -105,9 +106,9 @@ public class AchieveController {
         List<ProgressVO> progressList;
 
         if (status == null) {
-            progressList = achieveService.selectAllProgress(userId);
+            progressList = archiveService.selectAllProgress(userId);
         } else {
-            progressList = achieveService.selectProgressByStatus(userId, status);
+            progressList = archiveService.selectProgressByStatus(userId, status);
         }
 
         Map<String, List<ProgressVO>> response = new HashMap<>();
@@ -131,7 +132,7 @@ public class AchieveController {
         }
 
         // 학습 진행 상태 업데이트
-        int affectedRows = achieveService.updateProgressStatus(userId, materialId, status);
+        int affectedRows = archiveService.updateProgressStatus(userId, materialId, status);
 
         Map<String, String> response = new HashMap<>();
         if (affectedRows > 0) {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.finterest.achieve.mapper.AchieveMapper">
+<mapper namespace="org.finterest.archive.mapper.ArchiveMapper">
 
     <!-- 공통 칼럼 정의 -->
-    <sql id="AchieveColumns">
+    <sql id="ArchiveColumns">
         lm.material_id AS material_id,
         lm.title AS title,
         lm.material_img AS material_img,
@@ -37,40 +37,40 @@
     </sql>
 
     <!-- 모든 항목 조회 -->
-    <select id="selectAllAchieve" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectAllArchive" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="AchieveColumns" />
+        <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
     </select>
 
     <!-- 특정 ID로 조회 -->
-    <select id="selectAchieveById" parameterType="int" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectArchiveById" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="AchieveColumns" />
+        <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
         WHERE lm.material_id = #{material_id}
     </select>
 
     <!-- 카테고리로 필터링 -->
-    <select id="selectAchieveByCategory" parameterType="int" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectArchiveByCategory" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="AchieveColumns" />
+        <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
         WHERE c.category_id = #{category_id}
     </select>
 
     <!-- 텍스트 자료만 조회 (link가 NULL) -->
-    <select id="selectTextAchieve" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectTextArchive" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="AchieveColumns" />
+        <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
         WHERE lm.link IS NULL
     </select>
 
     <!-- 영상 자료만 조회 (link가 NULL이 아닌 경우) -->
-    <select id="selectVideoAchieve" resultType="org.finterest.achieve.domain.AchieveVO">
+    <select id="selectVideoArchive" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="AchieveColumns" />
+        <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
         WHERE lm.link IS NOT NULL
     </select>
@@ -88,14 +88,14 @@
     </delete>
 
     <!-- 전체 학습 진행 상태 조회 -->
-    <select id="selectAllProgress" parameterType="int" resultType="org.finterest.achieve.domain.ProgressVO">
+    <select id="selectAllProgress" parameterType="int" resultType="org.finterest.archive.domain.ProgressVO">
         SELECT
         <include refid="ProgressFields" />
         <include refid="ProgressFromJoin" />
     </select>
 
     <!-- 학습 상태별 조회 (완료/미완료) -->
-    <select id="selectProgressByStatus" parameterType="map" resultType="org.finterest.achieve.domain.ProgressVO">
+    <select id="selectProgressByStatus" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
         SELECT
         <include refid="ProgressFields" />
         <include refid="ProgressFromJoin" />
