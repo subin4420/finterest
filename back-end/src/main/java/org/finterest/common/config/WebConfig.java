@@ -1,9 +1,8 @@
-package org.finterest.common.config;
+package org.scoula.common.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.scoula.security.config.SecurityConfig;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.MultipartConfigElement;
@@ -12,7 +11,7 @@ import java.io.File;
 
 @Slf4j
 @Configuration
-public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer implements WebMvcConfigurer {
+public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     // 업로드 경로 설정
     final String LOCATION = "/Users/park/Desktop/upload";
@@ -22,7 +21,7 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { RootConfig.class };
+        return new Class[] { RootConfig.class, SecurityConfig.class };
     }
 
     @Override
@@ -57,15 +56,5 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
                         FILE_SIZE_THRESHOLD // 메모리 파일의 최대 크기(이보다 작으면 실제 메모리에서만 작업)
                 );
         registration.setMultipartConfig(multipartConfig);
-    }
-
-    // CORS 설정 추가
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")  // 모든 경로에 대해 CORS 허용
-                .allowedOrigins("http://localhost:5173")  // 특정 도메인 허용
-                .allowedMethods("GET", "POST", "PUT", "DELETE")  // 허용할 HTTP 메소드 지정
-                .allowedHeaders("*")  // 모든 헤더 허용
-                .allowCredentials(true);  // 인증 정보 허용
     }
 }

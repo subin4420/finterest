@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.finterest.invest.board.mapper.BoardMapper">
+<mapper namespace="org.scoula.invest.domain.board.mapper.BoardMapper">
 
 
     <insert id="insertBoard" useGeneratedKeys="true" keyProperty="boardId">
@@ -17,11 +17,11 @@
         WHERE board_Id = #{boardId}
     </update>
 
-    <select id="selectBoardById" resultType="org.finterest.invest.board.domain.BoardVO">
+    <select id="selectBoardById" resultType="org.scoula.invest.domain.board.domain.BoardVO">
         SELECT * FROM Boards WHERE board_Id = #{boardId}
     </select>
 
-    <select id="selectAllBoards" resultType="org.finterest.invest.board.domain.BoardVO">
+    <select id="selectAllBoards" resultType="org.scoula.invest.domain.board.domain.BoardVO">
         SELECT * FROM Boards
     </select>
 

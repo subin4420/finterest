@@ -1,19 +1,22 @@
-package org.finterest.common.config;
+package org.scoula.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @ComponentScan(basePackages = {
-        "org.finterest.controller",
-        "org.finterest.exception",
-        "org.finterest.member.controller",
-        "org.finterest.quiz.controller",
-        "org.finterest.achieve.controller",
-        "org.finterest.user.controller",
+        "org.scoula.controller",
+        "org.scoula.exception",
+        "org.scoula.member.controller",
+        "org.scoula.board.controller",
+        "org.scoula.invest.domain.stock.overall.controller",
+        "org.scoula.invest.domain.stock.overall.service",
+        "org.scoula.invest.domain.conversion."
 })
 public class ServletConfig  implements WebMvcConfigurer {
 

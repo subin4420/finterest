@@ -1,4 +1,4 @@
-package org.finterest.common.util;
+package org.scoula.common.util;
 
 import org.springframework.web.multipart.MultipartFile;
 

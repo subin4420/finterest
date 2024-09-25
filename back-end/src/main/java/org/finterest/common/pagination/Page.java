@@ -1,5 +1,5 @@
 
-package org.finterest.common.pagination;
+package org.scoula.common.pagination;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
