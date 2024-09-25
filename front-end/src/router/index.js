@@ -1,36 +1,48 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '@/views/Home.vue';
-import Profile from '@/views/Profile.vue';
-import Quiz from '@/views/Quiz.vue';
-import Achieve from '@/views/Achieve.vue';
-import Trading from '@/views/Trading.vue';
-import Login from '@/views/Login.vue';
-import FindPassword from '@/views/FindPassword.vue';
-import ChangePassword from '@/views/ChangePassword.vue';
-import SignUp from '@/views/SignUp.vue';
-import ProfileSettings from '@/views/ProfileSettings.vue';
-import MyLearning from '@/views/MyLearning.vue';
-import NoticeBoard from '@/views/NoticeBoard.vue';
-
-
-const routes = [
-    { path: '/', component: Home },
-    { path: '/profile', component: Profile },
-    { path: '/achieve', component: Achieve },
-    { path: '/quiz', component: Quiz },
-    { path: '/trading', component: Trading },
-    { path: '/login', component: Login },
-    { path: '/find-password', name: 'FindPassword', component: FindPassword, },
-    { path: '/change-password', name: 'ChangePassword', component: ChangePassword, },
-    { path: '/signup', name: 'SignUp', component: SignUp, },
-    { path: '/profile-settings', name: 'ProfileSettings', component: ProfileSettings, },
-    { path: '/my-learning', name: 'MyLearning', component: MyLearning, },
-    { path: '/notice', name: 'NoticeBoard', component: NoticeBoard, },
-];
+import HomePage from '../pages/HomePage.vue';
+import ArchivePage from '../pages/archive/ArchivePage.vue';
+import QuizPage from '../pages/quiz/QuizPage.vue';
+import TradePage from '../pages/trade/TradePage.vue';
+import MyLearningPage from '../pages/myLearning/MyLearningPage.vue';
+import NoticePage from '../pages/notice/NoticePage.vue';
+import authRotes from './auth';
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomePage,
+    },
+    {
+      path: '/archive/ArchivePage',
+      name: 'archive',
+      component: ArchivePage,
+    },
+    {
+      path: '/quiz/QuizPage',
+      name: 'quiz',
+      component: QuizPage,
+    },
+    {
+      path: '/trade/TradePage',
+      name: 'trade',
+      component: TradePage,
+    },
+    {
+      path: '/myLearning/MyLearningPage',
+      name: 'myLearning',
+      component: MyLearningPage,
+    },
+    {
+      path: '/notice/NoticePage',
+      name: 'notice',
+      component: NoticePage,
+    },
+    ...authRotes,
+
+  ],
 });
 
 export default router;
