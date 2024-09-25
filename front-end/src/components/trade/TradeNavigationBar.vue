@@ -3,7 +3,7 @@
     <ul class="nav-links">
       <li><router-link to="/trade">홈</router-link></li>
       <!-- /trade로 수정 -->
-      <li><router-link to="/trade/simulatorstock">모의투자</router-link></li>
+      <li><router-link to="/trade/stocksimulator">모의투자</router-link></li>
       <!-- /trade로 수정 -->
       <li><router-link to="/trade/portfolio">포트폴리오</router-link></li>
       <li><router-link to="/trade/news">뉴스</router-link></li>
