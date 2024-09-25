@@ -3,21 +3,25 @@
     <ul class="nav-links">
       <li><router-link to="/trade">홈</router-link></li>
       <!-- /trade로 수정 -->
-      <li><router-link to="/archive/ArchivePage">경제상식</router-link></li>
-      <li><router-link to="/trade">투자</router-link></li>
+      <li><router-link to="/trade/simulatorstock">모의투자</router-link></li>
       <!-- /trade로 수정 -->
-      <li><router-link to="/trade/pointconversion">돈의 흐름</router-link></li>
-      <li><router-link to="/trade/news">세계경제</router-link></li>
-      <li><router-link to="/trade/simulatorstock">경제구조</router-link></li>
-      <li><router-link to="/trade/community">기타</router-link></li>
+      <li><router-link to="/trade/portfolio">포트폴리오</router-link></li>
+      <li><router-link to="/trade/news">뉴스</router-link></li>
+      <li><router-link to="/trade/settlement">결산</router-link></li>
       <li>
-        <router-link to="/myLearning/MyLearningPage">즐겨찾기</router-link>
+        <router-link to="/trade/pointconversion">포인트 전환</router-link>
+      </li>
+      <li><router-link to="/trade/community">커뮤니티</router-link></li>
+      <li>
+        <router-link to="/trade/turnbasedsimulation">턴제 모의투자</router-link>
       </li>
     </ul>
   </nav>
 </template>
 
 <script>
+import router from '@/router';
+
 export default {
   name: 'NavigationBar',
 };

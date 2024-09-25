@@ -1,8 +1,8 @@
 export default [
     {
-      path: '/trade/simulatorstock',
+      path: '/trade/stocksimulator',
       name: 'simulatorstock',
-      component: () => import('../pages/trade/SimulatorStockPage.vue'), // 시뮬레이터 주식 페이지
+      component: () => import('../pages/trade/StockSimulatorPage.vue'), // 시뮬레이터 주식 페이지
     },
     {
       path: '/trade/news',
