@@ -14,6 +14,8 @@ public interface ArchiveMapper {
     List<ArchiveVO> selectArchiveByCategory(int category_id);
     List<ArchiveVO> selectTextArchive();
     List<ArchiveVO> selectVideoArchive();
+    ProgressVO getProgressForMaterial(int materialId);
+
     //void insertFavorite(int userId, int materialId);
     //void deleteFavorite(int userId, int materialId);
 

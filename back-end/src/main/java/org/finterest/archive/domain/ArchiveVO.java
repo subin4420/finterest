@@ -25,4 +25,11 @@ public class ArchiveVO {
     private Date updatedAt;       // 학습 자료 수정일
 
     private String categoryName;  // category_name (조인된 값)
+
+    // JWT 토큰이 있을 때 반환되는 필드
+    private String status;        // 학습 상태
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private Date startedAt;       // 학습 시작일
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private Date completedAt;     // 학습 완료일
 }
