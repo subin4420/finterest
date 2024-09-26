@@ -2,8 +2,11 @@ package org.finterest.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.finterest.user.dto.ChangePasswordDTO;
 import org.finterest.user.dto.UserDTO;
 import org.finterest.user.dto.UserJoinDTO;
+import org.finterest.user.dto.UserVerificationDTO;
 import org.finterest.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,22 +34,12 @@ public class UserController {
     public ResponseEntity<UserDTO> get(@PathVariable String username) {
         return ResponseEntity.ok(userService.get(username));
     }
+    //회원가입
     @PostMapping("/join")
-    public ResponseEntity<UserDTO> join(UserJoinDTO member) {
-        return ResponseEntity.ok(userService.join(member));
+    public ResponseEntity<UserDTO> join(@RequestBody UserJoinDTO userJoinDTO) {
+        return ResponseEntity.ok(userService.join(userJoinDTO));
     }
-
-    //비밀번호 바꾸기
-//    @PutMapping("/{username}/changepassword")
-//    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
-//        userService.changePassword(changePasswordDTO);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PutMapping("/{username}")
-//    public ResponseEntity<UserDTO> changeProfile(UserUpdateDTO user) {
-//        return ResponseEntity.ok(userService.update(user));
-//    }
+    //회원탈퇴
     @DeleteMapping("/{username}")
     public ResponseEntity<UserDTO> delete(@PathVariable String username) {
         return ResponseEntity.ok(userService.delete(username));
