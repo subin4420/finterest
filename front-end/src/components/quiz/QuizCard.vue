@@ -1,22 +1,19 @@
 <template>
-    <div class="content-card">
-        <!-- 이미지 섹션 -->
+    <div class="content-card" @click="$emit('click', cardData)">
         <div class="image-wrapper">
-            <img :src="cardData.materialImg || defaultImage" alt="썸네일 이미지" />
+            <img :src="cardData.setImg || defaultImage" alt="썸네일 이미지" />
         </div>
-
-        <!-- 카드 내용 섹션 -->
         <div class="card-info">
             <div class="category-title">[{{ cardData.categoryName }}]</div>
-            <div class="title">{{ cardData.title }}</div>
-            <p class="summary">{{ cardData.content }}</p>
+            <div class="title">{{ cardData.setName }}</div>
+            <p class="summary">{{ cardData.description }}</p>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'ArchiveCard',
+    name: 'QuizCard',
     props: {
         cardData: {
             type: Object,
@@ -124,3 +121,4 @@ export default {
     }
 }
 </style>
+

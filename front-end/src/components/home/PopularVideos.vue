@@ -112,4 +112,5 @@ const getYoutubeThumbnail = (youtubeId) => {
   border-radius: 4px;
   display: inline-block;
 }
+
 </style>
