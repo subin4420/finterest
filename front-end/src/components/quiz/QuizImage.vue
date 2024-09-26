@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 const currentSlide = ref(0);
 const slides = ref([
 {
-    image: '/src/assets/images/퀴즈페이지.png',
+    image: '/src/assets/images/quizpage.png',
     title: '문제를 한 번 풀어봐요.',
     subtitle: '퀴즈페이지',
     description: '배웠던 내용으로 퀴즈를 풀어봐요.',
