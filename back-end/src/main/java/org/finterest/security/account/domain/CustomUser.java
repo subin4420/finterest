@@ -11,10 +11,12 @@ import java.util.Collection;
 @Setter
 public class CustomUser extends User {
     private UserVO userVO;
-    public CustomUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUser(String username, String password,
+                      Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
     }
     public CustomUser(UserVO userVO){
         super(userVO.getUsername(), userVO.getPassword(), userVO.getAuthList());
+        this.userVO = userVO;
     }
 }
