@@ -40,12 +40,9 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 <style scoped>
 .navbar {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1030;
+  height: 90px;
   background-color: backgroundColor; /* props로 색상 설정 */
-  padding: 1% 15%; /* 상하 1%, 좌우 15%의 패딩 추가 */
+  padding: 0% 15%; /* 상하 1%, 좌우 15%의 패딩 추가 */
   border-bottom: 1px solid #d5d5d5; /* 하단 경계선 추가 */
 }
 
