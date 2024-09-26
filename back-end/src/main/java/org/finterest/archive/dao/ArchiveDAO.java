@@ -1,6 +1,7 @@
 package org.finterest.archive.dao;
 
 import org.finterest.archive.domain.ArchiveVO;
+import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.mapper.ArchiveMapper;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,11 @@ public class ArchiveDAO {
     public List<ArchiveVO> selectVideoArchive(){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectVideoArchive();
     }
+
+    public ProgressVO getProgressForMaterial(int materialId){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).getProgressForMaterial(materialId);
+    }
+
 
     public void insertFavorite(int userId, int materialId){
         sqlSessionTemplate.getMapper(ArchiveMapper.class).insertFavorite(userId, materialId);
