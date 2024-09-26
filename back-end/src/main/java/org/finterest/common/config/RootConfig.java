@@ -29,7 +29,6 @@ import javax.sql.DataSource;
         "org.finterest.point.mapper",
         "org.finterest.notice.mapper",
 
-        
 })
 @ComponentScan(basePackages = {
         "org.finterest.security.config",
@@ -39,7 +38,9 @@ import javax.sql.DataSource;
         "org.finterest.point",
         "org.finterest.notice",
         //"org.finterest.member.service",
-        "org.finterest.user"
+        "org.finterest.user",
+        "org.finterest.chatbot"
+
 })
 @Slf4j
 @EnableTransactionManagement
