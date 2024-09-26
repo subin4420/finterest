@@ -15,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.finterest.archive.controller",
         "org.finterest.user.controller",
         "org.finterest.point.controller",
+        "org.finterest.notice.controller",
 
 })
 public class ServletConfig  implements WebMvcConfigurer {
