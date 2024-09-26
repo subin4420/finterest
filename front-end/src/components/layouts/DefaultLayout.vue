@@ -6,14 +6,15 @@ import Footer from './Footer.vue';
 const props = defineProps({
   backgroundColor: {
     type: String,
-    default: '#ffffff' // 기본 색상 설정
-  }
+    default: '#ffffff', // 기본 색상 설정
+  },
 });
 </script>
 
 <template>
   <div class="layout-container">
-    <Header :backgroundColor="backgroundColor" /> <!-- backgroundColor 속성 추가 -->
+    <Header :backgroundColor="backgroundColor" />
+    <!-- backgroundColor 속성 추가 -->
     <div class="content-container">
       <slot></slot>
     </div>

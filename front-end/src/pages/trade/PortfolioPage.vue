@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- 여기에 턴 기반 시뮬레이션 페이지 템플릿을 작성하세요 -->
-    <h1>턴 기반 시뮬레이션 페이지</h1>
+    <h1>포트폴리오 페이지</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'TurnBasedSimulationPage',
+  name: 'portfolio',
   data() {
     return {
       // 데이터 속성을 정의하세요.

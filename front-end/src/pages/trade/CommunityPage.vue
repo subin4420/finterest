@@ -1,7 +1,8 @@
 <template>
   <div class="community-page">
-    <TradeImage/>
+    <TradeImage />
     <TradeNavigationBar />
+    <!-- TradeNavigationBar 추가 -->
     <h1>커뮤니티 페이지</h1>
     <p>여기는 커뮤니티 페이지입니다.</p>
   </div>
@@ -9,13 +10,14 @@
 
 <script>
 import TradeImage from '@/components/trade/TradeImage.vue';
-import TradeNavigationBar from '@/components/trade/TradeNavigationBar.vue';
+import TradeNavigationBar from '@/components/trade/TradeNavigationBar.vue'; // TradeNavigationBar 임포트 추가
 
 export default {
   name: 'CommunityPage',
-  component: {
-    TradeImage
-  }
+  components: {
+    TradeImage,
+    TradeNavigationBar, // TradeNavigationBar 컴포넌트 등록
+  },
 };
 </script>
 

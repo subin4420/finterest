@@ -1,10 +1,8 @@
 <template>
   <nav class="navbar">
     <ul class="nav-links">
-      <li><router-link to="/trade">홈</router-link></li>
-      <!-- /trade로 수정 -->
+      <li><router-link to="/trade" exact>홈</router-link></li>
       <li><router-link to="/trade/stocksimulator">모의투자</router-link></li>
-      <!-- /trade로 수정 -->
       <li><router-link to="/trade/portfolio">포트폴리오</router-link></li>
       <li><router-link to="/trade/news">뉴스</router-link></li>
       <li><router-link to="/trade/settlement">결산</router-link></li>
@@ -20,8 +18,6 @@
 </template>
 
 <script>
-import router from '@/router';
-
 export default {
   name: 'NavigationBar',
 };
@@ -32,8 +28,12 @@ export default {
   background-color: black;
   color: white;
   display: flex;
-  margin: 0px auto;
   justify-content: center; /* 가로 방향으로 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  max-width: 800px; /* 최대 너비 설정 */
+  margin: -20px auto 10px auto; /* 상단 마진 -20px, 좌우 중앙 정렬 */
+  border-radius: 5px; /* 둥근 모서리 추가 */
+  padding: 10px; /* 패딩 추가하여 내용과 모서리 간격 조정 */
 }
 
 .nav-links {
@@ -41,14 +41,24 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 0;
-  width: 80%; /* 적당한 너비로 설정 */
+  width: 90%; /* 적당한 너비로 설정 */
   max-width: 1200px; /* 최대 너비 설정 */
+}
+
+.nav-links li {
+  position: relative; /* 자식 요소의 위치를 기준으로 설정 */
 }
 
 .nav-links a {
   color: white;
   text-decoration: none;
   font-size: 16px; /* 기본 글자 크기 설정 */
+  padding: 5px 10px; /* 패딩 추가 */
+}
+
+.nav-links a.router-link-exact-active {
+  color: #337ce5; /* 선택된 항목의 글씨 색상 변경 */
+  border-bottom: 2px solid #337ce5; /* 밑줄 추가 */
 }
 
 /* 미디어 쿼리 추가 */
