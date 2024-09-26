@@ -10,31 +10,36 @@ const slides = ref([
     image: '/src/assets/images/홈페이지.png',
     title: 'Z세대를 위한 경제 교육 플랫폼',
     subtitle: '우리의 서비스 소개',
-    description: '우리의 서비스 소개'
+    description: '우리의 서비스 소개',
+    page: '/' // 홈 페이지 경로
   },
   {
     image: '/src/assets/images/학습페이지.png',
     title: '경제 상식을 배워봐요',
     subtitle: '학습페이지',
-    description: '카테고리별로 학습 할 수 있어요.'
+    description: '카테고리별로 학습 할 수 있어요.',
+    page: '/archive/ArchivePage' // 아카이브 페이지 경로
   },
   {
     image: '/src/assets/images/퀴즈페이지.png',
     title: '문제를 한 번 풀어봐요.',
     subtitle: '퀴즈페이지',
-    description: '배웠던 내용으로 퀴즈를 풀어봐요.'
+    description: '배웠던 내용으로 퀴즈를 풀어봐요.',
+    page: '/quiz/QuizPage' // 퀴즈 페이지 경로
   },
   {
     image: '/src/assets/images/모의투자페이지.png',
     title: '이제는 실전에서 해봐요',
     subtitle: '모의투자 페이지',
-    description: '리스크 없이 투자 경험을 쌓아보세요'
+    description: '리스크 없이 투자 경험을 쌓아보세요',
+    page: '/trade/TradePage' // 거래 페이지 경로
   },
   {
     image: '/src/assets/images/쳇봇페이지.png',
     title: '저에게 모르는 걸 물어보세요.',
     subtitle: '쳇봇 서비스',
-    description: '학습 중 모르는 것이 있으면 질문할 수 있어요.'
+    description: '학습 중 모르는 것이 있으면 질문할 수 있어요.',
+    page: '/myLearning/MyLearningPage' // 내 학습 페이지 경로
   },
 ]);
 
@@ -48,6 +53,10 @@ const nextSlide = () => {
 
 const prevSlide = () => {
   currentSlide.value = (currentSlide.value - 1 + slides.value.length) % slides.value.length;
+};
+
+const goToPage = (page) => {
+  router.push(page); // 해당 페이지로 이동
 };
 
 onMounted(() => {
@@ -116,7 +125,7 @@ onMounted(() => {
   transform: translate(-50%, -50%); /* 중앙 정렬을 위해 변경 */
   color: white;
   text-align: left; /* 텍스트 중앙 정렬 */
-  width: 80%; /* 내용의 최대 너비 설정 */
+  width: 65%; /* 내용의 최대 너비 설정 */
 }
 
 .prev, .next {
