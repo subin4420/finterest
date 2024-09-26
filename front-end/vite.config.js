@@ -28,6 +28,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'C:/KB_Fullstack/09_Spring+Vue/scoula/backend/src/main/webapp/resources',
+    outDir:
+      'C:/Users/Desktop/Desktop/finterest/backend/src/main/webapp/resources',
   },
 });

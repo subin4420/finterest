@@ -3,13 +3,12 @@ package org.finterest.invest.stock.overall.service;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.finterest.invest.stock.overall.dto.kospi.KOSPIStockIndexDTO;
-import org.finterest.invest.stock.overall.dto.kospi.KOSPIStockListDTO;
-import org.finterest.invest.stock.overall.mapper.OverallMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
+import org.finterest.invest.stock.overall.dto.kospi.KOSPIStockIndexDTO;
+import org.finterest.invest.stock.overall.dto.kospi.KOSPIStockListDTO;
+import org.finterest.invest.stock.overall.mapper.OverallMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;

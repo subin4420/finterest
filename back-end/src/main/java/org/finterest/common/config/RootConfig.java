@@ -1,4 +1,4 @@
-package org.scoula.common.config;
+package org.finterest.common.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -21,17 +21,15 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
-    "org.scoula.board.mapper",
-    "org.scoula.member.mapper",
-        "org.scoula.invest.domain.stock.overall.mapper",
-        "org.scoula.invest.domain.conversion.mapper",
-        "org.scoula.invest.domain.board.mapper"
+        "org.finterest.board.mapper",
+        "org.finterest.member.mapper",
+        "org.finterest.invest.stock.overall.mapper",
+        "org.finterest.invest.conversion.mapper"
 })
 
 @ComponentScan(basePackages = {
-//    "org.scoula.board.service",
-//    "org.scoula.member.service",
-        "org.scoula.invest"
+
+        "org.finterest.invest"
 
 })
 @Slf4j

@@ -1,7 +1,7 @@
 package org.finterest.invest.conversion.controller;
 
-import org.finterest.invest.conversion.dto.ConversionTransactionDTO;
 import org.finterest.invest.conversion.service.ConversionService;
+import org.finterest.invest.conversion.dto.ConversionTransactionDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;

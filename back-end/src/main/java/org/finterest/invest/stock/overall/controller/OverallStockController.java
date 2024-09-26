@@ -13,7 +13,7 @@ import java.util.List;
 
 @Log4j
 @RestController
-@RequestMapping("/stock")
+@RequestMapping("/api/stock")
 public class OverallStockController {
 
     private final OverallService overallService;
@@ -23,6 +23,8 @@ public class OverallStockController {
         this.overallService = overallService;
     }
 
+
+    // 코스피 리스트 읽기.
     @GetMapping("/list/KOSPI")
     public ResponseEntity<List<KOSPIStockListDTO>> getListOfKOSPI() {
         log.info("Request received for KOSPI stock list");
@@ -30,7 +32,7 @@ public class OverallStockController {
         return new ResponseEntity<>(kospiStockList, HttpStatus.OK);
     }
 
-
+    // 코스피 인덱스 읽기
     @GetMapping("/index/KOSPI")
     public ResponseEntity<List<KOSPIStockIndexDTO>> getIndexOfKOSPI() {
         log.info("Request received for KOSPI stock index");

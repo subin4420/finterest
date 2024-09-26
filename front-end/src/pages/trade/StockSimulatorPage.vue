@@ -3,7 +3,6 @@
     <TradeImage />
     <TradeNavigationBar />
 
-    <!-- 검색 입력창 추가 -->
     <div class="search-container">
       <input
         type="text"
@@ -14,7 +13,6 @@
         @blur="hideDropdown"
       />
 
-      <!-- 검색어와 관련된 주식 리스트 자동완성 -->
       <div
         v-if="showDropdown && searchQuery && filteredStockList.length"
         class="autocomplete-dropdown"
@@ -22,15 +20,33 @@
         <ul>
           <li
             v-for="stock in filteredStockList"
-            :key="stock.id"
-            @mousedown="selectStock(stock)"
+            :key="stock.srtnCd"
+            @click="selectStock(stock)"
           >
             {{ stock.itmsNm }}
-            <span class="stock-code">({{ stock.srtncd }})</span>
-            <!-- srtncd를 표시 -->
+            <span class="stock-code">({{ stock.srtnCd }})</span>
           </li>
         </ul>
       </div>
+    </div>
+
+    <div class="stock-list">
+      <ul>
+        <li
+          v-for="stock in uniqueKospiStockList.slice(0, 10)"
+          :key="stock.srtnCd"
+          class="stock-item"
+        >
+          <img :src="stock.thumbnail" class="thumbnail" />
+          <div class="stock-info">
+            <span class="stock-name">{{ stock.itmsNm }}</span>
+            <span class="stock-code">({{ stock.srtnCd }})</span>
+            <span class="stock-market-amount"
+              >{{ formatCurrency(stock.mrktTotAmt) }} 원</span
+            >
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -47,28 +63,44 @@ export default {
   },
   data() {
     return {
-      kospiStockList: [], // KOSPI 주식 리스트
-      searchQuery: '', // 검색어 저장
-      filteredStockList: [], // 필터된 주식 리스트
-      showDropdown: false, // 드롭다운을 보여줄지 여부
+      kospiStockList: [],
+      searchQuery: '',
+      filteredStockList: [],
+      showDropdown: false,
     };
+  },
+  computed: {
+    // 중복을 제거한 KOSPI 주식 리스트
+    uniqueKospiStockList() {
+      const seen = new Set();
+      return this.kospiStockList.filter((stock) => {
+        if (!seen.has(stock.srtnCd)) {
+          seen.add(stock.srtnCd);
+          return true;
+        }
+        return false;
+      });
+    },
   },
   methods: {
     async fetchKOSPIStockList() {
       try {
         const response = await axios.get('/api/stock/list/KOSPI');
-        console.log('KOSPI Stock List Response:', response.data); // 데이터 구조 확인
         this.kospiStockList = Array.isArray(response.data) ? response.data : [];
+
+        // 주가 총액(mrktTotAmt) 기준으로 정렬
+        this.kospiStockList.sort(
+          (a, b) => Number(b.mrktTotAmt) - Number(a.mrktTotAmt)
+        );
       } catch (error) {
         console.error('Error fetching KOSPI Stock List:', error);
       }
     },
     filterData() {
-      // 검색어를 기준으로 주식 리스트 필터링 및 중복 제거
       const lowerCaseQuery = this.searchQuery.toLowerCase();
       const seenStocks = new Set();
 
-      this.filteredStockList = this.kospiStockList.filter((stock) => {
+      this.filteredStockList = this.uniqueKospiStockList.filter((stock) => {
         if (
           stock.itmsNm.toLowerCase().includes(lowerCaseQuery) &&
           !seenStocks.has(stock.itmsNm)
@@ -80,25 +112,28 @@ export default {
       });
     },
     selectStock(stock) {
-      this.searchQuery = stock.itmsNm; // 선택된 주식명으로 검색어 설정
-      this.showDropdown = false; // 드롭다운 숨김
+      this.searchQuery = stock.itmsNm;
+      this.showDropdown = false;
     },
     hideDropdown() {
-      setTimeout(() => {
-        this.showDropdown = false;
-      }, 200); // 약간의 지연 후 드롭다운을 숨김
+      this.showDropdown = false;
+    },
+    formatCurrency(amount) {
+      // 금액을 숫자로 변환 후 쉼표와 '원' 추가
+      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
   },
   mounted() {
-    this.fetchKOSPIStockList(); // KOSPI 주식 리스트 데이터 가져오기
+    this.fetchKOSPIStockList();
   },
 };
 </script>
 
 <style scoped>
+/* 스타일 추가 */
 .search-container {
   position: relative;
-  width: 300px; /* 검색창 크기 설정 */
+  width: 300px;
 }
 
 input {
@@ -135,40 +170,38 @@ li:hover {
 }
 
 .stock-code {
-  color: gray; /* 회색 글씨 */
-  font-size: 0.8em; /* 글자 크기 조정 */
-  margin-left: 5px; /* 주식 이름과의 간격 */
+  color: gray;
+  font-size: 0.8em;
+  margin-left: 5px;
+}
+
+.stock-list {
+  margin-top: 20px;
+}
+
+.stock-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.thumbnail {
+  width: 40px; /* 썸네일 이미지 너비 */
+  height: 40px; /* 썸네일 이미지 높이 */
+  margin-right: 10px; /* 썸네일과 텍스트 사이의 간격 */
+}
+
+.stock-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stock-name {
+  font-weight: bold;
+}
+
+.stock-market-amount {
+  margin-top: 5px; /* 주가 총액과 주식 이름 사이의 간격 */
 }
 </style>
-<template>
-    <div>
-      <div id="chart">
-        <StockChart class="stock-chart" />
-        <router-view></router-view>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  import StockChart from '@/components/trade/StockChart.vue';
-  
-  export default {
-    name: 'StockSimulatorPage',
-    components: {
-      StockChart,
-    },
-  };
-  </script>
-  
-  <style scoped>
-  #chart {
-    height: 400px;
-    width: 600px;
-  }
-  
-  .stock-chart {
-    height: 400px;
-    width: 600px;
-  }
-  </style>
-  

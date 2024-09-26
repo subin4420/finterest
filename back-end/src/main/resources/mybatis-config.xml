@@ -9,13 +9,12 @@
     </settings>
 
     <typeAliases>
-        <package name="org.scoula.security.account.domain" />
+        <package name="org.finterest.security.account.domain" />
     </typeAliases>
 
     <mappers>
-        <mapper resource="org/scoula/stock/overall/mapper/OverallMapper.xml"/>
-        <mapper resource="org/scoula/conversion/mapper/ConversionMapper.xml"/>
-        <mapper resource="org/scoula/board/mapper/BoardMapper.xml"/>
+        <mapper resource="org/finterest/stock/overall/mapper/OverallMapper.xml"/>
+<!--        <mapper resource="org/finterest/conversion/mapper/ConversionMapper.xml"/>-->
     </mappers>
 
 </configuration>

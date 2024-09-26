@@ -1,4 +1,4 @@
-package org.scoula.common.exception;
+package org.finterest.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;

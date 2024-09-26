@@ -1,4 +1,4 @@
-package org.scoula.common.util;
+package org.finterest.common.util;
 
 public class UploadFileName {
     public static String getUniqueName(String filename) {

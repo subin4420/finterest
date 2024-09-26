@@ -1,4 +1,4 @@
-package org.scoula.security.account.domain;
+package org.finterest.security.account.domain;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

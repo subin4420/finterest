@@ -1,5 +1,5 @@
 
-package org.scoula.common.pagination;
+package org.finterest.common.pagination;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

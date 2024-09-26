@@ -1,7 +1,7 @@
-package org.scoula.common.config;
+package org.finterest.common.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.scoula.security.config.SecurityConfig;
+import org.finterest.security.config.SecurityConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
