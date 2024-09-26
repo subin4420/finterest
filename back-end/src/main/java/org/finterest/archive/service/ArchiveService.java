@@ -17,24 +17,34 @@ public class ArchiveService {
         this.archiveDAO = archiveDAO;
     }
 
+    // 모든 자료 조회
     public List<ArchiveVO> selectAllArchive(){
         return archiveDAO.selectAllArchive();
     }
 
+    // 특정 ID로 조회
     public ArchiveVO selectArchiveById(int id){
         return archiveDAO.selectArchiveById(id);
     }
 
+    // 특정 카테고리로 조회
     public List<ArchiveVO> selectArchiveByCategory(int categoryId){
         return archiveDAO.selectArchiveByCategory(categoryId);
     }
 
+    // 텍스트 자료만 조회
     public List<ArchiveVO> selectTextArchive(){
         return archiveDAO.selectTextArchive();
     }
 
+    // 영상 자료만 조회
     public List<ArchiveVO> selectVideoArchive(){
         return archiveDAO.selectVideoArchive();
+    }
+
+    // 학습 진행 상태 조회 (materialId 기준)
+    public ProgressVO getProgressForMaterial(int materialId) {
+        return archiveDAO.getProgressForMaterial(materialId);
     }
 
     public void insertFavorite(int userId, int materialId){
