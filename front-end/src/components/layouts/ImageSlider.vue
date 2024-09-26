@@ -7,35 +7,35 @@ const router = useRouter(); // Router 인스턴스 가져오기
 const currentSlide = ref(0);
 const slides = ref([
   {
-    image: '/src/assets/images/홈페이지.png',
+    image: '/src/assets/images/homepage.png',
     title: 'Z세대를 위한 경제 교육 플랫폼',
     subtitle: '우리의 서비스 소개',
     description: '우리의 서비스 소개',
     page: '/' // 홈 페이지 경로
   },
   {
-    image: '/src/assets/images/학습페이지.png',
+    image: '/src/assets/images/learnpage.png',
     title: '경제 상식을 배워봐요',
     subtitle: '학습페이지',
     description: '카테고리별로 학습 할 수 있어요.',
     page: '/archive/ArchivePage' // 아카이브 페이지 경로
   },
   {
-    image: '/src/assets/images/퀴즈페이지.png',
+    image: '/src/assets/images/quizpage.png',
     title: '문제를 한 번 풀어봐요.',
     subtitle: '퀴즈페이지',
     description: '배웠던 내용으로 퀴즈를 풀어봐요.',
     page: '/quiz/QuizPage' // 퀴즈 페이지 경로
   },
   {
-    image: '/src/assets/images/모의투자페이지.png',
+    image: '/src/assets/images/tradepage.png',
     title: '이제는 실전에서 해봐요',
     subtitle: '모의투자 페이지',
     description: '리스크 없이 투자 경험을 쌓아보세요',
     page: '/trade/TradePage' // 거래 페이지 경로
   },
   {
-    image: '/src/assets/images/쳇봇페이지.png',
+    image: '/src/assets/images/chatbotpage.png',
     title: '저에게 모르는 걸 물어보세요.',
     subtitle: '쳇봇 서비스',
     description: '학습 중 모르는 것이 있으면 질문할 수 있어요.',
