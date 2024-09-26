@@ -39,11 +39,15 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 
 <style scoped>
 .navbar {
-  position: absolute;
-  height: 90px;
+  position: fixed; /* 절대 위치에서 고정 위치로 변경 */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
   background-color: backgroundColor; /* props로 색상 설정 */
-  padding: 0% 15%; /* 상하 1%, 좌우 15%의 패딩 추가 */
+  padding: 10px 15px; /* 패딩 조정 */
   border-bottom: 1px solid #d5d5d5; /* 하단 경계선 추가 */
+  height: 60px; /* 고정 높이 설정 */
 }
 
 .container-fluid {

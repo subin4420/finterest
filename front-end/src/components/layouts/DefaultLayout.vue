@@ -31,8 +31,6 @@ const props = defineProps({
 
 .content-container {
   flex: 1;
-  position: absolute;
-  top:90px;
   width: 100%; /* 전체 너비를 사용하도록 설정 */
   padding: 0; /* 패딩 제거 */
   margin: 0; /* 마진 제거 */
