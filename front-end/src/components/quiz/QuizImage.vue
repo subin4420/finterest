@@ -3,11 +3,12 @@ import { ref, onMounted } from 'vue';
 
 const currentSlide = ref(0);
 const slides = ref([
-  {
-    image: '/src/assets/images/학습페이지.png',
-    title: '경제 상식을 배워봐요',
-    subtitle: '학습페이지',
-    description: '카테고리별로 학습 할 수 있어요.'
+{
+    image: '/src/assets/images/퀴즈페이지.png',
+    title: '문제를 한 번 풀어봐요.',
+    subtitle: '퀴즈페이지',
+    description: '배웠던 내용으로 퀴즈를 풀어봐요.',
+    page: '/quiz/QuizPage' // 퀴즈 페이지 경로
   }
   // 필요한 만큼 슬라이드를 추가할 수 있습니다
   // 추가 슬라이드를 여기에 넣으세요
