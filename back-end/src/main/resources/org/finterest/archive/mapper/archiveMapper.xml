@@ -75,6 +75,19 @@
         WHERE lm.link IS NOT NULL
     </select>
 
+    <!-- 특정 자료의 학습 진행 상태 조회 -->
+    <select id="getProgressForMaterial" parameterType="int" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT
+            progress_id AS progressId,
+            material_id AS materialId,
+            status,
+            started_at AS startedAt,
+            completed_at AS completedAt
+        FROM Learning_Progress
+        WHERE material_id = #{materialId} AND user_id = #{userId}
+    </select>
+
+
     <!-- 즐겨찾기 추가 -->
     <insert id="insertFavorite">
         INSERT INTO favorites (user_id, material_id, added_at)

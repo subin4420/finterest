@@ -26,7 +26,9 @@ public class ArchiveController {
     // 모든 자료 조회
     @GetMapping
     public Map<String, List<ArchiveVO>> selectAllArchive(
-            @RequestParam(value = "type", required = false) String type) {
+            @RequestParam(value = "type", required = false) String type,
+            @RequestHeader(value = "Authorization", required = false) String authToken) {
+
         List<ArchiveVO> archiveVOList;
 
         if (type != null) {
@@ -41,29 +43,80 @@ public class ArchiveController {
             archiveVOList = archiveService.selectAllArchive(); // 모든 자료
         }
 
+        boolean isAuthenticated = (authToken != null && !authToken.isEmpty()); // JWT 토큰이 있는지 확인
+
         Map<String, List<ArchiveVO>> response = new HashMap<>();
-        response.put("archives", archiveVOList);
+        response.put("archives", applyProgressData(archiveVOList, isAuthenticated)); // 학습 진행 상태 추가
+
         return response;
     }
 
     // 특정 ID로 자료 조회
     @GetMapping("/{id}")
-    public ArchiveVO one(@PathVariable int id) {
+    public ArchiveVO one(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authToken) {
         ArchiveVO archiveVO = archiveService.selectArchiveById(id);
-        System.out.println("---------------->>" + archiveVO);
-        return archiveVO;
+
+        boolean isAuthenticated = (authToken != null && !authToken.isEmpty());
+        return applyProgressDataToSingle(archiveVO, isAuthenticated); // 학습 진행 상태 추가
     }
 
     // 특정 카테고리 ID로 자료 조회
     @GetMapping(params = "categoryId")
-    public Map<String, List<ArchiveVO>> findByCategoryId(@RequestParam int categoryId) {
+    public Map<String, List<ArchiveVO>> findByCategoryId(
+            @RequestParam int categoryId,
+            @RequestHeader(value = "Authorization", required = false) String authToken) {
+
         List<ArchiveVO> archiveVOList = archiveService.selectArchiveByCategory(categoryId);
-        System.out.println("------------->>" + archiveVOList);
+
+        boolean isAuthenticated = (authToken != null && !authToken.isEmpty());
 
         Map<String, List<ArchiveVO>> response = new HashMap<>();
-        response.put("archives", archiveVOList);
+        response.put("archives", applyProgressData(archiveVOList, isAuthenticated));
+
         return response;
     }
+
+    // JWT 토큰이 있는 경우 학습 진행 데이터를 추가하는 메서드
+    private List<ArchiveVO> applyProgressData(List<ArchiveVO> archives, boolean isAuthenticated) {
+        if (isAuthenticated) {
+            for (ArchiveVO archive : archives) {
+                // 여기서 학습 진행 상태(status, startedAt, completedAt)를 추가할 수 있습니다.
+                ProgressVO progress = archiveService.getProgressForMaterial(archive.getMaterialId());
+                if (progress != null) {
+                    archive.setStatus(progress.getStatus());
+                    archive.setStartedAt(progress.getStartedAt());
+                    archive.setCompletedAt(progress.getCompletedAt());
+                }
+            }
+        } else {
+            for (ArchiveVO archive : archives) {
+                // 토큰이 없는 경우 null로 설정
+                archive.setStatus(null);
+                archive.setStartedAt(null);
+                archive.setCompletedAt(null);
+            }
+        }
+        return archives;
+    }
+
+    // JWT 토큰이 있는 경우 학습 진행 데이터를 추가하는 메서드 (단일 자료용)
+    private ArchiveVO applyProgressDataToSingle(ArchiveVO archive, boolean isAuthenticated) {
+        if (isAuthenticated) {
+            ProgressVO progress = archiveService.getProgressForMaterial(archive.getMaterialId());
+            if (progress != null) {
+                archive.setStatus(progress.getStatus());
+                archive.setStartedAt(progress.getStartedAt());
+                archive.setCompletedAt(progress.getCompletedAt());
+            }
+        } else {
+            archive.setStatus(null);
+            archive.setStartedAt(null);
+            archive.setCompletedAt(null);
+        }
+        return archive;
+    }
+
+
 
     // 학습 자료 즐겨찾기 추가
     @PostMapping("/{materialId}/favorite")
