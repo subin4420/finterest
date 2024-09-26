@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.quiz.mapper.QuizSetsMapper">
+
+    <!-- 공통 필드 정의 -->
+    <sql id="QuizSetFields">
+        qs.set_id AS setId,
+        qs.set_name AS setName,
+        qs.set_img AS setImg,
+        c.category_name AS categoryName,
+        qs.created_at AS createdAt,
+        qs.updated_at AS updatedAt
+    </sql>
+
+    <!-- 공통 FROM 및 JOIN 정의 -->
+    <sql id="QuizSetFromJoin">
+        FROM Quiz_Sets qs
+        JOIN Categories c ON qs.category_id = c.category_id
+    </sql>
+
+    <!-- 퀴즈 문제 목록 가져오기 (퀴즈 세트 ID 기준) -->
+    <sql id="QuizFields">
+        q.quiz_id AS quizId,
+        q.question AS question,
+        q.choice1 AS choice1,
+        q.choice2 AS choice2,
+        q.choice3 AS choice3,
+        q.choice4 AS choice4
+    </sql>
+
+    <!-- 공통 FROM 및 JOIN 정의 (퀴즈 문제용) -->
+    <sql id="QuizFromJoin">
+        FROM Quizzes q
+        WHERE q.category_id = #{category_id}
+    </sql>
+
+    <!-- 전체 조회 -->
+    <select id="selectAllQuizSets" resultType="org.finterest.quiz.domain.vo.QuizSetsVO">
+        SELECT
+        <include refid="QuizSetFields" />
+        <include refid="QuizSetFromJoin" />
+    </select>
+
+    <!-- 사용자별 퀴즈 세트 결과 조회 (점수와 완료 날짜 포함) -->
+    <select id="selectQuizResultsByUserId" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizResultVO">
+        SELECT
+            set_id,
+            total_score,
+            completed_at
+        FROM Quiz_Sets_Results
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 카테고리별 조회 -->
+    <select id="selectQuizSetsByCategory" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizSetsVO">
+        SELECT
+        <include refid="QuizSetFields" />
+        <include refid="QuizSetFromJoin" />
+        WHERE
+        qs.category_id = #{category_id}
+    </select>
+
+
+
+    <!-- 퀴즈 세트 정보 조회 -->
+    <select id="selectQuizSetById" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizSetsVO">
+        SELECT
+        <include refid="QuizSetFields" />
+        <include refid="QuizSetFromJoin" />
+        WHERE qs.set_id = #{set_id}
+    </select>
+
+    <!-- 퀴즈 세트에 속한 문제들 조회 -->
+    <select id="selectQuestionsBySetId" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizVO">
+        SELECT
+            q.quiz_id AS quizId,
+            q.question AS question,
+            q.choice1 AS choice1,
+            q.choice2 AS choice2,
+            q.choice3 AS choice3,
+            q.choice4 AS choice4
+        FROM Quizzes q
+        WHERE q.category_id = (SELECT category_id FROM Quiz_Sets WHERE set_id = #{set_id})
+    </select>
+
+    <!-- 특정 퀴즈 문제 조회 -->
+    <select id="selectQuizById" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizVO">
+        SELECT
+            quiz_id AS quizId,
+            question,
+            choice1,
+            choice2,
+            choice3,
+            choice4
+        FROM Quizzes
+        WHERE quiz_id = #{quizId}
+    </select>
+
+    <!-- 퀴즈의 정답 선택지를 조회 -->
+    <select id="selectCorrectChoiceByQuizId" parameterType="int" resultType="int">
+        SELECT correct_choice
+        FROM Quizzes
+        WHERE quiz_id = #{quizId}
+    </select>
+
+    <!-- 퀴즈 결과 저장 -->
+    <insert id="insertQuizResult" useGeneratedKeys="true" keyProperty="resultId">
+        INSERT INTO Quiz_Sets_Results (user_id, set_id, total_score, max_score, completed_at)
+        VALUES (#{userId}, #{setId}, #{totalScore}, #{maxScore}, NOW())
+    </insert>
+
+    <select id="getLastInsertedResultId" resultType="int">
+        SELECT LAST_INSERT_ID()
+    </select>
+
+    <!-- 사용자 답변 저장 -->
+    <insert id="insertUserAnswer">
+        INSERT INTO User_Answers (result_id, quiz_id, user_id, user_answer, is_correct)
+        VALUES (#{resultId}, #{quizId}, #{userId}, #{userAnswer}, #{isCorrect})
+    </insert>
+
+    <!-- 퀴즈 포인트 조회 -->
+    <select id="selectPointsForQuiz" resultType="int">
+        SELECT points_awarded
+        FROM Point_Rules
+        WHERE activity_name = '퀴즈'
+    </select>
+
+    <!-- 퀴즈 결과 조회 (특정 사용자 및 퀴즈 세트) -->
+    <select id="selectQuizResultByUserAndSet" parameterType="map" resultType="org.finterest.quiz.domain.vo.QuizResultVO">
+        SELECT
+            result_id AS resultId,
+            user_id AS userId,
+            set_id AS setId,
+            total_score AS totalScore,
+            max_score AS maxScore,
+            completed_at AS completedAt
+        FROM Quiz_Sets_Results
+        WHERE user_id = #{userId}
+          AND set_id = #{setId}
+    </select>
+
+    <!-- 특정 resultId와 userId에 대한 사용자 답변 목록 조회 -->
+    <select id="selectUserAnswers" parameterType="map" resultType="org.finterest.quiz.domain.vo.UserAnswerVO">
+        SELECT DISTINCT
+            quiz_id,
+            user_answer AS selectedChoice,
+            is_correct AS isCorrect,
+            (SELECT correct_choice FROM Quizzes WHERE Quizzes.quiz_id = User_Answers.quiz_id) AS correctChoice
+        FROM User_Answers
+        WHERE result_id = #{resultId}
+          AND user_id = #{userId}
+    </select>
+
+</mapper>

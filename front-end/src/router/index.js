@@ -1,28 +1,48 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '@/views/Home.vue';
-import Profile from '@/views/Profile.vue';
-import Quiz from '@/views/Quiz.vue';
-import Learning from '@/views/Learning.vue';
-import Trading from '@/views/Trading.vue';
-import Login from '@/views/Login.vue';
-import FindPassword from '@/views/FindPassword.vue';
-import SignUp from '@/views/SignUp.vue';
-
-
-const routes = [
-    { path: '/', component: Home },
-    { path: '/profile', component: Profile },
-    { path: '/learning', component: Learning },
-    { path: '/quiz', component: Quiz },
-    { path: '/trading', component: Trading },
-    { path: '/login', component: Login },
-    { path: '/find-password', name: 'FindPassword', component: FindPassword, },
-    { path: '/signup', name: 'SignUp', component: SignUp, },
-];
+import HomePage from '../pages/HomePage.vue';
+import ArchivePage from '../pages/archive/ArchivePage.vue';
+import QuizPage from '../pages/quiz/QuizPage.vue';
+import TradePage from '../pages/trade/TradePage.vue';
+import MyLearningPage from '../pages/myLearning/MyLearningPage.vue';
+import NoticePage from '../pages/notice/NoticePage.vue';
+import authRoutes from './auth';
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomePage,
+    },
+    {
+      path: '/archive/ArchivePage',
+      name: 'archive',
+      component: ArchivePage,
+    },
+    {
+      path: '/quiz/QuizPage',
+      name: 'quiz',
+      component: QuizPage,
+    },
+    {
+      path: '/trade/TradePage',
+      name: 'trade',
+      component: TradePage,
+    },
+    {
+      path: '/myLearning/MyLearningPage',
+      name: 'myLearning',
+      component: MyLearningPage,
+    },
+    {
+      path: '/notice/NoticePage',
+      name: 'notice',
+      component: NoticePage,
+    },
+    ...authRoutes,
+
+  ],
 });
 
 export default router;

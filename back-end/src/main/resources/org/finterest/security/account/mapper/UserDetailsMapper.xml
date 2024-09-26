@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.finterest.security.account.mapper.UserDetailsMapper">
+
+    <resultMap id="authMap" type="AuthVO">
+        <result property="username" column="username" />
+        <result property="auth" 			column="auth" />
+    </resultMap>
+
+    <resultMap id="memberMap"  type="UserVO">
+        <id property="username" 				column="username" />
+        <result property="username"		column="username" />
+        <result property="password"		column="password" />
+        <result property="email" 			column="email" />
+        <result property="regDate"			column="reg_date" />
+        <result property="updateDate"	column="update_date" />
+
+        <collection property="authList" resultMap="authMap" />
+    </resultMap>
+    <select id="get" resultMap="memberMap">
+        select m.username, password, email, reg_date, update_date, auth
+        from
+            tbl_member m left outer join tbl_member_auth a
+                                         on m.username = a.username
+        where m.username = #{username}
+    </select>
+</mapper>
+<!--        *public class UserVO {-->
+<!--        *     private int userId;  // user_id (Primary Key)-->
+<!--        *     private String username;  // 사용자 ID-->
+<!--        *     private String password;  // 비밀번호-->
+<!--        *     private String email;  // 이메일-->
+<!--        *     private String fullName;  // 실명-->
+<!--        *     private String accountStatus;  // 계정 상태 ('active' or 'inactive')-->
+<!--        *     private BigDecimal money;  // 보유 금액-->
+<!--        *     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")-->
+<!--        *     private Date signupDate;  // 가입일-->
+<!--        *     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")-->
+<!--        *     private Date lastLogin;  // 마지막 로그인 시간-->
+<!--        *     private int totalPoints;  // 누적 포인트-->
+<!--        *     // 권한 목록, Join 처리 필요-->
+<!--        *     private List<AuthVO> authList;-->
