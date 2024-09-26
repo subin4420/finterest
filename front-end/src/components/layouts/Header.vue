@@ -45,6 +45,12 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
   right: 0;
   z-index: 1030;
   background-color: backgroundColor; /* props로 색상 설정 */
+  padding: 1% 15%; /* 상하 1%, 좌우 15%의 패딩 추가 */
+  border-bottom: 1px solid #d5d5d5; /* 하단 경계선 추가 */
+}
+
+.container-fluid {
+  margin: 0 20px; /* 좌우 20px의 마진 추가 */
 }
 
 .logo-image {
@@ -54,10 +60,20 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 }
 
 .header-title {
-  font-size: 24px; /* 원하는 크기로 조정 */
+  font-size: 20px; /* 원하는 크기로 조정 */
   font-weight: bold;
   color: #fff; /* 원하는 색상으로 변경 */
   letter-spacing: 1px; /* 자간 조정 (선택사항) */
 }
 
+/* 미디어 쿼리 추가 */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 15px; /* 작은 화면에서 패딩 조정 */
+  }
+
+  .container-fluid {
+    margin: 0 10px; /* 작은 화면에서 마진 조정 */
+  }
+}
 </style>

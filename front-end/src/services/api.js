@@ -5,6 +5,5 @@ const api = axios.create({
   timeout: 5000,                       // 요청 제한 시간
   headers: { 'Content-Type': 'application/json' }
 })
-console.log("dd");
 
 export default api
