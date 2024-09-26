@@ -15,6 +15,7 @@
         <package name="org.finterest.archive.domain"/>
         <package name="org.finterest.quiz.domain"/>
         <package name="org.finterest.point.domain"/>
+        <package name="org.finterest.notice.domain"/>
         <package name="org.finterest.user.domain"/> <!-- User 관련 패키지 추가 -->
     </typeAliases>
 
@@ -24,5 +25,9 @@
         <mapper resource="org/finterest/user/mapper/userMapper.xml"/> <!-- User 매퍼 추가 -->
         <mapper resource="org/finterest/archive/mapper/adminArchiveMapper.xml"/>
         <mapper resource="org/finterest/point/mapper/pointMapper.xml"/>
+        <mapper resource="org/finterest/point/mapper/adminPointMapper.xml"/>
+        <mapper resource="org/finterest/point/mapper/adminPointRulesMapper.xml"/>
+        <mapper resource="org/finterest/notice/mapper/noticeMapper.xml"/>
+        <mapper resource="org/finterest/notice/mapper/adminNoticeMapper.xml"/>
     </mappers>
 </configuration>

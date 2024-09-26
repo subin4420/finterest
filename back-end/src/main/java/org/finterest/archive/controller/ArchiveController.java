@@ -25,7 +25,8 @@ public class ArchiveController {
 
     // 모든 자료 조회
     @GetMapping
-    public Map<String, List<ArchiveVO>> selectAllArchive(@RequestParam(value = "type", required = false) String type) {
+    public Map<String, List<ArchiveVO>> selectAllArchive(
+            @RequestParam(value = "type", required = false) String type) {
         List<ArchiveVO> archiveVOList;
 
         if (type != null) {
@@ -66,7 +67,9 @@ public class ArchiveController {
 
     // 학습 자료 즐겨찾기 추가
     @PostMapping("/{materialId}/favorite")
-    public Map<String, String> addFavorite(@PathVariable int materialId, @RequestHeader("Authorization") String token) {
+    public Map<String, String> addFavorite(
+            @PathVariable int materialId,
+            @RequestHeader("Authorization") String token) {
         //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
         int userId = 1;  // 테스트용 userId 하드코딩
         Map<String, String> response = new HashMap<>();
@@ -84,7 +87,9 @@ public class ArchiveController {
 
     // 학습 자료 즐겨찾기 삭제
     @DeleteMapping("/{materialId}/favorite")
-    public Map<String, String> removeFavorite(@PathVariable int materialId, @RequestHeader("Authorization") String token) {
+    public Map<String, String> removeFavorite(
+            @PathVariable int materialId,
+            @RequestHeader("Authorization") String token) {
         //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
         int userId = 1;     // 테스트용
         archiveService.deleteFavorite(userId, materialId);

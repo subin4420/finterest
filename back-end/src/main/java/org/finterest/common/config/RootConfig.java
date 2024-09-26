@@ -27,6 +27,7 @@ import javax.sql.DataSource;
         "org.finterest.member.mapper",
         "org.finterest.user.mapper",
         "org.finterest.point.mapper",
+        "org.finterest.notice.mapper",
 
         
 })
@@ -36,6 +37,7 @@ import javax.sql.DataSource;
         "org.finterest.common.config",
         "org.finterest.quiz",
         "org.finterest.point",
+        "org.finterest.notice",
         //"org.finterest.member.service",
         "org.finterest.user"
 })
