@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.point.mapper.AdminPointRulesMapper">
+    <!-- 1. 포인트 정책 전체 조회 -->
+    <select id="getAllPointRules" resultType="org.finterest.point.domain.PointRulesVO">
+        SELECT
+            rule_id AS ruleId,
+            activity_name AS activityName,
+            points_awarded AS pointsAwarded
+        FROM
+            Point_Rules
+    </select>
+
+    <!-- 2. 포인트 정책 추가 -->
+    <insert id="addPointRule">
+        INSERT INTO Point_Rules (activity_name, points_awarded)
+        VALUES (#{activityName}, #{pointsAwarded})
+    </insert>
+
+    <!-- 3. 포인트 정책 수정 -->
+    <update id="updatePointRule">
+        UPDATE Point_Rules
+        SET activity_name = #{activityName}, points_awarded = #{pointsAwarded}
+        WHERE rule_id = #{ruleId}
+    </update>
+
+    <!-- 4. 포인트 정책 삭제 -->
+    <delete id="deletePointRule">
+        DELETE FROM Point_Rules WHERE rule_id = #{ruleId}
+    </delete>
+</mapper>
