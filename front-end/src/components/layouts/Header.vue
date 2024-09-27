@@ -58,6 +58,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
   height: 30px;
   width: auto;
   margin-right: 10px;
+  margin-left: 15px; /* 왼쪽 마진 추가 */
 }
 
 .header-title {
@@ -77,4 +78,5 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
     margin: 0 10px; /* 작은 화면에서 마진 조정 */
   }
 }
+
 </style>
