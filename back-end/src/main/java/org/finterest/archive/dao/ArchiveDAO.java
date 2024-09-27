@@ -1,6 +1,7 @@
 package org.finterest.archive.dao;
 
 import org.finterest.archive.domain.ArchiveVO;
+import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.mapper.ArchiveMapper;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -51,11 +52,11 @@ public class ArchiveDAO {
         sqlSessionTemplate.getMapper(ArchiveMapper.class).deleteFavorite(userId, materialId);
     }
 
-    public List<org.finterest.archive.domain.ProgressVO> selectAllProgress(int userId){
+    public List<ProgressDetailVO> selectAllProgress(int userId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectAllProgress(userId);
     }
 
-    public List<org.finterest.archive.domain.ProgressVO> selectProgressByStatus(int userId, String status){
+    public List<ProgressDetailVO> selectProgressByStatus(int userId, String status){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectProgressByStatus(userId, status);
     }
 

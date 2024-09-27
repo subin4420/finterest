@@ -2,6 +2,7 @@ package org.finterest.archive.controller;
 
 import org.finterest.archive.domain.ArchiveVO;
 
+import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.service.ArchiveService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,13 +156,13 @@ public class ArchiveController {
 
     // 학습 진행 상태 조회
     @GetMapping("/progress")
-    public Map<String, List<ProgressVO>> getProgress(
+    public Map<String, List<ProgressDetailVO>> getProgress(
             @RequestHeader("Authorization") String token,
             @RequestParam(value = "status", required = false) String status) {
 
         //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
         int userId = 1;     // 테스트용
-        List<ProgressVO> progressList;
+        List<ProgressDetailVO> progressList;
 
         if (status == null) {
             progressList = archiveService.selectAllProgress(userId);
@@ -169,7 +170,7 @@ public class ArchiveController {
             progressList = archiveService.selectProgressByStatus(userId, status);
         }
 
-        Map<String, List<ProgressVO>> response = new HashMap<>();
+        Map<String, List<ProgressDetailVO>> response = new HashMap<>();
         response.put("progress", progressList);
         return response;
     }

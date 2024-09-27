@@ -3,6 +3,7 @@ package org.finterest.archive.mapper;
 import org.apache.ibatis.annotations.Param;
 import org.finterest.archive.domain.ArchiveVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 
 import java.util.List;
@@ -26,8 +27,8 @@ public interface ArchiveMapper {
     void deleteFavorite(@Param("userId") int userId, @Param("materialId") int materialId);
 
     // 학습 진행 상태 조회
-    List<ProgressVO> selectAllProgress(@Param("userId") int userId);
-    List<ProgressVO> selectProgressByStatus(@Param("userId") int userId, @Param("status") String status);
+    List<ProgressDetailVO> selectAllProgress(@Param("userId") int userId);
+    List<ProgressDetailVO> selectProgressByStatus(@Param("userId") int userId, @Param("status") String status);
 
     // 학습 진행 상태 업데이트 (반환값을 int로 설정)
     int updateProgressStatus(@Param("userId") int userId, @Param("materialId") int materialId, @Param("status") String status);

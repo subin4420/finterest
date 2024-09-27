@@ -2,6 +2,7 @@ package org.finterest.archive.service;
 
 import org.finterest.archive.dao.ArchiveDAO;
 import org.finterest.archive.domain.ArchiveVO;
+import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,11 +56,11 @@ public class ArchiveService {
         archiveDAO.deleteFavorite(userId, materialId);
     }
 
-    public List<ProgressVO> selectAllProgress(int userId){
+    public List<ProgressDetailVO> selectAllProgress(int userId){
         return archiveDAO.selectAllProgress(userId);
     }
 
-    public List<ProgressVO> selectProgressByStatus(int userId, String status){
+    public List<ProgressDetailVO> selectProgressByStatus(int userId, String status){
         return archiveDAO.selectProgressByStatus(userId, status);
     }
 
