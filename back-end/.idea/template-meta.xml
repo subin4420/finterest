@@ -1,0 +1,9 @@
+<template unencoded="false">
+  <roots>
+    <root index="0" path="" />
+    <root index="1" path="src/main" />
+    <root index="2" path="build/generated/sources/annotationProcessor/java/main" />
+    <root index="3" path="src/test" />
+    <root index="4" path="build/generated/sources/annotationProcessor/java/test" />
+  </roots>
+</template>
