@@ -1,0 +1,82 @@
+<script setup>
+import { reactive, computed, defineProps } from 'vue';
+import config from '@/config';
+import MenuGroup from './menu/MenuGroup.vue';
+import AccountMenuGroup from './menu/AccountMenuGroup.vue';
+import logoImage from '../../assets/images/logo.png'; // 상대 경로 사용
+
+const props = defineProps({
+  backgroundColor: {
+    type: String,
+    default: 'transparent' // 기본값은 투명
+  }
+});
+
+let state = reactive({ isNavShow: false });
+
+let navClass = computed(() => (state.isNavShow ? 'collapse navbar-collapse show' : 'collapse navbar-collapse'));
+
+const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
+</script>
+
+<template>
+  <nav class="navbar navbar-expand-sm navbar-dark">
+    <div class="container-fluid">
+      <router-link class="navbar-brand" to="/">
+        <img :src="logoImage" alt="Logo" class="logo-image">
+        <span class="header-title">{{ config.title }}</span>
+      </router-link>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" @click="toggleNavShow">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div :class="navClass" id="collapsibleNavbar">
+        <MenuGroup :menus="config.menus" />
+        <AccountMenuGroup />
+      </div>
+    </div>
+  </nav>
+</template>
+
+<style scoped>
+.navbar {
+  position: fixed; /* 절대 위치에서 고정 위치로 변경 */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  background-color: backgroundColor; /* props로 색상 설정 */
+  padding: 10px 15px; /* 패딩 조정 */
+  border-bottom: 1px solid #d5d5d5; /* 하단 경계선 추가 */
+  height: 60px; /* 고정 높이 설정 */
+}
+
+.container-fluid {
+  margin: 0 20px; /* 좌우 20px의 마진 추가 */
+}
+
+.logo-image {
+  height: 30px;
+  width: auto;
+  margin-right: 10px;
+  margin-left: 15px; /* 왼쪽 마진 추가 */
+}
+
+.header-title {
+  font-size: 20px; /* 원하는 크기로 조정 */
+  font-weight: bold;
+  color: #fff; /* 원하는 색상으로 변경 */
+  letter-spacing: 1px; /* 자간 조정 (선택사항) */
+}
+
+/* 미디어 쿼리 추가 */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 15px; /* 작은 화면에서 패딩 조정 */
+  }
+
+  .container-fluid {
+    margin: 0 10px; /* 작은 화면에서 마진 조정 */
+  }
+}
+
+</style>
