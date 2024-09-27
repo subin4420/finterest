@@ -2,8 +2,8 @@ package org.finterest.invest.board.service;
 
 import lombok.extern.log4j.Log4j;
 import org.finterest.invest.board.domain.BoardVO;
+import org.finterest.invest.board.dto.BoardDTO;
 import org.finterest.invest.board.mapper.BoardMapper;
-import org.scoula.invest.domain.board.dto.BoardDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

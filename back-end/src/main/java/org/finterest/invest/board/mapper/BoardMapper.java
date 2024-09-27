@@ -2,7 +2,8 @@ package org.finterest.invest.board.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.finterest.invest.board.domain.BoardVO;
-import org.scoula.invest.domain.board.dto.BoardDTO;
+import org.finterest.invest.board.dto.BoardDTO;
+
 
 import java.util.List;
 

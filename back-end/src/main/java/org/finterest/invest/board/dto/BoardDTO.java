@@ -1,4 +1,4 @@
-package org.scoula.invest.domain.board.dto;
+package org.finterest.invest.board.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
