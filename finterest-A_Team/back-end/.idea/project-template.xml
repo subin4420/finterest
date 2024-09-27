@@ -1,0 +1,4 @@
+<template>
+  <input-field default="org.scoula">IJ_BASE_PACKAGE</input-field>
+  <input-field default="Tomcat 9.0.91">IJ_APPLICATION_SERVER</input-field>
+</template>
