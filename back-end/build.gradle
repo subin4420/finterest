@@ -25,12 +25,15 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
+  implementation 'org.springframework:spring-context:5.3.20' // 원하는 Spring 버전으로 변경
+  implementation 'org.springframework:spring-core:5.3.20'
   // 스프링
   implementation ("org.springframework:spring-context:${springVersion}")
           { exclude group: 'commons-logging', module: 'commons-logging' }
   implementation "org.springframework:spring-webmvc:${springVersion}"
   implementation 'javax.inject:javax.inject:1'
 
+  implementation 'com.squareup.okhttp3:okhttp:4.9.3'
   // AOP
   implementation 'org.aspectj:aspectjrt:1.9.20'
   implementation 'org.aspectj:aspectjweaver:1.9.20'
@@ -55,6 +58,7 @@ dependencies {
 
   // Jackson - Json 처리
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+  implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
   // 데이터베이스
   implementation 'com.mysql:mysql-connector-j:8.1.0'
