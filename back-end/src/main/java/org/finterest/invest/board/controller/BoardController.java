@@ -1,8 +1,8 @@
 package org.finterest.invest.board.controller;
 
 import org.finterest.invest.board.domain.BoardVO;
+import org.finterest.invest.board.dto.BoardDTO;
 import org.finterest.invest.board.service.BoardService;
-import org.scoula.invest.domain.board.dto.BoardDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

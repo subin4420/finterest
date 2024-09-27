@@ -1,4 +1,4 @@
-<template>
+``<template>
   <div>
     <h2>선택한 주식 코드: {{ selectedStockCode }}</h2>
   </div>

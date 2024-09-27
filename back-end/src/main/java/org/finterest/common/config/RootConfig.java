@@ -24,7 +24,8 @@ import javax.sql.DataSource;
         "org.finterest.board.mapper",
         "org.finterest.member.mapper",
         "org.finterest.invest.stock.overall.mapper",
-        "org.finterest.invest.conversion.mapper"
+        "org.finterest.invest.conversion.mapper",
+        "org.finterest.invest.board.mapper"
 })
 
 @ComponentScan(basePackages = {
