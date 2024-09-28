@@ -46,7 +46,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
   z-index: 1030;
   background-color: backgroundColor; /* props로 색상 설정 */
   padding: 10px 15px; /* 패딩 조정 */
-  border-bottom: 1px solid #d5d5d5; /* 하단 경계선 추가 */
+  border-bottom: 1px solid rgba(240, 240, 240, 0.4); /* 연한 회색 */  
   height: 60px; /* 고정 높이 설정 */
 }
 
