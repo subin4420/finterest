@@ -71,7 +71,7 @@ export default {
 
     const learningStatuses = ref([
       { value: 'incomplete', label: '진행중인 학습' },
-      { value: 'completed', label: '종료된 학습' },
+      { value: 'completed', label: '완료된 학습' },
     ]);
 
     const pointStatuses = ref([
