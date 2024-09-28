@@ -1,5 +1,5 @@
 import { reactive, toRefs } from 'vue';
-import { getArchive, getArchiveProgress } from '@/services/archiveService';
+import { getArchive, getArchiveProgress,addFavorite,removeFavorite } from '@/services/archiveService';
 
 const state = reactive({
   archives: [], // 초기값 설정
@@ -78,6 +78,28 @@ const fetchFavoriteArchives = async () => {
   }
 };
 
+// 즐겨찾기 추가
+const addToFavorites = async (materialId) => {
+  try {
+    const response = await addFavorite(materialId);
+    console.log(response.message); // 성공 메시지
+    // 즐겨찾기 목록을 다시 로드하거나 필요에 따라 상태를 업데이트합니다.
+  } catch (error) {
+    console.error('Error adding favorite:', error);
+  }
+};
+
+// 즐겨찾기 삭제
+const removeFromFavorites = async (materialId) => {
+  try {
+    const response = await removeFavorite(materialId);
+    console.log(response.message); // 성공 메시지
+    // 즐겨찾기 목록을 다시 로드하거나 필요에 따라 상태를 업데이트합니다.
+  } catch (error) {
+    console.error('Error removing favorite:', error);
+  }
+};
+
 export const useArchiveStore = () => {
   return {
     ...toRefs(state),
@@ -87,6 +109,8 @@ export const useArchiveStore = () => {
     fetchProgressArchives,
     fetchCompletedArchives,
     fetchInProgressArchives,
-    fetchFavoriteArchives
+    fetchFavoriteArchives,
+    addToFavorites,
+    removeFromFavorites
   };
 };

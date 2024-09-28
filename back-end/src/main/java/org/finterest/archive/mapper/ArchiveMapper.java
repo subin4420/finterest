@@ -5,16 +5,17 @@ import org.finterest.archive.domain.ArchiveVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
 @Mapper
 public interface ArchiveMapper {
-    List<ArchiveVO> selectAllArchive();
+    List<ArchiveVO> selectAllArchive(@Param("userId") Integer userId);
     ArchiveVO selectArchiveById(int id);
     List<ArchiveVO> selectArchiveByCategory(int category_id);
-    List<ArchiveVO> selectTextArchive();
-    List<ArchiveVO> selectVideoArchive();
+    List<ArchiveVO> selectTextArchive(@Param("userId") Integer userId);
+    List<ArchiveVO> selectVideoArchive(@Param("userId") Integer userId);
     ProgressVO getProgressForMaterial(int materialId);
 
     //void insertFavorite(int userId, int materialId);

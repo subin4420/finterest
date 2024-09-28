@@ -19,8 +19,8 @@ public class ArchiveDAO {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
 
-    public List<ArchiveVO> selectAllArchive(){
-        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectAllArchive();
+    public List<ArchiveVO> selectAllArchive(Integer userId){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectAllArchive(userId);
     }
 
     public ArchiveVO selectArchiveById(int id){
@@ -31,12 +31,12 @@ public class ArchiveDAO {
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectArchiveByCategory(categoryId);
     }
 
-    public List<ArchiveVO> selectTextArchive(){
-        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectTextArchive();
+    public List<ArchiveVO> selectTextArchive(Integer userId){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectTextArchive(userId);
     }
 
-    public List<ArchiveVO> selectVideoArchive(){
-        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectVideoArchive();
+    public List<ArchiveVO> selectVideoArchive(Integer userId){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectVideoArchive(userId);
     }
 
     public ProgressVO getProgressForMaterial(int materialId){

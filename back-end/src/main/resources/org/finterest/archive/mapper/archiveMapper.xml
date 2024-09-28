@@ -4,38 +4,43 @@
 
     <!-- 공통 칼럼 정의 -->
     <sql id="ArchiveColumns">
-        lm.material_id AS material_id,
+        lm.material_id AS materialId,
         lm.title AS title,
-        lm.material_img AS material_img,
+        lm.material_img AS materialImg,
         lm.link AS link,
         lm.description AS description,
         lm.content AS content,
         lm.created_at AS createdAt,
         lm.updated_at AS updatedAt,
-        c.category_name AS categoryName  -- 카테고리 이름을 가져옴
+        c.category_name AS categoryName,
+        CASE
+        WHEN f.favorite_id IS NOT NULL THEN TRUE
+        ELSE FALSE
+        END AS favorite  <!-- 즐겨찾기 여부 확인 -->
     </sql>
 
     <!-- 학습 진행 상태 필드 정의 -->
     <sql id="ProgressFields">
         lp.progress_id AS progressId,
-    lp.status AS status,
-    lp.started_at AS startedAt,
-    lp.completed_at AS completedAt
+        lp.status AS status,
+        lp.started_at AS startedAt,
+        lp.completed_at AS completedAt
     </sql>
-
 
     <!-- 기본 쿼리 구조 -->
     <sql id="BaseQuery">
         FROM learning_materials lm
         JOIN categories c ON lm.category_id = c.category_id
+        LEFT JOIN favorites f ON lm.material_id = f.material_id AND f.user_id = #{userId} <!-- 즐겨찾기 여부 확인 -->
     </sql>
 
     <!-- 학습 상태 조회 시 필요한 조인 정의 -->
     <sql id="ProgressFromJoin">
         FROM learning_progress lp
-    JOIN learning_materials lm ON lp.material_id = lm.material_id
-    JOIN categories c ON lm.category_id = c.category_id
-    WHERE lp.user_id = #{userId}
+        JOIN learning_materials lm ON lp.material_id = lm.material_id
+        JOIN categories c ON lm.category_id = c.category_id
+        LEFT JOIN favorites f ON lm.material_id = f.material_id AND f.user_id = #{userId} <!-- 즐겨찾기 여부 확인 -->
+        WHERE lp.user_id = #{userId}
     </sql>
 
     <!-- 모든 항목 조회 -->
@@ -44,6 +49,7 @@
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
     </select>
+
 
     <!-- 특정 ID로 조회 -->
     <select id="selectArchiveById" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">

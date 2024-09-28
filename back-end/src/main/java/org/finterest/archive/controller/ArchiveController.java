@@ -32,16 +32,20 @@ public class ArchiveController {
 
         List<ArchiveVO> archiveVOList;
 
+        //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
+        int userId = 1;  // 테스트용 userId 하드코딩
+
+
         if (type != null) {
             if (type.equals("text")) {
-                archiveVOList = archiveService.selectTextArchive(); // 텍스트 자료만
+                archiveVOList = archiveService.selectTextArchive(userId); // 텍스트 자료만
             } else if (type.equals("video")) {
-                archiveVOList = archiveService.selectVideoArchive(); // 영상 자료만
+                archiveVOList = archiveService.selectVideoArchive(userId); // 영상 자료만
             } else {
                 throw new IllegalArgumentException("Invalid type: " + type);
             }
         } else {
-            archiveVOList = archiveService.selectAllArchive(); // 모든 자료
+            archiveVOList = archiveService.selectAllArchive(userId); // 모든 자료
         }
 
         boolean isAuthenticated = (authToken != null && !authToken.isEmpty()); // JWT 토큰이 있는지 확인

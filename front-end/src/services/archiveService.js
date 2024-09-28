@@ -40,7 +40,37 @@ export const getArchiveProgress = async (params = {}) => {
   }
 };
 
+// 포스트 요청에도 Authorization 헤더 추가
 export const postArchive = async () => {
-  const response = await api.post('/api/archive');
+  const token = 'eyJhbGciOiJIUzI1NiIsInR...'; // 여기에 실제 테스트용 JWT 토큰을 추가하세요.
+  
+  const response = await api.post('/api/archive', {}, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+    },
+  });
+  
+  return response.data;
+};
+
+// 즐겨찾기 추가
+export const addFavorite = async (materialId) => {
+  const token = 'eyJhbGciOiJIUzI1NiIsInR...'; // JWT 토큰
+  const response = await api.post(`/api/archive/${materialId}/favorite`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+// 즐겨찾기 삭제
+export const removeFavorite = async (materialId) => {
+  const token = 'eyJhbGciOiJIUzI1NiIsInR...'; // JWT 토큰
+  const response = await api.delete(`/api/archive/${materialId}/favorite`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 };
