@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,15 +23,17 @@ import javax.sql.DataSource;
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
         "org.finterest.board.mapper",
-        "org.finterest.member.mapper",
+        "org.finterest.user.mapper",
         "org.finterest.invest.stock.overall.mapper",
         "org.finterest.invest.conversion.mapper",
-        "org.finterest.invest.board.mapper"
+        "org.finterest.invest.board.mapper",
 })
 
 @ComponentScan(basePackages = {
-
-        "org.finterest.invest"
+        "org.finterest.security.config",
+        "org.finterest.invest",
+        "org.finterest.common.config",
+        "org.finterest.user",
 
 })
 @Slf4j
@@ -70,6 +73,10 @@ public class RootConfig {
     public DataSourceTransactionManager transactionManager(){
         DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
         return manager;
+    }
+    @Bean
+    public SqlSessionTemplate sqlSessionTemplate1(SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
     }
 
 }

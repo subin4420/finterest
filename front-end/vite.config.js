@@ -29,6 +29,6 @@ export default defineConfig({
   },
   build: {
     outDir:
-      'C:/Users/student/Desktop/ATEAM/finterest-A_Team/back-end/src/main/webapp/resources',
+      'C:/Users/student/Desktop/finterest/back-end/src/main/webapp/resources',
   },
 });

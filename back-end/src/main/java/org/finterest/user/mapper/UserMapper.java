@@ -37,4 +37,6 @@ public interface UserMapper {
 
     int deleteAuth(AuthVO auth);
 
+
+
 }
