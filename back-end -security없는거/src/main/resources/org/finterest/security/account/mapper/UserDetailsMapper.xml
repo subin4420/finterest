@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.finterest.security.account.mapper.UserDetailsMapper">
+
+    <!-- AuthVO mapping for user authorities -->
+    <resultMap id="authMap" type="org.finterest.security.account.domain.AuthVO">
+        <result property="username" column="username" />
+        <result property="auth" column="auth" />
+    </resultMap>
+
+    <!-- UserVO mapping for the main user details -->
+    <resultMap id="userMap" type="org.finterest.security.account.domain.UserVO">
+        <id property="userId" column="user_id" />
+<!--        <result property="userId" column="user_id" />-->
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="email" column="email" />
+        <result property="fullName" column="full_name" />
+        <result property="accountStatus" column="account_status" />
+        <result property="money" column="money" />
+        <result property="signupDate" column="signup_date" />
+        <result property="lastLogin" column="last_login" />
+        <result property="totalPoints" column="total_points" />
+
+        <!-- Collection for authList, mapping the user roles -->
+        <collection property="authList" resultMap="authMap" />
+    </resultMap>
+
+    <!-- Query to retrieve user and their associated roles -->
+    <select id="get" resultMap="userMap">
+        SELECT
+            u.user_id, u.username, u.password, u.email, u.full_name,
+            u.account_status, u.money, u.signup_date, u.last_login, u.total_points,
+            a.auth
+        FROM
+            Users u LEFT OUTER JOIN Users_auth a
+                                    ON u.username = a.username
+        WHERE u.username = #{username}
+    </select>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+        <setting name="logImpl" value="SLF4J"/> <!-- 로그 설정 -->
+        <setting name="cacheEnabled" value="true"/> <!-- 캐시 설정 -->
+    </settings>
+
+    <typeAliases>
+        <package name="org.finterest.security.account.domain" />
+        <package name="org.finterest.archive.domain"/>
+        <package name="org.finterest.quiz.domain"/>
+        <package name="org.finterest.point.domain"/>
+        <package name="org.finterest.notice.domain"/>
+        <package name="org.finterest.user.domain"/> <!-- User 관련 패키지 추가 -->
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="org/finterest/archive/mapper/archiveMapper.xml"/>
+        <mapper resource="org/finterest/quiz/mapper/quizSetsMapper.xml"/>
+
+        <mapper resource="org/finterest/archive/mapper/adminArchiveMapper.xml"/>
+        <mapper resource="org/finterest/point/mapper/pointMapper.xml"/>
+        <mapper resource="org/finterest/point/mapper/adminPointMapper.xml"/>
+        <mapper resource="org/finterest/point/mapper/adminPointRulesMapper.xml"/>
+        <mapper resource="org/finterest/notice/mapper/noticeMapper.xml"/>
+        <mapper resource="org/finterest/notice/mapper/adminNoticeMapper.xml"/>
+    </mappers>
+</configuration>
