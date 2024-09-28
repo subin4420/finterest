@@ -61,11 +61,12 @@ export default {
     const videoArchives = ref([]);
 
     onMounted(async () => {
-      // 텍스트와 영상 자료를 모두 가져옵니다.
       await archiveStore.fetchArchive('text'); // 텍스트 자료 가져오기
       const Tarchives = archiveStore.archives.value; // .value를 통해 배열에 접근
+      console.log('Text Archives:', Tarchives); // 추가된 로그
       await archiveStore.fetchArchive('video'); // 영상 자료 가져오기
       const Varchives = archiveStore.archives.value; // .value를 통해 배열에 접근
+      console.log('Video Archives:', Varchives); // 추가된 로그
 
       // 자료를 구분하여 저장
       textArchives.value = Tarchives.filter(archive => archive.link === null);
@@ -79,6 +80,9 @@ export default {
 
     // 필터링된 텍스트 아카이브
     const filteredTextArchives = computed(() => {
+      if (selectedCategory.value === '즐겨찾기') {
+        return textArchives.value.filter(archive => archive.favorite); // 즐겨찾기된 카드만 필터링
+      }
       return selectedCategory.value 
         ? textArchives.value.filter(archive => archive.categoryName === selectedCategory.value) 
         : textArchives.value;
@@ -86,6 +90,9 @@ export default {
 
     // 필터링된 영상 아카이브
     const filteredVideoArchives = computed(() => {
+      if (selectedCategory.value === '즐겨찾기') {
+        return videoArchives.value.filter(archive => archive.favorite); // 즐겨찾기된 카드만 필터링
+      }
       return selectedCategory.value 
         ? videoArchives.value.filter(archive => archive.categoryName === selectedCategory.value) 
         : videoArchives.value;

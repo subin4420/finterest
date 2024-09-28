@@ -55,9 +55,9 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 }
 
 .logo-image {
-  height: 30px;
+  height: 40px;
   width: auto;
-  margin-right: 10px;
+  margin-right: 0px;
   margin-left: 15px; /* 왼쪽 마진 추가 */
 }
 

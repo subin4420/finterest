@@ -1,5 +1,5 @@
 import { reactive, toRefs } from 'vue';
-import { getArchive, getArchiveProgress,addFavorite,removeFavorite } from '@/services/archiveService';
+import { getArchive, getArchiveProgress, addFavorite, removeFavorite } from '@/services/archiveService';
 
 const state = reactive({
   archives: [], // 초기값 설정
@@ -10,7 +10,9 @@ const state = reactive({
 const fetchArchive = async (type) => { // type 매개변수 추가
   try {
     const data = await getArchive({ type }); // type을 객체로 전달
-    state.archives = data.archives; // data.archives로 수정
+    state.archives = data.archives.map(archive => ({
+      ...archive,
+    })); // 각 아카이브에 isFavorite 속성 추가
   } catch (error) {
     console.error('Error fetching Archive:', error);
   }
