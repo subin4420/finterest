@@ -8,19 +8,19 @@ const router = useRouter();
 const auth = useAuthStore();
 
   //////////////////////////////////////////////////////////
-const member = reactive({
+const user = reactive({
   username: '',
   password: '',
 });
 
 const error = ref('');
 
-const disableSubmit = computed(() => !(member.username && member.password));
+const disableSubmit = computed(() => !(user.username && user.password));
 
 const login = async () => {
-  console.log(member);
+  console.log(user);
   try {
-    await auth.login(member);
+    await auth.login(user);
     if (cr.query.next) {
       router.push({ name: cr.query.next });
     } else {
