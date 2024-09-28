@@ -1,8 +1,9 @@
 package org.finterest.security.account.mapper;
 
-import org.finterest.security.account.domain.MemberVO;
+import org.finterest.security.account.domain.UserVO;
 
 
 public interface UserDetailsMapper {
-    public MemberVO get(String username);
+    public UserVO get(String username);
 }
+

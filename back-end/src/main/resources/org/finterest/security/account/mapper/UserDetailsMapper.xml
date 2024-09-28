@@ -3,26 +3,40 @@
 
 <mapper namespace="org.finterest.security.account.mapper.UserDetailsMapper">
 
-    <resultMap id="authMap" type="AuthVO">
+    <!-- AuthVO mapping for user authorities -->
+    <resultMap id="authMap" type="org.finterest.security.account.domain.AuthVO">
         <result property="username" column="username" />
-        <result property="auth" 			column="auth" />
+        <result property="auth" column="auth" />
     </resultMap>
 
-    <resultMap id="memberMap"  type="MemberVO">
-        <id property="username" 				column="username" />
-        <result property="username"		column="username" />
-        <result property="password"		column="password" />
-        <result property="email" 			column="email" />
-        <result property="regDate"			column="reg_date" />
-        <result property="updateDate"	column="update_date" />
+    <!-- UserVO mapping for the main user details -->
+    <resultMap id="userMap" type="org.finterest.security.account.domain.UserVO">
+        <id property="userId" column="user_id" />
+<!--        <result property="userId" column="user_id" />-->
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="email" column="email" />
+        <result property="fullName" column="full_name" />
+        <result property="accountStatus" column="account_status" />
+        <result property="money" column="money" />
+        <result property="signupDate" column="signup_date" />
+        <result property="lastLogin" column="last_login" />
+        <result property="totalPoints" column="total_points" />
 
+        <!-- Collection for authList, mapping the user roles -->
         <collection property="authList" resultMap="authMap" />
     </resultMap>
-    <select id="get" resultMap="memberMap">
-        select m.username, password, email, reg_date, update_date, auth
-        from
-            tbl_member m left outer join tbl_member_auth a
-                                         on m.username = a.username
-        where m.username = #{username}
+
+    <!-- Query to retrieve user and their associated roles -->
+    <select id="get" resultMap="userMap">
+        SELECT
+            u.user_id, u.username, u.password, u.email, u.full_name,
+            u.account_status, u.money, u.signup_date, u.last_login, u.total_points,
+            a.auth
+        FROM
+            Users u LEFT OUTER JOIN Users_auth a
+                                    ON u.username = a.username
+        WHERE u.username = #{username}
     </select>
+
 </mapper>

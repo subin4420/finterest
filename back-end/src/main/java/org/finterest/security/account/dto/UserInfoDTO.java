@@ -4,7 +4,7 @@ package org.finterest.security.account.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.finterest.security.account.domain.MemberVO;
+import org.finterest.security.account.domain.UserVO;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ public class UserInfoDTO {
     String email;
     List<String> roles;
 
-    public static UserInfoDTO of(MemberVO member) {
-        return new UserInfoDTO(member.getUsername(), member.getEmail(),
-                member.getAuthList().stream()
+    public static UserInfoDTO of(UserVO user) {
+        return new UserInfoDTO(user.getUsername(), user.getEmail(),
+                user.getAuthList().stream()
                         .map(a-> a.getAuth())
                         .toList()
         );

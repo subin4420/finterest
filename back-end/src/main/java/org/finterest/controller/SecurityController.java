@@ -2,7 +2,7 @@ package org.finterest.controller;
 
 import lombok.extern.log4j.Log4j;
 import org.finterest.security.account.domain.CustomUser;
-import org.finterest.security.account.domain.MemberVO;
+import org.finterest.security.account.domain.UserVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,9 +30,9 @@ public class SecurityController {
     }
 
     @GetMapping("/admin")
-    public ResponseEntity<MemberVO> doAdmin(@AuthenticationPrincipal CustomUser customUser) {
-        MemberVO member = customUser.getMember();
-        log.info("username = " + member);
-        return ResponseEntity.ok(member);
+    public ResponseEntity<UserVO> doAdmin(@AuthenticationPrincipal CustomUser customUser) {
+        UserVO user = customUser.getUserVO();
+        log.info("username = " + user);
+        return ResponseEntity.ok(user);
     }
 }
