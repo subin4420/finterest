@@ -18,13 +18,15 @@
           :class="{ selected: stock.srtnCd === stockStore.selectedStockCode }"
           @click="selectStock(stock)"
         >
-          <img :src="stock.thumbnail" class="thumbnail" />
+          <img :src="getLogoPath(stock.srtnCd)" class="thumbnail" />
           <div class="stock-info">
-            <span class="stock-name">{{ stock.itmsNm }}</span>
+            <div class="stock-info-header">
+              <div class="stock-name">{{ stock.itmsNm }}</div>
+              <div class="stock-end-price">
+                {{ formatCurrency(stock.clpr) }} 원
+              </div>
+            </div>
             <span class="stock-code">({{ stock.srtnCd }})</span>
-            <span class="stock-market-amount"
-              >{{ formatCurrency(stock.mrktTotAmt) }} 원</span
-            >
           </div>
         </li>
       </ul>
@@ -50,12 +52,13 @@ export default {
       return useStockStore(); // Pinia 스토어 인스턴스 가져오기
     },
     displayedStockList() {
-      // 검색어가 없으면 기본 주식 리스트 반환, 검색 결과가 있으면 필터된 리스트 반환
       return this.searchQuery
         ? this.filteredStockList.length > 0
           ? this.filteredStockList
           : this.uniqueKospiStockList
-        : this.uniqueKospiStockList.sort((a, b) => b.mrktTotAmt - a.mrktTotAmt);
+        : this.uniqueKospiStockList
+            .sort((a, b) => b.mrktTotAmt - a.mrktTotAmt)
+            .slice(0, 10);
     },
     uniqueKospiStockList() {
       const seen = new Set();
@@ -76,31 +79,50 @@ export default {
       });
     },
     selectStock(stock) {
-      const stockStore = useStockStore(); // Pinia 스토어 인스턴스 가져오기
-      stockStore.setSelectedStockCode(stock.srtnCd); // 주식 코드 저장
-      console.log('선택된 주식 코드:', stockStore.selectedStockCode); // 선택된 주식 코드 콘솔 출력
+      const stockStore = useStockStore();
+      stockStore.setSelectedStockCode(stock.srtnCd);
+      console.log('선택된 주식 코드:', stockStore.selectedStockCode);
+    },
+    getLogoPath(stockCode) {
+      return `/logos/${stockCode}.png`; // stockCode에 따라 경로를 설정
     },
     formatCurrency(amount) {
       return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
   },
   created() {
-    // 컴포넌트 로드 시 기본 주식 리스트로 초기화
     this.filteredStockList = this.uniqueKospiStockList;
   },
 };
 </script>
-
 <style scoped>
+.search-list-container {
+  border-radius: 10px; /* 전체 모서리 둥글게 */
+  overflow: hidden; /* 자식 요소가 컨테이너를 벗어나는 것을 방지 */
+  border: 1px solid #eaeaea; /* 테두리 추가 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  width: 300px;
+}
+
 .search-container {
   position: relative;
-  width: 300px;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px; /* padding-top 추가 */
+}
+
+input[type='text'] {
+  width: 100%; /* 입력창이 컨테이너에 맞게 확장 */
+  padding: 10px; /* padding 추가 */
+  border: 1px solid #eaeaea; /* 테두리 추가 */
+  border-radius: 10px; /* 모서리 둥글게 */
 }
 
 ul {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding-left: 0; /* padding-left 제거 */
 }
 
 li {
@@ -127,7 +149,7 @@ li:hover {
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid #eaeaea;
-  width: 300px;
+  width: 100%; /* 너비를 100%로 설정 */
 }
 
 .stock-item.selected {
@@ -138,18 +160,30 @@ li:hover {
   width: 40px;
   height: 40px;
   margin-right: 10px;
+  border-radius: 70%;
+  overflow: hidden;
 }
 
 .stock-info {
   display: flex;
   flex-direction: column;
 }
+.stock-info-header {
+  display: flex; /* 요소들을 가로로 나열 */
+  justify-content: space-between; /* 양쪽 끝으로 배치 */
+  align-items: center; /* 수직 정렬 */
+  width: 100%; /* 전체 너비 사용 */
+}
 
 .stock-name {
   font-weight: bold;
+  margin-right: auto; /* 오른쪽 여백을 자동으로 설정하여 종가와의 거리를 두게 함 */
 }
 
-.stock-market-amount {
-  margin-top: 5px;
+.stock-end-price {
+  font-weight: bold;
+  font-size: 15px;
+  color: gray;
+  text-align: right; /* 오른쪽 정렬 */
 }
 </style>

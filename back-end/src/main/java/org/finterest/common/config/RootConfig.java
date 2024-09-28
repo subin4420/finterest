@@ -22,15 +22,16 @@ import javax.sql.DataSource;
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
         "org.finterest.board.mapper",
-        "org.finterest.member.mapper",
+        "org.finterest.user.mapper",
         "org.finterest.invest.stock.overall.mapper",
-        "org.finterest.invest.conversion.mapper",
-        "org.finterest.invest.board.mapper"
+        "org.finterest.invest.conversion.mapper"
 })
 
 @ComponentScan(basePackages = {
-
-        "org.finterest.invest"
+        "org.finterest.security.config",
+        "org.finterest.invest",
+        "org.finterest.common.config",
+        "org.finterest.user",
 
 })
 @Slf4j
@@ -70,6 +71,10 @@ public class RootConfig {
     public DataSourceTransactionManager transactionManager(){
         DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
         return manager;
+    }
+    @Bean
+    public SqlSessionTemplate sqlSessionTemplate1(SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
     }
 
 }

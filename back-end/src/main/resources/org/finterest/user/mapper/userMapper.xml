@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.finterest.user.mapper.UserMapper">
+
+    <!-- 사용자 추가 -->
+    <insert id="insert">
+        INSERT INTO Users (username, password, email, full_name, account_status, money, signup_date, last_login, total_points)
+        VALUES (#{username}, #{password}, #{email}, #{fullName}, #{accountStatus}, #{money}, now(), null, 0)
+    </insert>
+
+    <!-- 사용자 정보 업데이트 -->
+    <update id="update">
+        UPDATE Users
+        SET
+            email = #{email},
+            full_name = #{fullName},
+            account_status = #{accountStatus},
+            money = #{money},
+            update_date = now()
+        WHERE username = #{username}
+    </update>
+
+    <!-- 비밀번호 업데이트 -->
+    <update id="updatePassword">
+        UPDATE Users
+        SET
+            password = #{newPassword},
+            update_date = now()
+        WHERE username = #{username}
+    </update>
+
+    <!-- 사용자 삭제 -->
+    <delete id="delete">
+        DELETE FROM Users
+        WHERE username = #{username}
+    </delete>
+
+    <!-- 권한 매핑 -->
+    <resultMap id="authMap" type="AuthVO">
+        <result property="username" column="username" />
+        <result property="auth" column="auth" />
+    </resultMap>
+
+    <!-- 사용자 매핑 -->
+    <resultMap id="userMap" type="UserVO">
+        <id property="userId" column="user_id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="email" column="email" />
+        <result property="fullName" column="full_name" />
+        <result property="accountStatus" column="account_status" />
+        <result property="money" column="money" />
+        <result property="signupDate" column="signup_date" />
+        <result property="lastLogin" column="last_login" />
+        <result property="totalPoints" column="total_points" />
+        <collection property="authList" resultMap="authMap" />
+    </resultMap>
+
+    <!-- 특정 사용자 조회 -->
+    <select id="get" resultMap="userMap">
+        SELECT m.user_id, m.username, password, email, full_name, account_status, money, signup_date, last_login, total_points, a.auth
+        FROM
+            Users m
+                LEFT OUTER JOIN Users_auth a
+                                ON m.username = a.username
+        WHERE m.username = #{username}
+    </select>
+
+    <!-- 모든 사용자 조회 -->
+    <select id="getList" resultMap="userMap">
+        SELECT m.user_id, m.username, password, email, full_name, account_status, money, signup_date, last_login, total_points, a.auth
+        FROM
+            Users m
+                LEFT OUTER JOIN Users_auth a
+                                ON m.username = a.username
+    </select>
+
+    <!-- 권한 추가 -->
+    <insert id="insertAuth">
+        INSERT INTO Users_auth (username, auth)
+        VALUES (#{username}, #{auth})
+    </insert>
+
+    <!-- 권한 삭제 -->
+    <delete id="deleteAuth">
+        DELETE FROM Users_auth
+        WHERE username = #{username} AND auth = #{auth}
+    </delete>
+
+    <select id="findUserByDetails" resultType="org.finterest.security.account.domain.UserVO">
+        SELECT * FROM Users
+        WHERE username = #{username}
+          AND full_name = #{fullName}
+          AND email = #{email}
+    </select>
+
+
+</mapper>

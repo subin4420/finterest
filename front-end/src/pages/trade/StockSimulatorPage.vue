@@ -2,7 +2,6 @@
   <div class="community-page">
     <TradeImage />
     <TradeNavigationBar />
-
     <StockSearch :kospiStockList="kospiStockList" />
   </div>
 </template>
@@ -17,7 +16,7 @@ export default {
   components: {
     TradeImage,
     TradeNavigationBar,
-    StockSearch, // 등록
+    StockSearch, 
   },
   data() {
     return {
