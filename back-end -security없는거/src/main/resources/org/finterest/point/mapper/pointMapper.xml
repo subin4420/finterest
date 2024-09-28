@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.point.mapper.PointMapper">
+
+    <!-- 포인트 전체 조회 -->
+    <!-- 포인트 전체 조회 -->
+    <select id="selectAllPoints" resultType="org.finterest.point.domain.PointVO">
+        SELECT
+        p.point_id AS pointId,
+        p.user_id AS userId,
+        pr.activity_name AS activityName,
+        p.points_change AS pointsChange,
+        p.created_at AS createdAt
+        FROM Points p
+        JOIN Point_Rules pr ON p.source = pr.rule_id
+        WHERE p.user_id = #{userId}
+        <if test="filter != null and filter == 'earned'">
+            AND p.points_change &gt; 0   <!-- &gt; 로 수정 -->
+        </if>
+        <if test="filter != null and filter == 'deducted'">
+            AND p.points_change &lt; 0   <!-- &lt; 로 수정 -->
+        </if>
+        <if test="startDate != null and endDate != null">
+            AND p.created_at BETWEEN #{startDate} AND #{endDate}
+        </if>
+        ORDER BY p.created_at DESC
+    </select>
+
+    <!-- total_points 조회 -->
+    <select id="selectTotalPoints" parameterType="int" resultType="int">
+        SELECT total_points
+        FROM Users
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="getUserById" parameterType="int" resultType="UserPointVO">
+        SELECT user_id AS userId, total_points AS totalPoints
+        FROM Users
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>

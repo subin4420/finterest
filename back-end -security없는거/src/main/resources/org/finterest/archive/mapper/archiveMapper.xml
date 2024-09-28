@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.archive.mapper.ArchiveMapper">
+
+    <!-- 공통 칼럼 정의 -->
+    <sql id="ArchiveColumns">
+        lm.material_id AS material_id,
+        lm.title AS title,
+        lm.material_img AS material_img,
+        lm.link AS link,
+        lm.description AS description,
+        lm.content AS content,
+        lm.created_at AS createdAt,
+        lm.updated_at AS updatedAt,
+        c.category_name AS categoryName  -- 카테고리 이름을 가져옴
+    </sql>
+
+    <!-- 학습 진행 상태 필드 정의 -->
+    <sql id="ProgressFields">
+        lp.progress_id AS progressId,
+    lp.status AS status,
+    lp.started_at AS startedAt,
+    lp.completed_at AS completedAt
+    </sql>
+
+
+    <!-- 기본 쿼리 구조 -->
+    <sql id="BaseQuery">
+        FROM learning_materials lm
+        JOIN categories c ON lm.category_id = c.category_id
+    </sql>
+
+    <!-- 학습 상태 조회 시 필요한 조인 정의 -->
+    <sql id="ProgressFromJoin">
+        FROM learning_progress lp
+    JOIN learning_materials lm ON lp.material_id = lm.material_id
+    JOIN categories c ON lm.category_id = c.category_id
+    WHERE lp.user_id = #{userId}
+    </sql>
+
+    <!-- 모든 항목 조회 -->
+    <select id="selectAllArchive" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+    </select>
+
+    <!-- 특정 ID로 조회 -->
+    <select id="selectArchiveById" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.material_id = #{material_id}
+    </select>
+
+    <!-- 카테고리로 필터링 -->
+    <select id="selectArchiveByCategory" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE c.category_id = #{category_id}
+    </select>
+
+    <!-- 텍스트 자료만 조회 (link가 NULL) -->
+    <select id="selectTextArchive" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.link IS NULL
+    </select>
+
+    <!-- 영상 자료만 조회 (link가 NULL이 아닌 경우) -->
+    <select id="selectVideoArchive" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.link IS NOT NULL
+    </select>
+
+    <!-- 특정 자료의 학습 진행 상태 조회 -->
+    <select id="getProgressForMaterial" parameterType="int" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT
+            progress_id AS progressId,
+            material_id AS materialId,
+            status,
+            started_at AS startedAt,
+            completed_at AS completedAt
+        FROM Learning_Progress
+        WHERE material_id = #{materialId} AND user_id = #{userId}
+    </select>
+
+
+    <!-- 즐겨찾기 추가 -->
+    <insert id="insertFavorite">
+        INSERT INTO favorites (user_id, material_id, added_at)
+        VALUES (#{userId}, #{materialId}, NOW())
+    </insert>
+
+    <!-- 즐겨찾기 삭제 -->
+    <delete id="deleteFavorite">
+        DELETE FROM favorites
+        WHERE user_id = #{userId} AND material_id = #{materialId}
+    </delete>
+
+    <!-- 전체 학습 진행 상태 조회 -->
+    <select id="selectAllProgress" parameterType="int" resultType="org.finterest.archive.domain.ProgressDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />,
+        <include refid="ProgressFields" />
+        <include refid="ProgressFromJoin" />
+    </select>
+
+    <!-- 학습 상태별 조회 (완료/미완료) -->
+    <select id="selectProgressByStatus" parameterType="map" resultType="org.finterest.archive.domain.ProgressDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />,
+        <include refid="ProgressFields" />
+        <include refid="ProgressFromJoin" />
+        AND lp.status = #{status}
+    </select>
+
+
+    <!-- 학습 진행 상태 업데이트 -->
+    <update id="updateProgressStatus">
+        UPDATE Learning_Progress
+        SET status = #{status},
+            completed_at = CASE WHEN #{status} = 'completed' THEN NOW() ELSE NULL END
+        WHERE user_id = #{userId}
+          AND material_id = #{materialId}
+    </update>
+</mapper>
