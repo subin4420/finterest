@@ -7,7 +7,10 @@
 
         <!-- 카드 내용 섹션 -->
         <div class="card-info">
-            <div class="category-title">[{{ cardData.categoryName }}]</div>
+            <div class="category-status-wrapper">
+                <div class="category-title">[{{ cardData.categoryName }}]</div>
+                <div v-if="cardData.status" :class="['status', statusClass]">{{ statusText }}</div>
+            </div>
             <div class="title">{{ cardData.title }}</div>
             <p class="summary">{{ cardData.content }}</p>
         </div>
@@ -27,6 +30,19 @@ export default {
         return {
             defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg' // 대체 이미지 URL
         };
+    },
+    computed: {
+        statusText() {
+            return this.cardData.status === 'completed' ? '완료' : 
+                   this.cardData.status === 'incomplete' ? '미완료' : 
+                   this.cardData.status;
+        },
+        statusClass() {
+            return {
+                'status-completed': this.cardData.status === 'completed',
+                'status-incomplete': this.cardData.status === 'incomplete'
+            };
+        }
     }
 }
 </script>
@@ -52,13 +68,14 @@ export default {
 
 .image-wrapper {
     width: 100%;
-    height: 120px; /* 고정된 높이 */
-    background-color: #f0f0f0; /* 배경색을 연한 회색으로 변경 */
+    height: 120px;
+    background-color: #f0f0f0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px; /* 모서리를 둥글게 */
-    overflow: hidden; /* 이미지가 영역을 넘지 않도록 설정 */
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative; /* 추가: 상대 위치 설정 */
 }
 
 .image-wrapper img {
@@ -72,11 +89,33 @@ export default {
     transform: scale(1.1); /* 이미지 호버 시 확대 효과 */
 }
 
+.status {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.status-completed {
+    color: blue;
+}
+
+.status-incomplete {
+    color: red;
+}
+
 .card-info {
     padding-top: 10px;
     text-align: left;
     width: 100%;
     flex-grow: 1; /* 공간을 차지하도록 설정 */
+}
+
+.category-status-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
 }
 
 .category-title {

@@ -1,7 +1,21 @@
 import api from './api';
 
+// Authorization 헤더 추가 X
+// export const getArchive = async (params = {}) => {
+//   const response = await api.get('/api/archive', { params }); // params를 쿼리로 전달
+//   console.log("in service response.data: ", response.data);
+//   return response.data;
+// };
+
+// Authorization 헤더 추가
 export const getArchive = async (params = {}) => {
-  const response = await api.get('/api/archive', { params }); // params를 쿼리로 전달
+  const token = 'eyJhbGciOiJIUzI1NiIsInR...'; // 여기에 실제 테스트용 JWT 토큰을 추가하세요.
+  const response = await api.get('/api/archive', { 
+    params,
+    headers: {
+        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+      },
+   }); // params를 쿼리로 전달
   console.log("in service response.data: ", response.data);
   return response.data;
 };
