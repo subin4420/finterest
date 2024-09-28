@@ -64,6 +64,8 @@ function openQuizModal(quiz) {
 <style scoped>
 .content-section {
   margin-bottom: 2rem; /* 섹션 간의 간격 */
+  width: 80%; /* 전체 화면의 80%만 차지 */
+  margin: 0 auto; /* 화면 중앙 정렬 */
 }
 
 .content-grid {
@@ -71,5 +73,9 @@ function openQuizModal(quiz) {
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
+}
+.content-grid > * {
+  flex: 1 1 calc(25% - 1rem); /* 각 카드가 25%의 너비를 차지 */
+  max-width: calc(25% - 1rem); /* 최대 너비도 25%로 설정 */
 }
 </style>

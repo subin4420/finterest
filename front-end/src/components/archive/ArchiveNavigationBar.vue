@@ -30,6 +30,7 @@ export default {
 </script>
 
 <style scoped>
+
 .navbar {
     background-color: black;
     color: white;
@@ -37,7 +38,7 @@ export default {
     justify-content: center; /* 가로 방향으로 중앙 정렬 */
     align-items: center; /* 수직 중앙 정렬 */
     max-width: 1000px; /* 최대 너비 설정 */
-    margin: -20px auto 10px auto; /* 상단 마진 -20px, 좌우 중앙 정렬 */
+    margin: -20px auto 40px auto; /* 상단 마진 -20px, 좌우 중앙 정렬 */
     border-radius: 5px; /* 둥근 모서리 추가 */
     padding: 10px; /* 패딩 추가하여 내용과 모서리 간격 조정 */
 }
