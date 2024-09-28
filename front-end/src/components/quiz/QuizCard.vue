@@ -20,6 +20,9 @@ export default {
             required: true
         }
     },
+    created() {
+        console.log('Card Data:', this.cardData);  // 전달된 데이터 확인
+    },
     data() {
         return {
             defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg' // 대체 이미지 URL

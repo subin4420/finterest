@@ -26,7 +26,7 @@ public class PointController {
 
     // 포인트 적립/차감 내역 조회 API
     @GetMapping("/points")
-    public ResponseEntity<List<PointVO>> getPoints(
+    public ResponseEntity<Map<String, Object>> getPoints(
             @RequestHeader("Authorization") String token,
             @RequestParam(value = "filter", required = false) String filter,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
@@ -37,8 +37,14 @@ public class PointController {
 
         // 포인트 조회
         List<PointVO> points = pointService.getPoint(userId, filter, startDate, endDate);
-        return ResponseEntity.ok(points);
+
+        // 결과를 points 키 아래에 담아 반환
+        Map<String, Object> response = new HashMap<>();
+        response.put("points", points);
+
+        return ResponseEntity.ok(response);
     }
+
 
     // 사용자 누적 포인트 조회 API
     @GetMapping("/total_points")
