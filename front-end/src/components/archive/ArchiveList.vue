@@ -13,6 +13,7 @@
       v-if="selectedCard"
       :isVisible="isModalVisible" 
       :cardData="selectedCard" 
+      :status="selectedCard?.status"
       @update:isVisible="isModalVisible = $event" 
     />
   </div>

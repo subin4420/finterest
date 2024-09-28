@@ -83,22 +83,21 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000; /* 높은 z-index 값 설정 */
 }
 
 .modal-content {
     background-color: white;
     padding: 20px;
-    width: 60%;
-    max-width: 800px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    /* Makes modal content flow vertically */
+    border-radius: 8px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    z-index: 1001; /* modal-overlay보다 더 높은 z-index 값 설정 */
 }
 
 .close-button {
