@@ -102,7 +102,6 @@ export default {
 </script>
 
 <style scoped>
-
 h3 {
   font-size: 1.8rem; /* 폰트 크기를 조금 더 키워서 눈에 띄게 */
   font-weight: bold; /* 텍스트를 굵게 */
@@ -129,5 +128,25 @@ h3 {
 .content-grid > * {
   flex: 1 1 calc(25% - 1rem); /* 각 카드가 25%의 너비를 차지 */
   max-width: calc(25% - 1rem); /* 최대 너비도 25%로 설정 */
+}
+@media (max-width: 1200px) {
+  .content-grid > * {
+    flex: 1 1 calc(33.33% - 1rem); /* 화면이 작아지면 한 행에 3개 */
+    max-width: calc(33.33% - 1rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .content-grid > * {
+    flex: 1 1 calc(50% - 1rem); /* 더 작은 화면에서 한 행에 2개 */
+    max-width: calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .content-grid > * {
+    flex: 1 1 100%; /* 작은 모바일 화면에서는 한 행에 1개 */
+    max-width: 100%;
+  }
 }
 </style>

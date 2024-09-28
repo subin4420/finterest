@@ -1,22 +1,26 @@
 <template>
     <div v-if="isVisible" class="modal-overlay" @click.self="closeModal">
         <div class="modal-content">
-            <button class="close-button" @click="closeModal">&times;</button>
+            <!-- <button class="close-button" @click="closeModal">&times;</button> -->
             <div class="modal-header">
-                <button class="back-button" @click="closeModal">< 뒤로가기</button>
-                <!-- ArchiveCard에서 전달받은 status 출력 -->
-                <span class="learning-status" v-if="cardData.status" :class="['status', statusClass]">{{ statusText }}</span>
+                <button class="back-button" @click="closeModal">
+                    <i class="fas fa-arrow-left"></i> 뒤로가기
+                </button>
+                <span class="learning-status" v-if="cardData.status" :class="['status', statusClass]">
+                    <i :class="statusIcon"></i> {{ statusText }}
+                </span>
             </div>
             <div class="content-section">
                 <div class="title-section">
-                    <!-- 이미지 섹션 -->
                     <img :src="cardData.materialImg || defaultImage" alt="썸네일 이미지" />
                     <div class="title-info">
-                        <h3>제목 : {{ cardData.title }}</h3>
-                        <p>카테고리 : {{ cardData.categoryName }}</p>
+                        <h2>{{ cardData.title }}</h2>
+                        <p><i class="fas fa-folder"></i> {{ cardData.categoryName }}</p>
                     </div>
                 </div>
-                <p>{{ cardData.content }}</p>
+                <div class="archive-content">
+                    <p>{{ cardData.content }}</p>
+                </div>
             </div>
             <button 
                 class="complete-button" 
@@ -24,7 +28,7 @@
                 :disabled="cardData.status === 'completed'"
                 :class="{ 'completed': cardData.status === 'completed' }"
             >
-                학습완료
+                <i class="fas fa-check"></i> 학습완료
             </button>
         </div>
     </div>
@@ -41,22 +45,24 @@ export default {
     },
     data() {
         return {
-            defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg' // 대체 이미지 URL
+            defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg'
         };
     },
     computed: {
         statusText() {
-            // status 값이 제대로 있는지 확인하기 위해 콘솔 출력 추가
             console.log('Status in Modal:', this.cardData.status);
             return this.cardData.status === 'completed' ? '완료된 학습' : 
                    this.cardData.status === 'incomplete' ? '진행중인 학습' : 
-                   this.cardData.status || 'N/A';  // status 값이 없을 경우 'N/A' 표시
+                   this.cardData.status || 'N/A';
         },
         statusClass() {
             return {
                 'status-completed': this.cardData.status === 'completed',
                 'status-incomplete': this.cardData.status === 'incomplete'
             };
+        },
+        statusIcon() {
+            return this.cardData.status === 'completed' ? 'fas fa-check-circle' : 'fas fa-clock';
         }
     },
     methods: {
@@ -65,7 +71,6 @@ export default {
         },
         markComplete() {
             if (this.cardData.status !== 'completed') {
-                // 학습완료 로직 처리
                 console.log('학습완료 처리');
                 this.closeModal();
             }
@@ -74,8 +79,6 @@ export default {
 }
 </script>
 
-
-
 <style scoped>
 .modal-overlay {
     position: fixed;
@@ -83,108 +86,166 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* 높은 z-index 값 설정 */
+    z-index: 1000;
 }
 
 .modal-content {
     background-color: white;
-    padding: 20px;
-    border-radius: 8px;
+    padding: 30px;
+    border-radius: 15px;
     max-width: 80%;
     max-height: 80%;
     overflow-y: auto;
-    z-index: 1001; /* modal-overlay보다 더 높은 z-index 값 설정 */
+    z-index: 1001;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 20px;
     border: none;
     background: none;
-    font-size: 24px;
+    font-size: 28px;
     cursor: pointer;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: #e74c3c;
 }
 
 .modal-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
 }
 
 .back-button {
-  color: #007BFF;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-  margin-bottom: 20px; /* 뒤로가기 버튼 아래에 마진 추가 */
+    color: #3498db;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.back-button:hover {
+    color: #2980b9;
 }
 
 .learning-status {
-  display: block;
-  align-self: flex-start; /* 오른쪽 정렬 */
-  font-size: 15px;
-  font-weight: bold;
-  margin-left: 5px;
-  margin-top: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+
+.status-completed {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.status-incomplete {
+    background-color: #f39c12;
+    color: white;
 }
 
 .title-section {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-    /* Adds space below the title section */
+    margin-bottom: 20px;
 }
 
 .title-info {
     margin-left: 20px;
-    /* Adds space between image and text */
+}
+
+.title-info h2 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.title-info p {
+    margin: 0;
+    color: #7f8c8d;
 }
 
 img {
-    width: 35%;
-    height: 35%;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
-    /* 이미지가 박스에 맞게 조절되도록 설정 */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.content-section {
-    flex-grow: 1;
-    /* Allows this section to take up available space */
-    margin: 30px;
-    /* Adds space above the complete button */
+.archive-content {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
 .complete-button {
     background-color: #00c4d1;
     color: white;
-    padding: 8px 12px;
+    padding: 10px 20px;
     border: none;
     cursor: pointer;
-    border-radius: 10px;
-    align-self: flex-end;
-    font-size: 14px;
-    margin-bottom: 30px;
-    margin-right: 30px;
+    border-radius: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .complete-button:hover:not(:disabled) {
-    opacity: 0.8;
+    background-color: #00a8b3;
 }
 
 .complete-button.completed {
-    background-color: #cccccc;
-    cursor: default;  /* 'not-allowed' 대신 'default' 사용 */
+    background-color: #95a5a6;
 }
 
 .complete-button:disabled {
     opacity: 0.6;
-    pointer-events: none;  /* 비활성화된 버튼에 대한 모든 마우스 이벤트 무시 */
+    cursor: not-allowed;
+}
+
+.complete-button i {
+    margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .title-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .title-info {
+        margin-left: 0;
+        margin-top: 15px;
+    }
+
+    img {
+        width: 100%;
+        height: auto;
+    }
 }
 </style>

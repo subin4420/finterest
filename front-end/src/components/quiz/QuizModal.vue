@@ -3,22 +3,43 @@
         <div class="modal-content">
             <button class="close-button" @click="closeModal">&times;</button>
             <div class="modal-header">
-                <button class="back-button" @click="closeModal">뒤로가기</button>
-                <span class="learning-status">학습중</span>
-                <hr />
-                <div class="title-section">
-                    <img src="https://cdn.pixabay.com/photo/2024/01/02/20/13/dry-8483913_1280.jpg" alt="자료 이미지"
-                        class="modal-image" />
-                    <div class="title-info">
-                        <h3>제목 : {{ cardData.title }}</h3>
-                        <p>카테고리 : {{ cardData.categoryName }}</p>
-                    </div>
+                <button class="back-button" @click="closeModal">
+                    <i class="fas fa-arrow-left"></i> 뒤로가기
+                </button>
+                <h2>{{ cardData.title }}</h2>
+            </div>
+            <div class="quiz-navigation">
+                <button 
+                    v-for="(quiz, index) in cardData.quizzes" 
+                    :key="index"
+                    :class="['quiz-nav-button', { 'answered': answeredQuizzes[index], 'current': currentQuizIndex === index }]"
+                    @click="setCurrentQuiz(index)"
+                >
+                    {{ index + 1 }}
+                </button>
+            </div>
+            <div class="quiz-content" v-if="currentQuiz">
+                <p>{{ currentQuiz.question }}</p>
+                <div class="quiz-options">
+                    <label v-for="(option, index) in currentQuiz.options" :key="index">
+                        <input 
+                            type="radio" 
+                            :name="'quiz-option'" 
+                            :value="index" 
+                            v-model="currentQuiz.selectedAnswer"
+                            @change="updateAnsweredQuizzes"
+                        >
+                        {{ option }}
+                    </label>
                 </div>
             </div>
-            <div class="content-section">
-                <p>{{ cardData.content }}</p>
-            </div>
-            <button class="complete-button" @click="markComplete">학습완료</button>
+            <button 
+                class="submit-button" 
+                @click="submitQuiz" 
+                :disabled="!allQuizzesAnswered"
+            >
+                퀴즈 제출
+            </button>
         </div>
     </div>
 </template>
@@ -32,13 +53,36 @@ export default {
             required: true
         }
     },
+    data() {
+        return {
+            currentQuizIndex: 0,
+            answeredQuizzes: {},
+        };
+    },
+    computed: {
+    currentQuiz() {
+        // cardData가 존재하고 quizzes 배열이 정의되어 있으며, currentQuizIndex가 범위 내에 있을 때만 반환
+        return this.cardData && this.cardData.quizzes && this.cardData.quizzes.length > 0
+            ? this.cardData.quizzes[this.currentQuizIndex]
+            : null;
+    },
+    allQuizzesAnswered() {
+        return this.cardData && this.cardData.quizzes && Object.keys(this.answeredQuizzes).length === this.cardData.quizzes.length;
+    }
+},
     methods: {
         closeModal() {
             this.$emit('update:isVisible', false);
         },
-        markComplete() {
-            // 학습완료 로직 처리
-            console.log('학습완료 처리');
+        setCurrentQuiz(index) {
+            this.currentQuizIndex = index;
+        },
+        updateAnsweredQuizzes() {
+            this.$set(this.answeredQuizzes, this.currentQuizIndex, true);
+        },
+        submitQuiz() {
+            // 퀴즈 제출 로직 구현
+            console.log('퀴즈 제출됨');
             this.closeModal();
         }
     }
@@ -52,85 +96,121 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .modal-content {
     background-color: white;
-    padding: 20px;
-    width: 80%;
-    max-width: 800px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    /* Makes modal content flow vertically */
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    z-index: 1001;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 20px;
     border: none;
     background: none;
-    font-size: 24px;
+    font-size: 28px;
     cursor: pointer;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: #e74c3c;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
 }
 
 .back-button {
-    color: #007BFF;
+    color: #3498db;
     background: none;
     border: none;
     cursor: pointer;
-}
-
-.learning-status {
-    display: block;
-    text-align: right;
-    margin-top: 10px;
-}
-
-.title-section {
+    font-size: 14px;
     display: flex;
     align-items: center;
+    transition: color 0.3s ease;
+}
+
+.back-button:hover {
+    color: #2980b9;
+}
+
+.quiz-navigation {
+    display: flex;
+    justify-content: center;
     margin-bottom: 20px;
-    /* Adds space below the title section */
 }
 
-.title-info {
-    margin-left: 20px;
-    /* Adds space between image and text */
+.quiz-nav-button {
+    width: 30px;
+    height: 30px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 50%;
+    background-color: #ddd;
+    cursor: pointer;
 }
 
-img {
-    width: 35%;
-    height: 35%;
-    object-fit: cover;
-    /* 이미지가 박스에 맞게 조절되도록 설정 */
+.quiz-nav-button.answered {
+    background-color: #2ecc71;
+    color: white;
 }
 
-.content-section {
-    flex-grow: 1;
-    /* Allows this section to take up available space */
+.quiz-nav-button.current {
+    background-color: #3498db;
+    color: white;
+}
+
+.quiz-content {
     margin-bottom: 20px;
-    /* Adds space above the complete button */
 }
 
-.complete-button {
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-options label {
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.submit-button {
     background-color: #00c4d1;
     color: white;
-    padding: 16px 20px;
+    padding: 10px 20px;
     border: none;
     cursor: pointer;
-    border-radius: 4px;
-    align-self: flex-end;
-    /* Aligns the button to the right */
+    border-radius: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
-.complete-button:hover {
-    opacity: 0.8;
+.submit-button:hover:not(:disabled) {
+    background-color: #00a8b3;
+}
+
+.submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 </style>
