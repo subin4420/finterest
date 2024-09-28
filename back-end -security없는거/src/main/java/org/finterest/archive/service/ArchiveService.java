@@ -19,8 +19,8 @@ public class ArchiveService {
     }
 
     // 모든 자료 조회
-    public List<ArchiveVO> selectAllArchive(){
-        return archiveDAO.selectAllArchive();
+    public List<ArchiveVO> selectAllArchive(Integer userId){
+        return archiveDAO.selectAllArchive(userId);
     }
 
     // 특정 ID로 조회
@@ -34,13 +34,13 @@ public class ArchiveService {
     }
 
     // 텍스트 자료만 조회
-    public List<ArchiveVO> selectTextArchive(){
-        return archiveDAO.selectTextArchive();
+    public List<ArchiveVO> selectTextArchive(Integer userId){
+        return archiveDAO.selectTextArchive(userId);
     }
 
     // 영상 자료만 조회
-    public List<ArchiveVO> selectVideoArchive(){
-        return archiveDAO.selectVideoArchive();
+    public List<ArchiveVO> selectVideoArchive(Integer userId){
+        return archiveDAO.selectVideoArchive(userId);
     }
 
     // 학습 진행 상태 조회 (materialId 기준)
