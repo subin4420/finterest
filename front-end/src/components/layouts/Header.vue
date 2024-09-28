@@ -3,7 +3,7 @@ import { reactive, computed, defineProps } from 'vue';
 import config from '@/config';
 import MenuGroup from './menu/MenuGroup.vue';
 import AccountMenuGroup from './menu/AccountMenuGroup.vue';
-import logoImage from '../../assets/images/logo.png'; // 상대 경로 사용
+import logoImage from '../../assets/images/Finterest-logo.png'; // 상대 경로 사용
 
 const props = defineProps({
   backgroundColor: {
@@ -24,7 +24,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
     <div class="container-fluid">
       <router-link class="navbar-brand" to="/">
         <img :src="logoImage" alt="Logo" class="logo-image">
-        <span class="header-title">{{ config.title }}</span>
+        <!-- <span class="header-title">{{ config.title }}</span> -->
       </router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" @click="toggleNavShow">
         <span class="navbar-toggler-icon"></span>

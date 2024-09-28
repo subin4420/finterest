@@ -78,6 +78,8 @@ public class QuizSetsController {
 
     // 카테고리별 또는 전체 퀴즈 세트 조회
     @GetMapping
+    //http://localhost:8080/api/quiz-sets?categoryId=1
+    //GET /api/quiz-sets?categoryId=1
     public Map<String, List<QuizSetsVO>> selectQuizSets(
             @RequestParam(value = "categoryId", required = false) Integer categoryId,
             @RequestHeader(value = "Authorization", required = false) String token) {

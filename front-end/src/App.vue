@@ -9,6 +9,9 @@ import DefaultLayout from './components/layouts/DefaultLayout.vue';
   </DefaultLayout>
 </template>
 
-<style scoped>
-
+<style >
+/* global.css 또는 App.vue의 style 섹션 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+}
 </style>
