@@ -180,14 +180,14 @@ public class ArchiveController {
     }
 
     // 학습 진행 상태 업데이트
-    @PostMapping("/{materialId}/progress")
+    @PutMapping("/{materialId}/progress")
     public Map<String, String> updateProgress(
             @PathVariable int materialId,
             @RequestBody Map<String, String> requestBody,
             @RequestHeader("Authorization") String token) {
 
         //int userId = getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-        int userId = 2;
+        int userId = 1;
 
         String status = requestBody.get("status");
         if (status == null || (!status.equals("completed") && !status.equals("incomplete"))) {

@@ -1,5 +1,6 @@
 package org.finterest.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,9 @@ public class UserDTO {
     private String fullName;  // full_name
     private String accountStatus;  // account_status (Default: 'active')
     private BigDecimal money;  // 보유 금액 (Default: 10,000,000)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date signupDate;  // 가입일
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private Date lastLogin;  // 마지막 로그인 시간
     private int totalPoints;  // 누적 포인트 (Default: 0)
 

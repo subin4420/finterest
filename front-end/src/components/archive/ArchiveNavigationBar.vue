@@ -32,7 +32,7 @@ export default {
 <style scoped>
 
 .navbar {
-    background-color: black;
+    background-color: rgb(0, 0, 0);
     color: white;
     display: flex;
     justify-content: center; /* 가로 방향으로 중앙 정렬 */

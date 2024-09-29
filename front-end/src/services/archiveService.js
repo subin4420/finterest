@@ -74,3 +74,14 @@ export const removeFavorite = async (materialId) => {
   });
   return response.data;
 };
+
+// 학습 상태 업데이트 함수
+export const updateArchiveStatus = async (materialId, data) => {
+  const token = 'eyJhbGciOiJIUzI1NiIsInR...'; // 여기에 실제 테스트용 JWT 토큰을 추가하세요.
+  const response = await api.put(`/api/archive/${materialId}/progress`, data,{    
+      headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};

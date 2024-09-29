@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+
+    //중복체크
     @Override
     public boolean checkDuplicate(String username) {
         UserVO member = userMapper.get(username);
@@ -48,19 +50,21 @@ public class UserServiceImpl implements UserService {
         //saveAvatar(UserJoinDTO.getAvatar(), userVO.getUsername());
         return get(userVO.getUsername());
     }
-
+    //특정 회원 삭제
     @Override
     public UserDTO delete(String username) {
         UserVO userVO = userMapper.get(username);
         userMapper.delete(username);
         return UserDTO.of(userVO);
     }
+    //특정회원 확인
     @Override
     public UserDTO get(String username) {
         System.out.println("username: " + username);
         UserVO userVO = Optional.ofNullable(userMapper.get(username)).orElseThrow(NoSuchElementException::new);
         return UserDTO.of(userVO);
     }
+    //전체 유저
     @Override
     public List<UserDTO> getList() {
         List<UserVO> userVOList = userMapper.getList();

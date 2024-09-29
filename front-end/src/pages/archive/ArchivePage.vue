@@ -76,6 +76,9 @@ export default {
     // 카테고리 필터링 함수
     const filterByCategory = (category) => {
       selectedCategory.value = category;
+      if (category === '즐겨찾기') {
+        // 페이지 새로고침
+      }
     };
 
     // 필터링된 텍스트 아카이브

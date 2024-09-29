@@ -1,7 +1,6 @@
 <template>
     <div v-if="isVisible" class="modal-overlay" @click.self="closeModal">
         <div class="modal-content">
-            <!-- <button class="close-button" @click="closeModal">&times;</button> -->
             <div class="modal-header">
                 <button class="back-button" @click="closeModal">
                     <i class="fas fa-arrow-left"></i> 뒤로가기
@@ -35,6 +34,8 @@
 </template>
 
 <script>
+import { useArchiveStore } from '@/stores/archiveStore';
+
 export default {
     props: {
         isVisible: Boolean,
@@ -69,10 +70,15 @@ export default {
         closeModal() {
             this.$emit('update:isVisible', false);
         },
-        markComplete() {
+        async markComplete() {
             if (this.cardData.status !== 'completed') {
-                console.log('학습완료 처리');
-                this.closeModal();
+                try {
+                    const archiveStore = useArchiveStore();
+                    await archiveStore.changeArchiveStatus(this.cardData.materialId, 'completed');
+                    this.closeModal(); // 모달 닫기
+                } catch (error) {
+                    console.error('Error updating archive status:', error);
+                }
             }
         }
     }

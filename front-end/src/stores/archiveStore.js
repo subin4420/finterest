@@ -1,5 +1,5 @@
 import { reactive, toRefs } from 'vue';
-import { getArchive, getArchiveProgress, addFavorite, removeFavorite } from '@/services/archiveService';
+import { getArchive, getArchiveProgress, addFavorite, removeFavorite, updateArchiveStatus } from '@/services/archiveService';
 
 const state = reactive({
   archives: [], // 초기값 설정
@@ -7,12 +7,26 @@ const state = reactive({
   completedArchives: [], // 완료된 학습 자료
 });
 
+// 학습 상태 업데이트
+const changeArchiveStatus = async (materialId, status) => {
+  try {
+    await updateArchiveStatus(materialId, { status }); // 상태 업데이트 요청
+    // 상태 업데이트 후, 로컬 상태를 업데이트
+    const archive = state.archives.find(archive => archive.materialId === materialId);
+    if (archive) {
+      archive.status = status; // 로컬 상태 업데이트
+    }
+  } catch (error) {
+    console.error('Error changing archive status:', error);
+  }
+};
+
 const fetchArchive = async (type) => { // type 매개변수 추가
   try {
     const data = await getArchive({ type }); // type을 객체로 전달
     state.archives = data.archives.map(archive => ({
       ...archive,
-    })); // 각 아카이브에 isFavorite 속성 추가
+    }));
   } catch (error) {
     console.error('Error fetching Archive:', error);
   }
@@ -85,7 +99,12 @@ const addToFavorites = async (materialId) => {
   try {
     const response = await addFavorite(materialId);
     console.log(response.message); // 성공 메시지
-    // 즐겨찾기 목록을 다시 로드하거나 필요에 따라 상태를 업데이트합니다.
+    // 로컬 상태 업데이트
+    const archive = state.archives.find(a => a.materialId === materialId);
+    if (archive) {
+      archive.favorite = true; // 즐겨찾기 상태로 변경
+    }
+    filterByCategory(selectedCategory.value); // 필터링 다시 적용
   } catch (error) {
     console.error('Error adding favorite:', error);
   }
@@ -96,12 +115,16 @@ const removeFromFavorites = async (materialId) => {
   try {
     const response = await removeFavorite(materialId);
     console.log(response.message); // 성공 메시지
-    // 즐겨찾기 목록을 다시 로드하거나 필요에 따라 상태를 업데이트합니다.
+    // 로컬 상태 업데이트
+    const archive = state.archives.find(a => a.materialId === materialId);
+    if (archive) {
+      archive.favorite = false; // 즐겨찾기 상태 제거
+    }
+    filterByCategory(selectedCategory.value); // 필터링 다시 적용
   } catch (error) {
     console.error('Error removing favorite:', error);
   }
 };
-
 export const useArchiveStore = () => {
   return {
     ...toRefs(state),
@@ -113,6 +136,7 @@ export const useArchiveStore = () => {
     fetchInProgressArchives,
     fetchFavoriteArchives,
     addToFavorites,
-    removeFromFavorites
+    removeFromFavorites,
+    changeArchiveStatus // 추가된 메서드
   };
 };
