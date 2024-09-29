@@ -1,43 +1,80 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="org.finterest.invest.board.mapper.BoardMapper">
 
-    <select id="getLatestRate" parameterType="String" resultType="org.finterest.invest.board.dto.BoardDTO">
-        SELECT *
-        FROM Conversion_Rates
-        WHERE conversion_type = #{conversionType}
-        ORDER BY created_at DESC
-            LIMIT 1
-    </select>
-
-    <insert id="insertConversionRate" parameterType="org.finterest.invest.board.dto.BoardDTO">
-        INSERT INTO Conversion_Rates (conversion_rate, created_at, updated_at)
-        VALUES (#{conversionRate}, NOW(), NOW())
+    <!-- 게시물 생성 -->
+    <insert id="insertBoard" parameterType="org.finterest.invest.board.dto.BoardDTO">
+        INSERT INTO Boards (title, content, user_Id, createdAt, updatedAt)
+        VALUES (#{title}, #{content}, #{userId}, NOW(), NOW())
     </insert>
 
-    <update id="updateConversionRate" parameterType="org.finterest.invest.board.dto.BoardDTO">
-        UPDATE Conversion_Rates
-        SET conversion_rate = #{conversionRate}, updated_at = NOW()
-        WHERE rate_id = #{rateId}
+    <!-- 게시물 조회 -->
+    <select id="selectBoardById" parameterType="long" resultType="org.finterest.invest.board.domain.BoardVO">
+        SELECT
+            board_Id AS boardId,
+            title,
+            content,
+            user_Id AS userId,
+            createdAt AS createdAt,
+            updatedAt AS updatedAt
+        FROM Boards
+        WHERE board_Id = #{boardId}
+    </select>
+
+    <!-- 게시물 목록 조회 -->
+    <select id="selectAllBoards" resultType="org.finterest.invest.board.domain.BoardVO">
+        SELECT
+            board_Id AS boardId,
+            title,
+            content,
+            user_Id AS userId,
+            createdAt AS createdAt,
+            updatedAt AS updatedAt
+        FROM Boards
+    </select>
+
+
+    <!-- 게시물 업데이트 -->
+    <update id="updateBoard" parameterType="org.finterest.invest.board.dto.BoardDTO">
+        UPDATE Boards
+        SET title = #{title}, content = #{content}, user_Id = #{userId}, updatedAt = NOW()
+        WHERE board_Id = #{boardId}
     </update>
 
-    <select id="getAllRates" resultType="org.finterest.invest.board.dto.BoardDTO">
-        SELECT * FROM Conversion_Rates
+    <!-- 게시물 삭제 -->
+    <delete id="deleteBoard" parameterType="long">
+        DELETE FROM Boards
+        WHERE board_Id = #{boardId}
+    </delete>
+
+    <!-- 게시글에 댓글도 나오게 하는 것 -->
+    <select id="selectBoardWithComments" parameterType="long" resultMap="boardResultMap">
+        SELECT
+            b.board_Id AS boardId,
+            b.title,
+            b.content,
+            b.user_Id AS userId,
+            b.createdAt,
+            b.updatedAt
+        FROM
+            Boards b
+        WHERE
+            b.board_Id = #{boardId}
     </select>
 
-    <insert id="insertConversionTransaction" parameterType="org.finterest.invest.board.dto.BoardDTO">
-        INSERT INTO Conversion_Transactions (user_id, money_change, point_change, conversion_type, conversion_date, rate_id)
-        VALUES (#{userId}, #{moneyChange}, #{pointChange}, #{conversionType}, NOW(), #{rateId})
-    </insert>
 
-    <select id="getTransactionsByUserId" parameterType="int" resultType="org.finterest.invest.board.dto.BoardDTO">
-        SELECT * FROM Conversion_Transactions
-        WHERE user_id = #{userId}
-    </select>
+    <!-- 게시물과 댓글을 함께 조회하는 resultMap -->
+    <resultMap id="boardResultMap" type="org.finterest.invest.board.dto.BoardDTO">
+        <id property="boardId" column="boardId" />
+        <result property="title" column="title" />
+        <result property="content" column="content" />
+        <result property="userId" column="userId" />
+        <result property="createdAt" column="createdAt" />
+        <result property="updatedAt" column="updatedAt" />
 
-
-
+        <!-- 댓글 목록을 매핑 -->
+        <collection property="comments" ofType="org.finterest.invest.comment.dto.CommentDTO" column="boardId"
+                    select="org.finterest.invest.comment.mapper.CommentMapper.selectCommentsByBoardId"/>
+    </resultMap>
 </mapper>

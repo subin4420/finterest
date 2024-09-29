@@ -10,6 +10,7 @@
         <setting name="cacheEnabled" value="true"/> <!-- 캐시 설정 -->
     </settings>
 
+
     <typeAliases>
         <package name="org.finterest.security.account.domain" />
         <package name="org.finterest.user.domain"/>
@@ -20,6 +21,7 @@
         <mapper resource="org/finterest/stock/overall/mapper/OverallMapper.xml"/>
         <mapper resource="org/finterest/conversion/mapper/ConversionMapper.xml"/>
         <mapper resource="org/finterest/user/mapper/userMapper.xml"/>
+        <mapper resource="org/finterest/board/mapper/BoardMapper.xml"/>
     </mappers>
 
 </configuration>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.finterest.invest.comment.mapper.CommentMapper">
+
+    <!-- 댓글 생성 -->
+    <insert id="insertComment" parameterType="org.finterest.invest.comment.domain.CommentVO">
+        INSERT INTO comments (content, user_id, board_id, created_at, updated_at)
+        VALUES (#{content}, #{userId}, #{boardId}, NOW(), NOW())
+    </insert>
+
+    <!-- 특정 게시물의 모든 댓글 조회 -->
+    <select id="selectCommentsByBoardId" resultType="org.finterest.invest.comment.domain.CommentVO">
+        SELECT * FROM comments WHERE board_id = #{boardId}
+    </select>
+
+    <!-- 댓글 수정 -->
+    <update id="updateComment" parameterType="org.finterest.invest.comment.domain.CommentVO">
+        UPDATE comments
+        SET content = #{content}, updated_at = NOW()
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- 댓글 삭제 -->
+    <delete id="deleteComment" parameterType="long">
+        DELETE FROM comments WHERE comment_id = #{commentId}
+    </delete>
+
+</mapper>

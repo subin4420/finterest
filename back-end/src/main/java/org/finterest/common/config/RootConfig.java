@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +22,12 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
-        "org.finterest.board.mapper",
         "org.finterest.user.mapper",
         "org.finterest.invest.stock.overall.mapper",
-        "org.finterest.invest.conversion.mapper"
+        "org.finterest.invest.conversion.mapper",
+        "org.finterest.invest.board.mapper",
+        "org.finterest.invest.comment.mapper"
+
 })
 
 @ComponentScan(basePackages = {
@@ -32,6 +35,7 @@ import javax.sql.DataSource;
         "org.finterest.invest",
         "org.finterest.common.config",
         "org.finterest.user",
+        "org.finterest.board"
 
 })
 @Slf4j

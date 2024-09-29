@@ -3,7 +3,6 @@ package org.finterest.invest.conversion.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.finterest.invest.conversion.dto.ConversionRateDTO;
-import org.finterest.invest.conversion.dto.ConversionTransactionDTO;
 import org.finterest.invest.conversion.domain.ConversionTransactionVO;
 
 import java.util.List;
@@ -20,9 +19,8 @@ public interface ConversionMapper {
 
     List<ConversionRateDTO> getAllRates(); //환전비율 기록 조회
 
-
     // 트랜잭션 추가, 사용자별 거래 내역 조회
-    void insertConversionTransaction(ConversionTransactionDTO transactionDTO); //환전내역 저장
+    void insertConversionTransaction(ConversionTransactionVO transactionVO); // 환전내역 저장
 
     List<ConversionTransactionVO> getConversionTransactionsByUserId(@Param("userId") int userId); // 사용자 ID로 거래내역 조회
 }

@@ -16,8 +16,10 @@
           <td @click="viewBoard(board.boardId)" style="cursor: pointer">
             {{ board.title }}
           </td>
-          <td>{{ board.writer }}</td>
-          <td>{{ board.createdDate }}</td>
+          <td>{{ getUserName(board.userId) }}</td>
+          <!-- 작성자 이름 가져오기 -->
+          <td>{{ formatDate(board.createdAt) }}</td>
+          <!-- 작성일 포맷팅 -->
         </tr>
       </tbody>
     </table>
@@ -32,14 +34,35 @@ export default {
   data() {
     return {
       boardList: [],
+      users: [], // 사용자 정보를 저장할 배열
     };
   },
   created() {
     this.loadBoards();
+    this.loadUsers(); // 사용자 정보 로드
   },
   methods: {
     async loadBoards() {
       this.boardList = await boardApi.getList();
+    },
+    async loadUsers() {
+      this.users = await boardApi.getUsers(); // 사용자 정보를 가져오는 API 호출
+    },
+    getUserName(userId) {
+      const user = this.users.find((user) => user.id === userId);
+      return user ? user.name : '익명'; // 사용자가 없을 경우 '익명' 표시
+    },
+    formatDate(date) {
+      const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      };
+      return new Date(date).toLocaleString('ko-KR', options); // 날짜 포맷팅
     },
     viewBoard(boardId) {
       this.$router.push(`/board/${boardId}`);
