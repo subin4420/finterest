@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j;
 import org.finterest.invest.board.dto.BoardDTO;
 import org.finterest.invest.board.domain.BoardVO;
 import org.finterest.invest.board.service.BoardService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,11 +46,17 @@ public class BoardController {
     // 게시물 조회 (ID로, 댓글 포함)
     @GetMapping("/{boardId}")
     public ResponseEntity<BoardDTO> getBoardWithComments(@PathVariable Long boardId) {
-        BoardDTO boardWithComments = boardService.getBoardWithComments(boardId);
-        if (boardWithComments != null) {
-            return ResponseEntity.ok(boardWithComments);
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            BoardDTO boardWithComments = boardService.getBoardWithComments(boardId);
+            if (boardWithComments != null) {
+                return ResponseEntity.ok(boardWithComments);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            // 로그에 오류 메시지 출력
+            System.err.println("Error fetching board: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

@@ -70,8 +70,8 @@
         <result property="title" column="title" />
         <result property="content" column="content" />
         <result property="userId" column="userId" />
-        <result property="createdAt" column="createdAt" />
-        <result property="updatedAt" column="updatedAt" />
+<!--        <result property="createdAt" column="createdAt" />-->
+<!--        <result property="updatedAt" column="updatedAt" />-->
 
         <!-- 댓글 목록을 매핑 -->
         <collection property="comments" ofType="org.finterest.invest.comment.dto.CommentDTO" column="boardId"

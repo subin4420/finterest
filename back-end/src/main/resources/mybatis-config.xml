@@ -22,6 +22,7 @@
         <mapper resource="org/finterest/conversion/mapper/ConversionMapper.xml"/>
         <mapper resource="org/finterest/user/mapper/userMapper.xml"/>
         <mapper resource="org/finterest/board/mapper/BoardMapper.xml"/>
+        <mapper resource="org/finterest/comment/mapper/CommentMapper.xml"/>
     </mappers>
 
 </configuration>

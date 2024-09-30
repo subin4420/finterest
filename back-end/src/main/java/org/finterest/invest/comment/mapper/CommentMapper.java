@@ -3,6 +3,7 @@ package org.finterest.invest.comment.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.finterest.invest.comment.domain.CommentVO;
+import org.finterest.invest.comment.dto.CommentDTO;
 
 import java.util.List;
 
@@ -14,7 +15,6 @@ public interface CommentMapper {
 
     // 특정 게시물의 모든 댓글 조회
     List<CommentVO> selectCommentsByBoardId(@Param("boardId") Long boardId);
-
     // 댓글 수정
     void updateComment(CommentVO commentVO);
 

@@ -30,8 +30,8 @@ public class CommentDTO {
                 .content(vo.getContent())
                 .userId(vo.getUserId())
                 .boardId(vo.getBoardId())
-                .createdAt(vo.getCreatedAt())
-                .updatedAt(vo.getUpdatedAt())
+//                .createdAt(vo.getCreatedAt())
+//                .updatedAt(vo.getUpdatedAt())
                 .build();
     }
 
@@ -42,8 +42,8 @@ public class CommentDTO {
                 .content(content)
                 .userId(userId)
                 .boardId(boardId)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
+//                .createdAt(createdAt)
+//                .updatedAt(updatedAt)
                 .build();
     }
 }

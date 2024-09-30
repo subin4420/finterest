@@ -14,7 +14,8 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.finterest.invest.board.controller",
         "org.finterest.invest.stock.overall.controller",
         "org.finterest.user.controller",
-        "org.finterest.invest.conversion.controller"
+        "org.finterest.invest.conversion.controller",
+        "org.finterest.invest.comment.controller"
 
 
 })

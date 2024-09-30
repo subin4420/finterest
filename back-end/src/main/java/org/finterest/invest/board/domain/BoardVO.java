@@ -15,6 +15,6 @@ public class BoardVO {
     private String title;       // 글 제목
     private String content;     // 글 내용
     private Long userId;        // 회원 ID
-    private LocalDateTime createdAt;   // 작성 시간
-    private LocalDateTime updatedAt;   // 수정 시간
+//    private LocalDateTime createdAt;   // 작성 시간
+//    private LocalDateTime updatedAt;   // 수정 시간
 }

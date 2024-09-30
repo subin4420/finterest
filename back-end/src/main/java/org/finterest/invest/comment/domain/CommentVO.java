@@ -16,6 +16,6 @@ public class CommentVO {
     private String content;      // 댓글 내용
     private Long userId;         // 회원 ID
     private Long boardId;        // 게시물 ID
-    private LocalDateTime createdAt;   // 작성 시간
-    private LocalDateTime updatedAt;   // 수정 시간
+//    private LocalDateTime createdAt;   // 작성 시간
+//    private LocalDateTime updatedAt;   // 수정 시간
 }

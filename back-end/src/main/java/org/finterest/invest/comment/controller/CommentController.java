@@ -23,7 +23,6 @@ public class CommentController {
         commentService.createComment(commentDTO);
         return ResponseEntity.ok("댓글이 성공적으로 생성되었습니다.");
     }
-
     // 특정 게시물의 댓글 조회
     @GetMapping("/board/{boardId}")
     public ResponseEntity<List<CommentDTO>> getCommentsByBoardId(@PathVariable Long boardId) {

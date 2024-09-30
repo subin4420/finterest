@@ -6,25 +6,27 @@
 
     <!-- 댓글 생성 -->
     <insert id="insertComment" parameterType="org.finterest.invest.comment.domain.CommentVO">
-        INSERT INTO comments (content, user_id, board_id, created_at, updated_at)
+        INSERT INTO Comments (content, user_Id, board_Id, createdAt, updatedAt)
         VALUES (#{content}, #{userId}, #{boardId}, NOW(), NOW())
     </insert>
 
     <!-- 특정 게시물의 모든 댓글 조회 -->
-    <select id="selectCommentsByBoardId" resultType="org.finterest.invest.comment.domain.CommentVO">
-        SELECT * FROM comments WHERE board_id = #{boardId}
+    <select id="selectCommentsByBoardId" parameterType="long" resultType="org.finterest.invest.comment.domain.CommentVO">
+        SELECT comment_Id, content, user_Id, board_Id
+        FROM Comments
+        WHERE board_Id = #{boardId}
     </select>
 
     <!-- 댓글 수정 -->
     <update id="updateComment" parameterType="org.finterest.invest.comment.domain.CommentVO">
-        UPDATE comments
-        SET content = #{content}, updated_at = NOW()
-        WHERE comment_id = #{commentId}
+        UPDATE Comments
+        SET content = #{content}, updatedAt = NOW()
+        WHERE comment_Id = #{commentId}
     </update>
 
     <!-- 댓글 삭제 -->
     <delete id="deleteComment" parameterType="long">
-        DELETE FROM comments WHERE comment_id = #{commentId}
+        DELETE FROM Comments WHERE comment_Id = #{commentId}
     </delete>
 
 </mapper>
