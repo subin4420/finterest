@@ -1,6 +1,8 @@
 <template>
   <div class="board-list">
     <h2>게시판 목록</h2>
+    <button @click="goToCreateBoard">작성목록</button>
+    <!-- 작성목록 버튼 추가 -->
     <table>
       <thead>
         <tr>
@@ -17,9 +19,7 @@
             {{ board.title }}
           </td>
           <td>{{ getUserName(board.userId) }}</td>
-          <!-- 작성자 이름 가져오기 -->
           <td>{{ formatDate(board.createdAt) }}</td>
-          <!-- 작성일 포맷팅 -->
         </tr>
       </tbody>
     </table>
@@ -27,30 +27,30 @@
 </template>
 
 <script>
-import boardApi from '@/api/boardApi'; // 위에서 구현한 board API 사용
+import boardApi from '@/api/boardApi';
 
 export default {
   name: 'BoardList',
   data() {
     return {
       boardList: [],
-      users: [], // 사용자 정보를 저장할 배열
+      users: [],
     };
   },
   created() {
     this.loadBoards();
-    this.loadUsers(); // 사용자 정보 로드
+    this.loadUsers();
   },
   methods: {
     async loadBoards() {
       this.boardList = await boardApi.getList();
     },
     async loadUsers() {
-      this.users = await boardApi.getUsers(); // 사용자 정보를 가져오는 API 호출
+      this.users = await boardApi.getUsers();
     },
     getUserName(userId) {
       const user = this.users.find((user) => user.id === userId);
-      return user ? user.name : '익명'; // 사용자가 없을 경우 '익명' 표시
+      return user ? user.name : '익명';
     },
     formatDate(date) {
       const options = {
@@ -62,10 +62,14 @@ export default {
         second: '2-digit',
         hour12: false,
       };
-      return new Date(date).toLocaleString('ko-KR', options); // 날짜 포맷팅
+      return new Date(date).toLocaleString('ko-KR', options);
     },
     viewBoard(boardId) {
       this.$router.push(`/board/${boardId}`);
+    },
+    goToCreateBoard() {
+      // 작성목록 버튼 클릭 시 호출될 메소드
+      this.$router.push('/board/create'); // BoardCreate 페이지로 이동
     },
   },
 };
@@ -89,5 +93,8 @@ th {
 }
 td:hover {
   background-color: #f5f5f5;
+}
+button {
+  margin-bottom: 10px; /* 버튼과 테이블 사이의 여백 */
 }
 </style>

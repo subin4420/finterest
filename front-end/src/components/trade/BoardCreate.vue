@@ -15,6 +15,8 @@
         <textarea v-model="article.content" required></textarea>
       </div>
       <button type="submit">작성</button>
+      <button type="button" @click="close">닫기</button>
+      <!-- 닫기 버튼 추가 -->
     </form>
   </div>
 </template>
@@ -37,6 +39,9 @@ export default {
     async createBoard() {
       await boardApi.create(this.article);
       this.$router.push('/board/list'); // 게시글 작성 후 목록 페이지로 이동
+    },
+    close() {
+      this.$emit('close'); // 닫기 이벤트를 부모로 전달
     },
   },
 };
