@@ -32,9 +32,8 @@ public class ArchiveController {
 
         List<ArchiveVO> archiveVOList;
 
-        //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
-        int userId = 1;  // 테스트용 userId 하드코딩
 
+       int userId = getUserIdFromToken(authToken);
 
         if (type != null) {
             if (type.equals("text")) {
@@ -60,7 +59,6 @@ public class ArchiveController {
     @GetMapping("/{id}")
     public ArchiveVO one(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authToken) {
         ArchiveVO archiveVO = archiveService.selectArchiveById(id);
-
         boolean isAuthenticated = (authToken != null && !authToken.isEmpty());
         return applyProgressDataToSingle(archiveVO, isAuthenticated); // 학습 진행 상태 추가
     }
@@ -128,8 +126,9 @@ public class ArchiveController {
     public Map<String, String> addFavorite(
             @PathVariable int materialId,
             @RequestHeader("Authorization") String token) {
-        //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
-        int userId = 1;  // 테스트용 userId 하드코딩
+
+        int userId = getUserIdFromToken(token);
+
         Map<String, String> response = new HashMap<>();
 
         try {
@@ -148,8 +147,7 @@ public class ArchiveController {
     public Map<String, String> removeFavorite(
             @PathVariable int materialId,
             @RequestHeader("Authorization") String token) {
-        //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
-        int userId = 1;     // 테스트용
+        int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
         archiveService.deleteFavorite(userId, materialId);
 
         Map<String, String> response = new HashMap<>();
@@ -164,8 +162,7 @@ public class ArchiveController {
             @RequestHeader("Authorization") String token,
             @RequestParam(value = "status", required = false) String status) {
 
-        //int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
-        int userId = 1;     // 테스트용
+        int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
         List<ProgressDetailVO> progressList;
 
         if (status == null) {
@@ -186,8 +183,7 @@ public class ArchiveController {
             @RequestBody Map<String, String> requestBody,
             @RequestHeader("Authorization") String token) {
 
-        //int userId = getUserIdFromToken(token); // 토큰에서 사용자 ID 추출
-        int userId = 2;
+        int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
 
         String status = requestBody.get("status");
         if (status == null || (!status.equals("completed") && !status.equals("incomplete"))) {
@@ -207,8 +203,22 @@ public class ArchiveController {
     }
 
     // 토큰에서 사용자 ID를 추출하는 예시 메서드
-    private int getUserIdFromToken(String token) {
-        // 실제 토큰에서 사용자 ID를 추출하는 로직 필요
-        return 1; // 테스트용으로 사용자 ID 1을 반환
+    private int getUserIdFromToken(String authToken) {
+        // JWT 토큰이 존재하고 유효한지 확인
+        if (authToken == null || authToken.isEmpty()) {
+            throw new IllegalArgumentException("Missing or invalid Authorization header");
+        }
+
+        // Bearer 토큰에서 실제 JWT 추출
+        String token = authToken.startsWith("Bearer ") ? authToken.substring(7) : authToken;
+
+        // 토큰 검증 및 사용자 ID 추출
+        int userId;
+        try {
+            userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid token");
+        }
+        return userId; // 테스트용으로 사용자 ID 1을 반환
     }
 }
