@@ -38,7 +38,8 @@ import javax.sql.DataSource;
         "org.finterest.common.config",
         "org.finterest.user.service",
         "org.finterest.invest.board.service",
-        "org.finterest.invest.conversion.service"
+        "org.finterest.invest.conversion.service",
+        "org.finterest.invest.comment.service"
 })
 @Slf4j
 @EnableTransactionManagement
