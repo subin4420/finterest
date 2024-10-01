@@ -2,11 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.finterest.invest.conversion.mapper.ConversionMapper">
 
+
     <!-- 최신 환전 비율 조회 -->
     <select id="getLatestRate" resultType="org.finterest.invest.conversion.dto.ConversionRateDTO">
-        SELECT * FROM Conversion_Rates WHERE conversion_type = #{conversionType}
-        ORDER BY created_at DESC LIMIT 1
+        SELECT * FROM Conversion_Rates
+        ORDER BY created_at DESC
+            LIMIT 1
     </select>
+
 
     <!-- 환전비율 입력 -->
     <insert id="insertConversionRate">

@@ -3,27 +3,27 @@
     <TradeImage />
     <TradeNavigationBar />
 
-    <h2>게시판 목록</h2>
+    <h2>모의투자 커뮤니티</h2>
     <table>
       <thead>
-        <tr>
-          <th>번호</th>
-          <th>제목</th>
-          <th>작성자</th>
-        </tr>
+      <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성자</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="(board, index) in boardList" :key="board.boardId">
-          <td>{{ index + 1 }}</td>
-          <td @click="viewBoard(board.boardId)" style="cursor: pointer">
-            {{ board.title }}
-          </td>
-          <td>{{ getUserName(board.userId) }}</td>
-        </tr>
+      <tr v-for="(board, index) in sortedBoardList" :key="board.boardId">
+        <td>{{ sortedBoardList.length - index }}</td>
+        <!-- 번호를 내림차순으로 표시 -->
+        <td @click="viewBoard(board.boardId)" style="cursor: pointer">
+          {{ board.title }}
+        </td>
+        <td>{{ getUserName(board.userId) }}</td>
+      </tr>
       </tbody>
     </table>
 
-    <!-- 작성 버튼 추가 (오른쪽 정렬 및 여백 추가) -->
     <div class="create-button">
       <button @click="goToCreateBoard">게시글 작성</button>
     </div>
@@ -51,9 +51,16 @@ export default {
     this.loadBoards(); // 게시글 목록 로드
     this.loadUsers(); // 사용자 목록 로드
   },
+  computed: {
+    sortedBoardList() {
+      // boardList를 boardId 기준으로 내림차순 정렬
+      return this.boardList.sort((a, b) => b.boardId - a.boardId);
+    },
+  },
   methods: {
     async loadBoards() {
       this.boardList = await boardApi.getList(); // API 호출하여 게시글 목록 가져오기
+      console.log('게시글 목록:', this.boardList); // 데이터 확인용
     },
     async loadUsers() {
       this.users = await boardApi.getUsers(); // API 호출하여 사용자 목록 가져오기
