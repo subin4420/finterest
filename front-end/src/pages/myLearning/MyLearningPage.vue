@@ -19,8 +19,7 @@
 
       <!-- 콘텐츠 -->
       <div class="content">
-        <h1>{{ pageTitle }}</h1>
-        <hr />
+        <h3>{{ pageTitle }}</h3>
 
         <!-- 학습 상태 필터 또는 포인트 상태 필터 -->
         <div class="tabs" v-if="activeTab === 'archive' || activeTab === 'points'">
@@ -173,6 +172,20 @@ export default {
 
 
 <style scoped>
+h3{
+  font-size: 1.8rem; /* 폰트 크기를 조금 더 키워서 눈에 띄게 */
+  font-weight: bold; /* 텍스트를 굵게 */
+  font-size: 1.8rem; /* 폰트 크기를 조금 더 키워서 눈에 띄게 */
+  font-weight: bold; /* 텍스트를 굵게 */
+  color: #333; /* 짙은 회색으로 시각적으로 부드럽게 */
+  text-align: left; /* 텍스트를 중앙에 배치 */
+  margin-bottom: 1.5rem; /* 제목 아래쪽에 간격 추가 */
+  padding-bottom: 0.5rem; /* 제목과 카드 사이에 간격 */ /* 짙은 회색으로 시각적으로 부드럽게 */
+  text-align: left; /* 텍스트를 중앙에 배치 */
+  margin-bottom: 1.5rem; /* 제목 아래쪽에 간격 추가 */
+  padding-bottom: 1rem; /* 제목과 카드 사이에 간격 */
+  border-bottom: 2px solid #b3b3b3; /* 제목 아래에 구분선 추가 */
+}
 /* 사이드바 및 탭 스타일 */
 .page-container {
   display: flex;
@@ -193,13 +206,14 @@ export default {
 
 .sidebar-container {
   width: 25%;
-  padding: 20px;
+  padding: 30px;
 }
 
 .content {
-  width: 75%;
-  margin-top: 20px;
-  padding: 20px;
+  width: 71%;
+  /* width: 75%; */
+  margin-top: 30px;
+  padding: 30px;
   border-radius: 10px;
   background-color: #FFFFFF;
 }
@@ -271,9 +285,4 @@ export default {
   border-bottom: 2px solid #00C4D1;
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
 </style>

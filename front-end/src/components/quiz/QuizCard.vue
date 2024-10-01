@@ -44,6 +44,11 @@ export default {
     border-radius: 8px; /* 모서리를 둥글게 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
     transition: transform 0.2s; /* 호버 시 부드러운 효과 */
+
+    width: 100%; /* 부모 요소의 크기를 기준으로 자동 조정 */
+    height: 200px; /* 카드 높이를 150px로 설정 */
+    padding: 10px; /* 카드 내부에 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함된 전체 크기 설정 */
 }
 
 .content-card:hover {

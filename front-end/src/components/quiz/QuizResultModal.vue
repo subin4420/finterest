@@ -1,93 +1,98 @@
 <template>
-    <div v-if="isVisible" class="modal-overlay" @click.self="closeModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="close-button" @click="closeModal">
-                    <i class="fas fa-times"></i> <!-- X 아이콘 추가 -->
-                </button>
-                <h2>{{ cardData.title }}</h2>
-            </div>
-            <div class="quiz-navigation">
-                <button 
-                    v-for="(quiz, index) in cardData.quizzes" 
-                    :key="index"
-                    :class="['quiz-nav-button', { 'answered': answeredQuizzes[index], 'current': currentQuizIndex === index }]"
-                    @click="setCurrentQuiz(index)"
-                >
-                    {{ index + 1 }}
-                </button>
-            </div>
-            <div class="quiz-content" v-if="currentQuiz">
-                <p>{{ currentQuiz.question }}</p>
-                <div class="quiz-options">
-                    <label v-for="(option, index) in currentQuiz.options" :key="index">
-                        <input 
-                            type="radio" 
-                            :name="'quiz-option'" 
-                            :value="index" 
-                            v-model="currentQuiz.selectedAnswer"
-                            @change="updateAnsweredQuizzes"
-                        >
-                        {{ option }}
-                    </label>
-                </div>
-            </div>
-            <button 
-                class="submit-button" 
-                @click="submitQuiz" 
-                :disabled="!allQuizzesAnswered"
-            >
-                퀴즈 제출
-            </button>
+  <!-- isVisible와 cardData가 존재하고 quizzes가 있을 때만 모달을 렌더링 -->
+  <div v-if="isVisible && cardData && cardData.quizzes && cardData.quizzes.length > 0" class="modal-overlay" @click.self="closeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close-button" @click="closeModal">
+          <i class="fas fa-times"></i>
+        </button>
+        <!-- 퀴즈 결과 -->
+        <span class="userScore" v-if="cardData.totalScore && cardData.maxScore">
+          {{ cardData.totalScore }}/{{ cardData.maxScore }}
+        </span>
+      </div>
+
+      <!-- 네비게이션 버튼들 -->
+      <div class="quiz-navigation">
+        <button
+          v-for="(quiz, index) in cardData.quizzes"
+          :key="index"
+          :class="['quiz-nav-button', { 'answered': answeredQuizzes[index], 'current': currentQuizIndex === index }]"
+          @click="setCurrentQuiz(index)"
+        >
+          {{ index + 1 }}
+        </button>
+      </div>
+
+      <!-- 퀴즈 컨텐츠 -->
+      <div class="quiz-content" v-if="currentQuiz">
+        <p>{{ currentQuiz.question }}</p>
+        <div class="quiz-options">
+          <label v-for="(option, index) in currentQuiz.options" :key="index">
+            <input
+              type="radio"
+              :name="'quiz-option'"
+              :value="index"
+              v-model="currentQuiz.selectedAnswer"
+              @change="updateAnsweredQuizzes"
+            />
+            {{ option }}
+          </label>
         </div>
+      </div>
+
+      <!-- 이전, 다음 버튼 -->
+      <div class="quiz-nav-buttons">
+        <button @click="previousQuiz" :disabled="currentQuizIndex === 0">이전</button>
+        <button @click="nextQuiz" :disabled="currentQuizIndex === cardData.quizzes.length - 1">다음</button>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-    props: {
-        isVisible: Boolean,
-        cardData: {
-            type: Object,
-            required: true
-        }
-    },
-    data() {
-        return {
-            currentQuizIndex: 0,
-            answeredQuizzes: {},
-        };
-    },
-    computed: {
+  props: {
+    isVisible: Boolean,
+    cardData: {
+      type: Object,
+      required: true,
+    }
+  },
+  data() {
+    return {
+      currentQuizIndex: 0, // 현재 문제 번호
+      answeredQuizzes: {}, // 답변된 문제 상태
+    };
+  },
+  computed: {
     currentQuiz() {
-        // cardData가 존재하고 quizzes 배열이 정의되어 있으며, currentQuizIndex가 범위 내에 있을 때만 반환
-        return this.cardData && this.cardData.quizzes && this.cardData.quizzes.length > 0
-            ? this.cardData.quizzes[this.currentQuizIndex]
-            : null;
+        console.log("currentQuiz-----------------------------");
+      return this.cardData && this.cardData.quizzes && this.cardData.quizzes.length > 0
+        ? this.cardData.quizzes[this.currentQuizIndex]
+        : null;
     },
-    allQuizzesAnswered() {
-        return this.cardData && this.cardData.quizzes && Object.keys(this.answeredQuizzes).length === this.cardData.quizzes.length;
+  },
+  methods: {
+    closeModal() {
+      this.$emit('update:isVisible', false);
+    },
+    setCurrentQuiz(index) {
+      this.currentQuizIndex = index;
+    },
+    previousQuiz() {
+      if (this.currentQuizIndex > 0) {
+        this.currentQuizIndex--;
+      }
+    },
+    nextQuiz() {
+      if (this.currentQuizIndex < this.cardData.quizzes.length - 1) {
+        this.currentQuizIndex++;
+      }
     }
-},
-    methods: {
-        closeModal() {
-            this.$emit('update:isVisible', false);
-        },
-        setCurrentQuiz(index) {
-            this.currentQuizIndex = index;
-        },
-        updateAnsweredQuizzes() {
-            this.$set(this.answeredQuizzes, this.currentQuizIndex, true);
-        },
-        submitQuiz() {
-            // 퀴즈 제출 로직 구현
-            console.log('퀴즈 제출됨');
-            this.closeModal();
-        }
-    }
-}
+  }
+};
 </script>
-
 <style scoped>
 .modal-overlay {
     position: fixed;
@@ -118,7 +123,6 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
 
@@ -127,9 +131,7 @@ export default {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 24px; /* 크기를 크게 설정 */
-    display: flex;
-    align-items: center;
+    font-size: 24px;
     transition: color 0.3s ease;
 }
 
@@ -151,6 +153,7 @@ export default {
     border-radius: 50%;
     background-color: #ddd;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .quiz-nav-button.answered {
@@ -177,23 +180,34 @@ export default {
     cursor: pointer;
 }
 
-.submit-button {
+.quiz-options input[type="radio"] {
+    margin-right: 10px;
+}
+
+.quiz-nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+button {
     background-color: #00c4d1;
     color: white;
     padding: 10px 20px;
     border: none;
-    cursor: pointer;
     border-radius: 20px;
     font-size: 16px;
+    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.submit-button:hover:not(:disabled) {
+button:hover:not(:disabled) {
     background-color: #00a8b3;
 }
 
-.submit-button:disabled {
-    opacity: 0.6;
+button:disabled {
+    background-color: #ccc;
     cursor: not-allowed;
 }
+
 </style>

@@ -2,7 +2,7 @@
   <div>
     <!-- 포인트 테이블 -->
     <table class="table table-hover">
-      <thead style="background-color: #00C4D1; color: white;">
+      <thead style="background-color: #f8f9fa; color: black;">
         <tr>
           <th scope="col">#</th>
           <th scope="col">활동 이름</th>
@@ -64,8 +64,8 @@ export default {
 </script>
 
 <style>
-
 .table > thead > tr > th {
-  color: #00C4D1 !important;
+  background-color: #e8e7e7; /* 옅은 회색 배경 */
+  color: black; /* 검정색 글자 */
 }
 </style>
