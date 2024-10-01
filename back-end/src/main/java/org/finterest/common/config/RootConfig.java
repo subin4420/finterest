@@ -28,6 +28,7 @@ import javax.sql.DataSource;
         "org.finterest.user.mapper",
         "org.finterest.point.mapper",
         "org.finterest.notice.mapper",
+        "org.finterest.ranking.mapper"
 
 })
 @ComponentScan(basePackages = {
@@ -39,7 +40,8 @@ import javax.sql.DataSource;
         "org.finterest.notice",
         //"org.finterest.member.service",
         "org.finterest.user",
-        "org.finterest.chatbot"
+        "org.finterest.chatbot",
+        "org.finterest.ranking"
 
 })
 @Slf4j

@@ -2,44 +2,50 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'; // Vue Router 사용
 
+import homepageImg from '@/assets/images/homepage.png';
+import learnPageImg from '@/assets/images/learnpage.png';
+import quizPageImg from '@/assets/images/quizpage.png';
+import tradePageImg from '@/assets/images/tradepage.png';
+import chatbotPageImg from '@/assets/images/chatbotpage.png';
+
 const router = useRouter(); // Router 인스턴스 가져오기
 
 const currentSlide = ref(0);
 const slides = ref([
   {
-    image: '/src/assets/images/homepage.png',
+    image: homepageImg,
     title: 'Z세대를 위한 경제 교육 플랫폼',
     subtitle: '우리의 서비스 소개',
     description: '우리의 서비스 소개',
-    page: '/' // 홈 페이지 경로
+    page: '/', // 홈 페이지 경로
   },
   {
-    image: '/src/assets/images/learnpage.png',
+    image: learnPageImg,
     title: '경제 상식을 배워봐요',
     subtitle: '학습페이지',
     description: '카테고리별로 학습 할 수 있어요.',
-    page: '/archive/ArchivePage' // 아카이브 페이지 경로
+    page: '/archive/ArchivePage', // 아카이브 페이지 경로
   },
   {
-    image: '/src/assets/images/quizpage.png',
+    image: quizPageImg,
     title: '문제를 한 번 풀어봐요.',
     subtitle: '퀴즈페이지',
     description: '배웠던 내용으로 퀴즈를 풀어봐요.',
-    page: '/quiz/QuizPage' // 퀴즈 페이지 경로
+    page: '/quiz/QuizPage', // 퀴즈 페이지 경로
   },
   {
-    image: '/src/assets/images/tradepage.png',
+    image: tradePageImg,
     title: '이제는 실전에서 해봐요',
     subtitle: '모의투자 페이지',
     description: '리스크 없이 투자 경험을 쌓아보세요',
-    page: '/trade/TradePage' // 거래 페이지 경로
+    page: '/trade/TradePage', // 거래 페이지 경로
   },
   {
-    image: '/src/assets/images/chatbotpage.png',
+    image: chatbotPageImg,
     title: '저에게 모르는 걸 물어보세요.',
     subtitle: '쳇봇 서비스',
     description: '학습 중 모르는 것이 있으면 질문할 수 있어요.',
-    page: '/myLearning/MyLearningPage' // 내 학습 페이지 경로
+    page: '/myLearning/MyLearningPage', // 내 학습 페이지 경로
   },
 ]);
 
@@ -52,7 +58,8 @@ const nextSlide = () => {
 };
 
 const prevSlide = () => {
-  currentSlide.value = (currentSlide.value - 1 + slides.value.length) % slides.value.length;
+  currentSlide.value =
+    (currentSlide.value - 1 + slides.value.length) % slides.value.length;
 };
 
 const goToPage = (page) => {
@@ -66,9 +73,17 @@ onMounted(() => {
 
 <template>
   <div class="slider-container">
-    <div class="slider" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
-      <div v-for="(slide, index) in slides" :key="index" class="slide" @click="goToPage(slide.page)" >
-        <img :src="slide.image" :alt="slide.title">
+    <div
+      class="slider"
+      :style="{ transform: `translateX(-${currentSlide * 100}%)` }"
+    >
+      <div
+        v-for="(slide, index) in slides"
+        :key="index"
+        class="slide"
+        @click="goToPage(slide.page)"
+      >
+        <img :src="slide.image" :alt="slide.title" />
         <div class="slide-content">
           <h2>{{ slide.title }}</h2>
           <h3>{{ slide.subtitle }}</h3>
@@ -79,12 +94,16 @@ onMounted(() => {
     <button class="prev" @click="prevSlide">&lt;</button>
     <button class="next" @click="nextSlide">&gt;</button>
     <div class="dots">
-      <span 
-        v-for="(slide, index) in slides" 
-        :key="index" 
+      <span
+        v-for="(slide, index) in slides"
+        :key="index"
         :class="['dot', { active: currentSlide === index }]"
         @click="goToSlide(index)"
-        :style="{ backgroundColor: currentSlide === index ? 'gray' : 'rgba(255, 255, 255, 0.5)' }" >
+        :style="{
+          backgroundColor:
+            currentSlide === index ? 'gray' : 'rgba(255, 255, 255, 0.5)',
+        }"
+      >
       </span>
     </div>
   </div>
@@ -128,7 +147,8 @@ onMounted(() => {
   width: 65%; /* 내용의 최대 너비 설정 */
 }
 
-.prev, .next {
+.prev,
+.next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -142,12 +162,17 @@ onMounted(() => {
   transition: all 0.3s ease; /* 부드러운 전환 효과 */
 }
 
-.prev:hover, .next:hover {
+.prev:hover,
+.next:hover {
   color: rgba(255, 255, 255, 0.8); /* 호버 시 약간 투명해지는 효과 */
 }
 
-.prev { left: 20px; }
-.next { right: 20px; }
+.prev {
+  left: 20px;
+}
+.next {
+  right: 20px;
+}
 
 .dots {
   position: absolute;

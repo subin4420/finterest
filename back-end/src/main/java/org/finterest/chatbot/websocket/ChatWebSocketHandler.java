@@ -47,7 +47,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
             // 에러 메시지를 클라이언트에게 전송
             session.sendMessage(new TextMessage("서버 에러가 발생했습니다."));
             // 연결 종료
-            session.close(CloseStatus.SERVER_ERROR);
+//            session.close(CloseStatus.SERVER_ERROR);
         }
     }
 

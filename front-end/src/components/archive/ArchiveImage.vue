@@ -1,14 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import learnPageImg from '@/assets/images/learnpage.png';
 
 const currentSlide = ref(0);
 const slides = ref([
   {
-    image: '/src/assets/images/learnpage.png',
+    //'/src/assets/images/learnpage.png'
+    image: learnPageImg,
     title: '경제 상식을 배워봐요',
     subtitle: '학습페이지',
-    description: '카테고리별로 학습 할 수 있어요.'
-  }
+    description: '카테고리별로 학습 할 수 있어요.',
+  },
   // 필요한 만큼 슬라이드를 추가할 수 있습니다
   // 추가 슬라이드를 여기에 넣으세요
 ]);
@@ -16,9 +18,12 @@ const slides = ref([
 
 <template>
   <div class="slider-container">
-    <div class="slider" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+    <div
+      class="slider"
+      :style="{ transform: `translateX(-${currentSlide * 100}%)` }"
+    >
       <div v-for="(slide, index) in slides" :key="index" class="slide">
-        <img :src="slide.image" :alt="slide.title">
+        <img :src="slide.image" :alt="slide.title" />
         <div class="slide-content">
           <h2>{{ slide.title }}</h2>
           <h3>{{ slide.subtitle }}</h3>
@@ -67,7 +72,8 @@ const slides = ref([
   width: 65%; /* 내용의 최대 너비 설정 */
 }
 
-.prev, .next {
+.prev,
+.next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -81,12 +87,17 @@ const slides = ref([
   transition: all 0.3s ease; /* 부드러운 전환 효과 */
 }
 
-.prev:hover, .next:hover {
+.prev:hover,
+.next:hover {
   color: rgba(255, 255, 255, 0.8); /* 호버 시 약간 투명해지는 효과 */
 }
 
-.prev { left: 20px; }
-.next { right: 20px; }
+.prev {
+  left: 20px;
+}
+.next {
+  right: 20px;
+}
 
 .dots {
   position: absolute;
