@@ -2,8 +2,8 @@
     <div v-if="isVisible" class="modal-overlay" @click.self="closeModal">
         <div class="modal-content">
             <div class="modal-header">
-                <button class="back-button" @click="closeModal">
-                    <i class="fas fa-arrow-left"></i> 뒤로가기
+                <button class="close-button" @click="closeModal">
+                    <i class="fas fa-times"></i> <!-- X 아이콘 추가 -->
                 </button>
                 <span class="learning-status" v-if="cardData.status" :class="['status', statusClass]">
                     <i :class="statusIcon"></i> {{ statusText }}
@@ -99,6 +99,7 @@ export default {
     z-index: 1000;
 }
 
+
 .modal-content {
     background-color: white;
     padding: 30px;
@@ -109,23 +110,6 @@ export default {
     z-index: 1001;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
-
-.close-button {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    border: none;
-    background: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: #333;
-    transition: color 0.3s ease;
-}
-
-.close-button:hover {
-    color: #e74c3c;
-}
-
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -135,19 +119,19 @@ export default {
     border-bottom: 1px solid #eee;
 }
 
-.back-button {
-    color: #3498db;
+.close-button {
+    color: #333;
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 24px; /* 크기를 크게 설정 */
     display: flex;
     align-items: center;
     transition: color 0.3s ease;
 }
 
-.back-button:hover {
-    color: #2980b9;
+.close-button:hover {
+    color: #00c4d1; /* 마우스를 올렸을 때 색상 변경 */
 }
 
 .learning-status {
@@ -158,7 +142,7 @@ export default {
 }
 
 .status-completed {
-    background-color: #2ecc71;
+    background-color: #00c4d1;
     color: white;
 }
 

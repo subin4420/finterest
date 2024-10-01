@@ -2,13 +2,14 @@
   <div>
     <div class="cards">
       <QuizCard 
-        v-for="quiz in quizSets" 
+        v-for="quiz in filteredQuizSets" 
         :key="quiz.setId" 
         :cardData="quiz" 
         @click.native="openQuizModal(quiz)"  
       />
     </div>
-    <QuizModal 
+    <QuizResultModal 
+      v-if="selectedQuizSet"
       :isVisible="isQuizModalVisible" 
       :cardData="selectedQuizSet" 
       @update:isVisible="isQuizModalVisible = $event" 
@@ -18,28 +19,35 @@
 
 <script>
 import QuizCard from '@/components/quiz/QuizCard.vue';
-import QuizModal from '@/components/quiz/QuizModal.vue';
-import { ref, onMounted } from 'vue';
+import QuizResultModal from '@/components/quiz/QuizResultModal.vue';
+import { ref, onMounted, computed } from 'vue';
 import { useQuizStore } from '@/stores/quizStore';
 
 export default {
   name: 'QuizSetList',
   components: {
     QuizCard,
-    QuizModal
+    QuizResultModal
   },
   setup() {
-    const quizStore = useQuizStore();
-    const quizSets = ref([]);
+    const { quizSets, fetchQuizSets } = useQuizStore();
     const isQuizModalVisible = ref(false);
-    const selectedQuizSet = ref({});
+    const selectedQuizSet = ref(null);
 
+    // 컴포넌트가 마운트될 때 퀴즈 세트를 가져오는 로직
     onMounted(async () => {
-      const quizSetData = await quizStore.fetchQuizSets();
-      console.log('Fetched Quiz Sets:', quizSetData);  // 데이터 확인
-      quizSets.value = quizSetData;
+      try {
+        await fetchQuizSets(); // 스토어의 fetchQuizSets 호출하여 데이터를 가져옴
+      } catch (error) {
+        console.error('Error fetching quizSets', error);
+      }
     });
 
+    // userScore가 null이 아닌 퀴즈 세트만 필터링
+    const filteredQuizSets = computed(() => {
+      //return quizSets.value.filter(quiz => quiz.userScore !== null);
+      return quizSets.value;  // 테스트용
+    });
 
     const openQuizModal = (quiz) => {
       console.log('Selected Quiz:', quiz);  // 선택한 퀴즈 로그 확인
@@ -49,9 +57,8 @@ export default {
       }
     };
 
-
     return {
-      quizSets,
+      filteredQuizSets, // 필터링된 퀴즈 세트를 반환
       isQuizModalVisible,
       selectedQuizSet,
       openQuizModal
@@ -59,3 +66,13 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.cards {
+  width: 80%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px; /* 간격을 30px로 늘림 */
+}
+
+</style>

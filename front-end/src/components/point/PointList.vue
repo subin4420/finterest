@@ -12,7 +12,7 @@
       </thead>
       <tbody>
         <tr v-for="(point, index) in filteredPoints" :key="point?.pointId || index">
-          <th scope="row">{{ index + 1 }}</th>
+          <td scope="row">{{ index + 1 }}</td>
           <td>{{ point?.activityName || 'N/A' }}</td>
           <td :class="point?.pointsChange > 0 ? 'text-success' : 'text-danger'">
             {{ point?.pointsChange > 0 ? '+' : '' }}{{ point?.pointsChange || 0 }}
@@ -66,7 +66,6 @@ export default {
 <style>
 
 .table > thead > tr > th {
-  background-color: #00C4D1 !important;
-  color: white !important;
+  color: #00C4D1 !important;
 }
 </style>

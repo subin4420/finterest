@@ -2,7 +2,7 @@
   <div id="app">
     <QuizImage />
     <QuizNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
-
+    
     <div class="content-section">
       <h3>퀴즈 자료</h3>
       <div class="content-grid">
@@ -10,56 +10,80 @@
           v-for="quizSet in filteredQuizSets" 
           :key="quizSet.setId" 
           :cardData="quizSet" 
-          @click="openQuizModal(quizSet)" 
+          @click.native="openModal(quizSet)" 
         />
       </div>
     </div>
 
     <QuizModal 
       :isVisible="isModalVisible" 
-      :cardData="selectedQuiz" 
+      :cardData="selectedCard" 
       @update:isVisible="isModalVisible = $event" 
     />
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, computed } from 'vue';
-import QuizImage from '../../components/quiz/QuizImage.vue';
-import QuizNavigationBar from '../../components/quiz/QuizNavigationBar.vue';
-import QuizCard from '../../components/quiz/QuizCard.vue';
-import QuizModal from '../../components/quiz/QuizModal.vue';
-import { useQuizStore } from '../../stores/quizStore';
+<script>
+import QuizImage from '@/components/quiz/QuizImage.vue';
+import QuizNavigationBar from '@/components/quiz/QuizNavigationBar.vue';
+import QuizCard from '@/components/quiz/QuizCard.vue';
+import QuizModal from '@/components/quiz/QuizModal.vue';
+import { onMounted, ref, computed } from "vue";
+import { useQuizStore } from "@/stores/quizStore";
 
-const { quizSets, fetchQuizSets } = useQuizStore();
-const isModalVisible = ref(false);
-const selectedQuiz = ref(null);
-const selectedCategory = ref(null); // 선택된 카테고리 상태 추가
+export default {
+  name: 'QuizPage',
+  components: {
+    QuizImage,
+    QuizCard,
+    QuizModal,
+    QuizNavigationBar
+  },
+  setup() {
+    const quizStore = useQuizStore();
+    const isModalVisible = ref(false);
+    const selectedCard = ref({});
+    const selectedCategory = ref(null); // 선택된 카테고리 상태 추가
 
-onMounted(async () => {
-    await fetchQuizSets(); // 퀴즈 세트 가져오기
-    console.log("Quiz Sets on Mount:", quizSets.value); // 초기 상태 확인
-});
+    const quizSets = ref([]);
 
-// 카테고리 필터링 함수
-const filterByCategory = (category) => {
-    selectedCategory.value = category;
-};
+    onMounted(async () => {
+      await quizStore.fetchQuizSets(); // 퀴즈 세트 가져오기
+      const fetchedQuizSets = quizStore.quizSets.value; // .value를 통해 배열에 접근
+      console.log('Fetched Quiz Sets:', fetchedQuizSets); // 가져온 데이터 확인
+      quizSets.value = fetchedQuizSets; // 퀴즈 세트 저장
+    });
 
-// 필터링된 퀴즈 세트
-const filteredQuizSets = computed(() => {
-    return selectedCategory.value 
+    // 카테고리 필터링 함수
+    const filterByCategory = (category) => {
+      selectedCategory.value = category;
+      if (category === '즐겨찾기') {
+        // 페이지 새로고침 등 처리
+      }
+    };
+
+    // 필터링된 퀴즈 세트
+    const filteredQuizSets = computed(() => {
+      if (selectedCategory.value === '즐겨찾기') {
+        return quizSets.value.filter(quizSet => quizSet.favorite); // 즐겨찾기된 퀴즈만 필터링
+      }
+      return selectedCategory.value 
         ? quizSets.value.filter(quizSet => quizSet.categoryName === selectedCategory.value) 
         : quizSets.value;
-});
+    });
 
-function openQuizModal(quiz) {
-    selectedQuiz.value = quiz;
-    isModalVisible.value = true;
+    // 모달 열기 함수
+    function openModal(quiz) {
+      selectedCard.value = quiz;
+      isModalVisible.value = true;
+    }
+
+    return { filteredQuizSets, isModalVisible, selectedCard, openModal, filterByCategory, selectedCategory };
+  }
 }
-
-// return { filteredQuizSets, isModalVisible, selectedQuiz, openQuizModal, filterByCategory, selectedCategory };
 </script>
+
+
 
 <style scoped>
 h3 {
