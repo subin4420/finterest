@@ -14,11 +14,13 @@
     <typeAliases>
         <package name="org.finterest.security.account.domain" />
         <package name="org.finterest.user.domain"/>
-
+        <package name="org.finterest.invest.stock.overall.domain.kospi"/>
+        <package name="org.finterest.invest.stock.simulator.domain.SimulatorVO"/>
     </typeAliases>
 
     <mappers>
-        <mapper resource="org/finterest/stock/overall/mapper/OverallMapper.xml"/>
+        <mapper resource="org/finterest/invest/stock/overall/mapper/OverallMapper.xml"/>
+        <mapper resource="org/finterest/invest/stock/simulator/mapper/SimulatorMapper.xml"/>
         <mapper resource="org/finterest/conversion/mapper/ConversionMapper.xml"/>
         <mapper resource="org/finterest/user/mapper/userMapper.xml"/>
         <mapper resource="org/finterest/board/mapper/BoardMapper.xml"/>

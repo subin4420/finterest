@@ -15,7 +15,7 @@
           v-for="stock in displayedStockList"
           :key="stock.srtnCd"
           class="stock-item"
-          :class="{ selected: stock.srtnCd === stockStore.selectedStockCode }"
+          :class="{ selected: stock.srtnCd === tradeStore.selectedStockCode }"
           @click="selectStock(stock)"
         >
           <img :src="getLogoPath(stock.srtnCd)" class="thumbnail" />
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { useStockStore } from '@/stores/tradestock'; // Pinia 스토어 가져오기
+import { useTradeStore } from "@/stores/tradeStore"; // Pinia 스토어 가져오기
 
 export default {
   props: {
@@ -43,13 +43,13 @@ export default {
   },
   data() {
     return {
-      searchQuery: '',
+      searchQuery: "",
       filteredStockList: [],
     };
   },
   computed: {
-    stockStore() {
-      return useStockStore(); // Pinia 스토어 인스턴스 가져오기
+    tradeStore() {
+      return useTradeStore(); // Pinia 스토어 인스턴스 가져오기
     },
     displayedStockList() {
       return this.searchQuery
@@ -79,15 +79,15 @@ export default {
       });
     },
     selectStock(stock) {
-      const stockStore = useStockStore();
-      stockStore.setSelectedStockCode(stock.srtnCd);
-      console.log('선택된 주식 코드:', stockStore.selectedStockCode);
+      const tradeStore = useTradeStore();
+      tradeStore.setSelectedStockCode(stock.srtnCd);
+      console.log("선택된 주식 코드:", tradeStore.selectedStockCode);
     },
     getLogoPath(stockCode) {
       return `/logos/${stockCode}.png`; // stockCode에 따라 경로를 설정
     },
     formatCurrency(amount) {
-      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
   },
   created() {
@@ -112,7 +112,7 @@ export default {
   padding-top: 20px; /* padding-top 추가 */
 }
 
-input[type='text'] {
+input[type="text"] {
   width: 100%; /* 입력창이 컨테이너에 맞게 확장 */
   padding: 10px; /* padding 추가 */
   border: 1px solid #eaeaea; /* 테두리 추가 */

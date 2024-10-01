@@ -13,11 +13,10 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.finterest.member.controller",
         "org.finterest.invest.board.controller",
         "org.finterest.invest.stock.overall.controller",
+        "org.finterest.invest.stock.simulator.controller",
         "org.finterest.user.controller",
         "org.finterest.invest.conversion.controller",
-        "org.finterest.invest.comment.controller"
-
-
+        "org.finterest.invest.comment.controller",
 })
 public class ServletConfig  implements WebMvcConfigurer {
 
@@ -32,8 +31,8 @@ public class ServletConfig  implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**")
                 .addResourceLocations("/resources/");
-        registry.addResourceHandler("/assets/**")
-                .addResourceLocations("/resources/assets/");
+//        registry.addResourceHandler("/assets/**")
+//                .addResourceLocations("/resources/assets/");
     }
 
 

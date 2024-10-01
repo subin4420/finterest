@@ -26,17 +26,19 @@ import javax.sql.DataSource;
         "org.finterest.invest.stock.overall.mapper",
         "org.finterest.invest.conversion.mapper",
         "org.finterest.invest.board.mapper",
-        "org.finterest.invest.comment.mapper"
-
+        "org.finterest.invest.comment.mapper",
+        "org.finterest.invest.stock.simulator.mapper"
 })
 
 @ComponentScan(basePackages = {
         "org.finterest.security.config",
-        "org.finterest.invest",
+        "org.finterest.security.service",
+        "org.finterest.invest.stock.overall.service",
+        "org.finterest.invest.stock.simulator.service",
         "org.finterest.common.config",
-        "org.finterest.user",
-        "org.finterest.board"
-
+        "org.finterest.user.service",
+        "org.finterest.invest.board.service",
+        "org.finterest.invest.conversion.service"
 })
 @Slf4j
 @EnableTransactionManagement
