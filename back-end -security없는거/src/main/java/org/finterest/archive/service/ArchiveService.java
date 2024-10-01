@@ -33,6 +33,11 @@ public class ArchiveService {
         return archiveDAO.selectArchiveByCategory(categoryId);
     }
 
+    // 즐겨찾기된 자료만 조회
+    public List<ArchiveVO> selectFavoriteArchive(int userId){
+        return archiveDAO.selectFavoriteArchive(userId);
+    }
+
     // 텍스트 자료만 조회
     public List<ArchiveVO> selectTextArchive(Integer userId){
         return archiveDAO.selectTextArchive(userId);
@@ -62,6 +67,10 @@ public class ArchiveService {
 
     public List<ProgressDetailVO> selectProgressByStatus(int userId, String status){
         return archiveDAO.selectProgressByStatus(userId, status);
+    }
+
+    public void insertProgressStatus(int userId, int materialId){
+        archiveDAO.insertProgressStatus(userId, materialId);
     }
 
     // 학습 진행 상태 업데이트 (반환값을 int로 설정)

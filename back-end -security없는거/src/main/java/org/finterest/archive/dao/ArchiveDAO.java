@@ -1,5 +1,6 @@
 package org.finterest.archive.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
@@ -31,6 +32,10 @@ public class ArchiveDAO {
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectArchiveByCategory(categoryId);
     }
 
+    public List<ArchiveVO> selectFavoriteArchive(int userId){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectFavoriteArchive(userId);
+    }
+
     public List<ArchiveVO> selectTextArchive(Integer userId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectTextArchive(userId);
     }
@@ -58,6 +63,11 @@ public class ArchiveDAO {
 
     public List<ProgressDetailVO> selectProgressByStatus(int userId, String status){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectProgressByStatus(userId, status);
+    }
+
+    // 학습 진행 상태 추가
+    public void insertProgressStatus(int userId, int materialId) {
+        sqlSessionTemplate.getMapper(ArchiveMapper.class).insertProgressStatus(userId, materialId);
     }
 
     // 학습 진행 상태 업데이트 (반환값을 int로 설정)

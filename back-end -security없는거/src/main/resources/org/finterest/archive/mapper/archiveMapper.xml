@@ -67,6 +67,16 @@
         WHERE c.category_id = #{category_id}
     </select>
 
+    <!-- 즐겨찾기한 자료만 조회 -->
+    <select id="selectFavoriteArchive" resultType="org.finterest.archive.domain.ArchiveVO" parameterType="int">
+        SELECT
+        <include refid="ArchiveColumns" />
+        FROM learning_materials lm
+        JOIN categories c ON lm.category_id = c.category_id
+        INNER JOIN favorites f ON lm.material_id = f.material_id  <!-- 즐겨찾기된 자료만 조회 -->
+        WHERE f.user_id = #{userId}  <!-- 특정 사용자의 즐겨찾기만 필터링 -->
+    </select>
+
     <!-- 텍스트 자료만 조회 (link가 NULL) -->
     <select id="selectTextArchive" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
@@ -124,6 +134,13 @@
         <include refid="ProgressFromJoin" />
         AND lp.status = #{status}
     </select>
+
+
+    <!-- 학습 진행 상태(incomplete) 추가 -->
+    <insert id="insertProgressStatus" parameterType="org.finterest.archive.domain.ProgressVO">
+        INSERT INTO Learning_Progress (user_id, material_id, status, started_at)
+        VALUES (#{userId}, #{materialId}, 'incomplete', NOW())
+    </insert>
 
 
     <!-- 학습 진행 상태 업데이트 -->

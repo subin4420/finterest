@@ -46,7 +46,7 @@ public class QuizSetsController {
         List<QuizSetsVO> quizSets = quizSetsService.selectAllQuizSets();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("quiz_sets", quizSets);
+        response.put("quizSets", quizSets);
 
         // JWT 토큰이 있으면 로그인한 사용자로 간주하고, 퀴즈 세트 점수와 완료 날짜를 추가
         if (token != null && !token.isEmpty()) {
@@ -109,7 +109,7 @@ public class QuizSetsController {
 
         // 응답 구성
         Map<String, List<QuizSetsVO>> response = new HashMap<>();
-        response.put("quiz_sets", quizSetsVOList);
+        response.put("quizSets", quizSetsVOList);
         return response;
     }
 

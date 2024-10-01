@@ -92,8 +92,9 @@ export default {
 
 <style scoped>
 .cards {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 250px)); /* 최소 크기를 200px로 조정 */
+  gap: 20px; /* 카드 간격을 10px로 유지 */
 }
 </style>
