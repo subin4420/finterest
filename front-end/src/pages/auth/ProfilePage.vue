@@ -6,7 +6,7 @@ import { computed, reactive, ref } from 'vue';
 const auth = useAuthStore();
 
 const avatar = ref(null);
-const avatarPath = `/api/member/${auth.username}/avatar`;
+const avatarPath = `/api/users/${auth.username}/avatar`;
 const member = reactive({
   username: auth.username,
   email: auth.email,

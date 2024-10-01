@@ -22,7 +22,7 @@ public class SecurityController {
         return ResponseEntity.ok("All can access everybody");
     }
 
-    @GetMapping("/member")
+    @GetMapping("/user")
     public ResponseEntity<String> doMember(Authentication authentication) {
         UserDetails userDetails = (UserDetails)authentication.getPrincipal();
         log.info("username = " + userDetails.getUsername());

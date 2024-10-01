@@ -114,17 +114,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
+                //cros 를 위해 OPTIONS는 모두 허용으로
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers(HttpMethod.POST,"/api/member").authenticated()
-                .antMatchers(HttpMethod.PUT,"/api/member", "/api/member/*/changepassword").authenticated()
+//                .antMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
-                .antMatchers(HttpMethod.POST, "/api/board/**").authenticated()
-                .antMatchers(HttpMethod.PUT, "/api/board/**").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/api/board/**").authenticated()
+                //회원
+                //회원가입도 인증 안된사람도 할 수 있게 만들어야함
+                .antMatchers(HttpMethod.POST,"/api/users/join").permitAll()
+                .antMatchers(HttpMethod.PUT,"/api/users", "/api/users/*/changepassword").authenticated()
+                //학습자료
+
+                //퀴즈
+                .antMatchers(HttpMethod.POST, "/api/quizzes/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/quizzes/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/quizzes/**").authenticated()
+                //퀴즈세트
+                .antMatchers(HttpMethod.POST, "/api/quiz-sets/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/quiz-sets/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/quiz-sets/**").authenticated()
                 .anyRequest().permitAll()
         ;
 
-        http.httpBasic().disable()		// 기본 HTTP 인증 비활성화
+        http    .cors().and()
+                .httpBasic().disable()		// 기본 HTTP 인증 비활성화
                 .csrf().disable()       // CSRF 비활성화
                 .formLogin().disable()  // formLogin 비활성화  관련 필터 해제
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 세션 생성 모드 설정

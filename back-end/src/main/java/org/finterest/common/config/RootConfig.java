@@ -39,7 +39,6 @@ import javax.sql.DataSource;
         "org.finterest.notice",
         //"org.finterest.member.service",
         "org.finterest.user",
-        "org.finterest.chatbot"
 
 })
 @Slf4j

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.finterest.security.account.domain.UserVO;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
@@ -20,6 +21,10 @@ public class UserJoinDTO {
     String email;
     String accountStatus = "active";  // 기본값
     BigDecimal money = new BigDecimal("0");  // 기본값
+
+    MultipartFile avatar;
+
+
     public UserVO toVO() {
         return UserVO.builder()
                 .username(username)

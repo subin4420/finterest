@@ -14,7 +14,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+//로그인 성공 시 호출되는 핸들러
+//JWT 토큰을 생성하고 인증 결과를 클라이언트에게 응답
 @Component
 @RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
@@ -24,9 +25,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
+        //authentication은 인증 객체이 인증 객체에 사용자 정보가 담겨있음
+        //그걸 꺼내는게 getPrincipal() 이걸 담기 위해 우리는 CustomUser 클래스를 만들었었음
         // 인증 결과 Principal
         CustomUser user = (CustomUser) authentication.getPrincipal();
 
+        //받아온 유저정보로
         // 인증 성공 결과를 JSON으로 직접 응답
         AuthResultDTO result = makeAuthResult(user);
         JsonResponse.send(response, result);
