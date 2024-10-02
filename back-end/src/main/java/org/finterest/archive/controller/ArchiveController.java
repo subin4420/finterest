@@ -6,6 +6,7 @@ import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.service.ArchiveService;
 import org.finterest.security.util.JwtProcessor;
+import org.finterest.security.util.TokenUtil;
 import org.finterest.user.dto.UserDTO;
 import org.finterest.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,13 @@ import java.util.Map;
 public class ArchiveController {
     private final ArchiveService archiveService;
     private final JwtProcessor jwtProcessor; // JwtProcessor 주입
-    private final UserService userService;
+    private final TokenUtil tokenUtil;
     @Autowired
-    public ArchiveController(ArchiveService archiveService, JwtProcessor jwtProcessor, UserService userService) {
+    public ArchiveController(ArchiveService archiveService, JwtProcessor jwtProcessor, TokenUtil tokenUtil) {
         System.out.println("ArchiveController created");
         this.archiveService = archiveService;
         this.jwtProcessor = jwtProcessor;
-        this.userService = userService;
+        this.tokenUtil = tokenUtil;
 
     }
 
@@ -42,7 +43,7 @@ public class ArchiveController {
 
         if (authToken != null && !authToken.isEmpty()) {
             // 토큰이 있는 경우에만 사용자 ID를 추출
-            userId = getUserIdFromToken(authToken);
+            userId = tokenUtil.getUserIdFromToken(authToken);
         }
 
         // 자료 유형별 조회
@@ -138,7 +139,7 @@ public class ArchiveController {
             @PathVariable int materialId,
             @RequestHeader("Authorization") String token) {
 
-        int userId = getUserIdFromToken(token);
+        int userId = tokenUtil.getUserIdFromToken(token);
 
         Map<String, String> response = new HashMap<>();
 
@@ -158,7 +159,7 @@ public class ArchiveController {
     public Map<String, String> removeFavorite(
             @PathVariable int materialId,
             @RequestHeader("Authorization") String token) {
-        int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
+        int userId = tokenUtil.getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
         archiveService.deleteFavorite(userId, materialId);
 
         Map<String, String> response = new HashMap<>();
@@ -173,7 +174,7 @@ public class ArchiveController {
             @RequestHeader("Authorization") String token,
             @RequestParam(value = "status", required = false) String status) {
 
-        int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
+        int userId = tokenUtil.getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
         List<ProgressDetailVO> progressList;
 
         if (status == null) {
@@ -194,7 +195,7 @@ public class ArchiveController {
             @RequestBody Map<String, String> requestBody,
             @RequestHeader("Authorization") String token) {
 
-        int userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
+        int userId = tokenUtil.getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
 
         String status = requestBody.get("status");
         if (status == null || (!status.equals("completed") && !status.equals("incomplete"))) {
@@ -213,22 +214,5 @@ public class ArchiveController {
         return response;
     }
 
-    // JWT 토큰에서 사용자 ID를 추출하는 메서드
-    private Integer getUserIdFromToken(String authToken) {
-        if (authToken == null || authToken.isEmpty()) {
-            throw new IllegalArgumentException("Missing or invalid Authorization header");
-        }
 
-        // Bearer 토큰에서 실제 JWT 추출
-        String token = authToken.startsWith("Bearer ") ? authToken.substring(7) : authToken;
-        try {
-            // JwtProcessor의 getUsername 메서드를 사용해 JWT에서 사용자 ID 추출
-            String username = jwtProcessor.getUsername(token);
-            UserDTO userDTO = userService.get(username);
-            int id = userDTO.toVO().getUserId();
-            return id;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid token", e);
-        }
-    }
 }
