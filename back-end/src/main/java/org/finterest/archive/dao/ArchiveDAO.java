@@ -42,7 +42,9 @@ public class ArchiveDAO {
     public ProgressVO getProgressForMaterial(int materialId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).getProgressForMaterial(materialId);
     }
-
+    public ProgressVO getProgressForUserId(Integer userId){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).getProgressForUserId(userId);
+    }
 
     public void insertFavorite(int userId, int materialId){
         sqlSessionTemplate.getMapper(ArchiveMapper.class).insertFavorite(userId, materialId);
@@ -64,10 +66,10 @@ public class ArchiveDAO {
     public int updateProgressStatus(int userId, int materialId, String status) {
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).updateProgressStatus(userId, materialId, status);
     }
+
     // 특정 학습 자료와 사용자의 학습 진행 상태 조회
-    public ProgressVO getProgressForMaterialAndUser(int materialId, int userId) {
-        return sqlSessionTemplate.getMapper(ArchiveMapper.class)
-                .getProgressForMaterialAndUser(materialId, userId);
+    public ProgressVO getProgressForMaterialAndUser(int userId, int materialId) {
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).getProgressForUserAndMaterial(userId, materialId);
     }
 
     // 학습 진행 상태 추가

@@ -30,7 +30,6 @@ public class ArchiveController {
 
     }
 
-    // 모든 자료 조회 (토큰 없이도 가능)
     @GetMapping
     public Map<String, List<ArchiveVO>> selectAllArchive(
             @RequestParam(value = "type", required = false) String type,
@@ -46,6 +45,7 @@ public class ArchiveController {
         }
         System.out.println("token: "+authToken);
         System.out.println("UserID: "+userId);
+
         // 자료 유형별 조회
         if (type != null) {
             if (type.equals("text")) {
@@ -62,7 +62,7 @@ public class ArchiveController {
         boolean isAuthenticated = (userId != null); // 사용자 ID가 있을 때만 인증된 상태로 간주
 
         Map<String, List<ArchiveVO>> response = new HashMap<>();
-        response.put("archives", applyProgressData(archiveVOList, isAuthenticated)); // 학습 진행 상태 추가
+        response.put("archives", applyProgressData(archiveVOList, isAuthenticated, userId)); // 학습 진행 상태 추가
 
         return response;
     }
@@ -83,20 +83,27 @@ public class ArchiveController {
 
         List<ArchiveVO> archiveVOList = archiveService.selectArchiveByCategory(categoryId);
 
-        boolean isAuthenticated = (authToken != null && !authToken.isEmpty());
+        Integer userId = null;
+        boolean isAuthenticated = false;
+
+        if (authToken != null && !authToken.isEmpty()) {
+            // 토큰이 있는 경우에만 사용자 ID를 추출
+            userId = tokenUtil.getUserIdFromToken(authToken);
+            isAuthenticated = true;
+        }
 
         Map<String, List<ArchiveVO>> response = new HashMap<>();
-        response.put("archives", applyProgressData(archiveVOList, isAuthenticated));
+        response.put("archives", applyProgressData(archiveVOList, isAuthenticated, userId));
 
         return response;
     }
 
     // JWT 토큰이 있는 경우 학습 진행 데이터를 추가하는 메서드
-    private List<ArchiveVO> applyProgressData(List<ArchiveVO> archives, boolean isAuthenticated) {
-        if (isAuthenticated) {
+    private List<ArchiveVO> applyProgressData(List<ArchiveVO> archives, boolean isAuthenticated, Integer userId) {
+        if (isAuthenticated && userId != null) {
             for (ArchiveVO archive : archives) {
-                // 여기서 학습 진행 상태(status, startedAt, completedAt)를 추가할 수 있습니다.
-                ProgressVO progress = archiveService.getProgressForMaterial(archive.getMaterialId());
+                // 학습 자료 ID와 사용자 ID로 학습 진행 정보를 조회
+                ProgressVO progress = archiveService.getProgressForUserAndMaterial(userId, archive.getMaterialId());
                 if (progress != null) {
                     archive.setStatus(progress.getStatus());
                     archive.setStartedAt(progress.getStartedAt());

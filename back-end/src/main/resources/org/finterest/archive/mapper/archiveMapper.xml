@@ -44,11 +44,10 @@
     </sql>
 
     <!-- 모든 항목 조회 -->
-    <select id="selectAllArchive"  parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
+    <select id="selectAllArchive"  resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
-
     </select>
 
 
@@ -138,6 +137,16 @@
 
     <!-- 특정 학습 자료와 사용자의 진행 상태 조회 -->
     <select id="getProgressForMaterialAndUser" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT *
+        FROM Learning_Progress
+        WHERE material_id = #{materialId} AND user_id = #{userId}
+    </select>
+    <select id="getProgressForUserId" parameterType="Integer" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT *
+        FROM Learning_Progress
+        WHERE user_id = #{userId}
+    </select>
+    <select id="getProgressForUserAndMaterial" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
         SELECT *
         FROM Learning_Progress
         WHERE material_id = #{materialId} AND user_id = #{userId}

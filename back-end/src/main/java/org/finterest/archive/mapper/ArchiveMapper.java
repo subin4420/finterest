@@ -17,6 +17,7 @@ public interface ArchiveMapper {
     List<ArchiveVO> selectTextArchive(@Param("userId") Integer userId);
     List<ArchiveVO> selectVideoArchive(@Param("userId") Integer userId);
     ProgressVO getProgressForMaterial(int materialId);
+    ProgressVO getProgressForUserId(Integer userId);
 
     //void insertFavorite(int userId, int materialId);
     //void deleteFavorite(int userId, int materialId);
@@ -34,7 +35,7 @@ public interface ArchiveMapper {
     // 학습 진행 상태 업데이트 (반환값을 int로 설정)
     int updateProgressStatus(@Param("userId") int userId, @Param("materialId") int materialId, @Param("status") String status);
 
-    ProgressVO getProgressForMaterialAndUser(int materialId, int userId);
-
-    void insertProgress(int userId, int materialId, String status, String startedAt);
+    // 학습 진행 상태 조회
+    ProgressVO getProgressForUserAndMaterial(@Param("userId") int userId, @Param("materialId") int materialId);
+    void insertProgress(@Param("userId") int userId, @Param("materialId") int materialId, @Param("status") String status, @Param("startedAt") String startedAt);
 }

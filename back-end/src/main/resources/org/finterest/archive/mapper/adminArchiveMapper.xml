@@ -87,5 +87,14 @@
         DELETE FROM Learning_Materials
         WHERE material_id = #{materialId}
     </delete>
-
+    <select id="getProgressForMaterialAndUser" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT
+            progress_id AS progressId,
+            material_id AS materialId,
+            status,
+            started_at AS startedAt,
+            completed_at AS completedAt
+        FROM Learning_Progress
+        WHERE material_id = #{materialId} AND user_id = #{userId}
+    </select>
 </mapper>

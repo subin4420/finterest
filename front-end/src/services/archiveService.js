@@ -49,7 +49,7 @@ export const getArchive = async (params = {}) => {
 
 
 
-// 학습 진행 상태 조회 API 호출 함수 (테스트용 Authorization 헤더 추가)
+// 학습 진행 상태 조회 API 호출 함수 
 export const getArchiveProgress = async (params = {}) => {
   try {
     const token = getToken();
