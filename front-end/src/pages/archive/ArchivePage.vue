@@ -9,7 +9,7 @@
         <ArchiveCard 
           v-for="archive in filteredTextArchives" 
           :key="archive.materialId" 
-          :cardData="archive" 
+          :cardData="archive"
           @click.native="openModal(archive)" 
         />
       </div>
@@ -57,20 +57,37 @@ export default {
     const selectedCard = ref({});
     const selectedCategory = ref(null); // 선택된 카테고리 상태 추가
 
-    const textArchives = ref([]);
-    const videoArchives = ref([]);
+    // const textArchives = ref([]);
+    // const videoArchives = ref([]);
+
+    // 텍스트 및 비디오 아카이브 데이터
+    const { textArchives, videoArchives } = archiveStore;
 
     onMounted(async () => {
-      await archiveStore.fetchArchive('text'); // 텍스트 자료 가져오기
-      const Tarchives = archiveStore.archives.value; // .value를 통해 배열에 접근
-      console.log('Text Archives:', Tarchives); // 추가된 로그
-      await archiveStore.fetchArchive('video'); // 영상 자료 가져오기
-      const Varchives = archiveStore.archives.value; // .value를 통해 배열에 접근
-      console.log('Video Archives:', Varchives); // 추가된 로그
-
+      // await archiveStore.fetchArchive('text'); // 텍스트 자료 가져오기
+      // const Tarchives = archiveStore.archives.value; // .value를 통해 배열에 접근
+      // console.log('Text Archives:', Tarchives); // 추가된 로그
+      // await archiveStore.fetchArchive('video'); // 영상 자료 가져오기
+      // const Varchives = archiveStore.archives.value; // .value를 통해 배열에 접근
+      // console.log('Video Archives:', Varchives); // 추가된 로그
       // 자료를 구분하여 저장
-      textArchives.value = Tarchives.filter(archive => archive.link === null);
-      videoArchives.value = Varchives.filter(archive => archive.link !== null);
+      // textArchives.value = Tarchives.filter(archive => archive.link === null);
+      // videoArchives.value = Varchives.filter(archive => archive.link !== null);
+
+      try {
+        // 텍스트 자료 가져오기
+        await archiveStore.fetchTextArchive();
+        
+        // 영상 자료 가져오기
+        await archiveStore.fetchVideoArchive();
+        
+        console.log('Text Archives:', textArchives.value);
+        console.log('Video Archives:', videoArchives.value);
+      } catch (error) {
+        console.error('Error during archive fetch:', error);
+      }
+
+  
     });
 
     // 카테고리 필터링 함수
@@ -83,6 +100,7 @@ export default {
 
     // 필터링된 텍스트 아카이브
     const filteredTextArchives = computed(() => {
+      if (!textArchives.value) return [];
       if (selectedCategory.value === '즐겨찾기') {
         return textArchives.value.filter(archive => archive.favorite); // 즐겨찾기된 카드만 필터링
       }
@@ -93,6 +111,7 @@ export default {
 
     // 필터링된 영상 아카이브
     const filteredVideoArchives = computed(() => {
+      if (!videoArchives.value) return [];
       if (selectedCategory.value === '즐겨찾기') {
         return videoArchives.value.filter(archive => archive.favorite); // 즐겨찾기된 카드만 필터링
       }
@@ -106,7 +125,15 @@ export default {
       isModalVisible.value = true;
     }
 
-    return { filteredTextArchives, filteredVideoArchives, isModalVisible, selectedCard, openModal, filterByCategory, selectedCategory };
+    return { 
+      filteredTextArchives, 
+      filteredVideoArchives, 
+      isModalVisible, 
+      selectedCard, 
+      openModal, 
+      filterByCategory, 
+      selectedCategory 
+    };
   }
 }
 </script>

@@ -5,24 +5,49 @@ import { useAuthStore } from '@/stores/auth'; // auth 스토어 import
 const getToken = () => {
   const authStore = useAuthStore();
   const token = authStore.getToken();
-  if (!token) {
-    throw new Error('인증 토큰이 없습니다. 로그인이 필요합니다.');
-  }
-  return token;
+  // if (!token) {
+  //   throw new Error('인증 토큰이 없습니다. 로그인이 필요합니다.');
+  // }
+  // return token;
+  return token || null;
 };
+
+// Authorization 헤더 추가 및 에러 핸들링 추가
+// export const getArchive = async (params = {}) => {
+//   const token = getToken();
+//   const response = await api.get('/api/archive', { 
+//     params,
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
+//   console.log("in service response.data: ", response.data);
+//   return response.data;
+// };
 
 // Authorization 헤더 추가 및 에러 핸들링 추가
 export const getArchive = async (params = {}) => {
   const token = getToken();
-  const response = await api.get('/api/archive', { 
+  
+  // API 요청 (토큰이 있으면 Authorization 헤더 추가)
+  const config = {
     params,
-    headers: {
+  };
+  
+  if (token) {
+    config.headers = {
       Authorization: `Bearer ${token}`,
-    },
-  });
+    };
+  }
+
+  // API 요청
+  const response = await api.get('/api/archive', config);
+
   console.log("in service response.data: ", response.data);
   return response.data;
 };
+
+
 
 // 학습 진행 상태 조회 API 호출 함수 (테스트용 Authorization 헤더 추가)
 export const getArchiveProgress = async (params = {}) => {
