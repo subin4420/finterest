@@ -6,10 +6,10 @@ import authApi from '@/api/authApi';
 const router = useRouter();
 const avatar = ref(null);
 const checkError = ref('');
-  
-//////////////////////////////////////////////////////////
+
 const member = reactive({
   username: 'hong',
+  fullName: '',  // 추가된 부분
   email: 'hong@gmail.com',
   password: '12',
   password2: '12',
@@ -70,6 +70,15 @@ const join = async () => {
           <span :class="disableSubmit.value ? 'text-primary' : 'text-danger'">{{ checkError }}</span>
         </label>
         <input type="text" class="form-control" placeholder="사용자 ID" id="username" @input="changeUsername" v-model="member.username" />
+      </div>
+
+      <!-- 새로 추가된 전체 이름 입력 필드 -->
+      <div class="mb-3 mt-3">
+        <label for="fullName" class="form-label">
+          <i class="fa-solid fa-user"></i>
+        이름:
+        </label>
+        <input type="text" class="form-control" placeholder="전체 이름" id="fullName" v-model="member.fullName" />
       </div>
 
       <div>

@@ -30,6 +30,7 @@ export default {
   async create(member) {
     const formData = new FormData();
     formData.append('username', member.username);
+    formData.append('fullName', member.fullName);  // 추가된 부분
     formData.append('email', member.email);
     formData.append('password', member.password);
 

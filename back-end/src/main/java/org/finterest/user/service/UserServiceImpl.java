@@ -14,7 +14,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,6 +36,19 @@ public class UserServiceImpl implements UserService {
         UserVO member = userMapper.get(username);
         return member != null ? true : false;
     }
+
+
+    private void saveAvatar(MultipartFile avatar, String username) {
+        //아바타 업로드
+        if(avatar != null && !avatar.isEmpty()) {
+            File dest = new File("/Users/park/Desktop/최종 프로젝트/avatar/", username + ".png");
+            try {
+                avatar.transferTo(dest);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
     // 회원 가입 처리
     @Transactional
     @Override
@@ -47,7 +63,7 @@ public class UserServiceImpl implements UserService {
         auth.setAuth("ROLE_USER");
 
         userMapper.insertAuth(auth);
-        //saveAvatar(UserJoinDTO.getAvatar(), userVO.getUsername());
+        saveAvatar(userJoinDTO.getAvatar(), userVO.getUsername());
         return get(userVO.getUsername());
     }
     //특정 회원 삭제

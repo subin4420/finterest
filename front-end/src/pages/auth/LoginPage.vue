@@ -24,13 +24,12 @@ const login = async () => {
     if (cr.query.next) {
       router.push({ name: cr.query.next });
     } else {
-      // 일반
       router.push('/');
     }
   } catch (e) {
     // 로그인 에러
     console.log('에러=======', e);
-    error.value = e.response.data;
+    error.value = e.response?.data?.message || '로그인에 실패했습니다.';
   }
 };
   //////////////////////////////////////////////////////////
@@ -49,7 +48,7 @@ const login = async () => {
           <i class="fa-solid fa-user"></i>
           사용자 ID:
         </label>
-        <input type="text" class="form-control" placeholder="사용자 ID" v-model="member.username" required />
+        <input type="text" class="form-control" placeholder="사용자 ID" v-model="user.username" required />
       </div>
 
       <div class="mb-3">
@@ -57,7 +56,7 @@ const login = async () => {
           <i class="fa-solid fa-lock"></i>
           비밀번호:
         </label>
-        <input type="password" class="form-control" placeholder="비밀번호" v-model="member.password" required />
+        <input type="password" class="form-control" placeholder="비밀번호" v-model="user.password" required />
       </div>
 
       <div v-if="error" class="text-danger">{{ error }}</div>

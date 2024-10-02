@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
+//인증은 되었지만 사용자가 해당 리소스에 접근할 권한이 없는 경우 호출
 @Component
 @Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {

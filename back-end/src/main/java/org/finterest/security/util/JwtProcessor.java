@@ -3,6 +3,7 @@ package org.finterest.security.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +15,12 @@ import java.util.Date;
 public class JwtProcessor {
     static private final long TOKEN_VALID_MILISECOND = 1000L * 60 * 60 * 2; // 5 분
 
-    private String secretKey = "충분히 긴 임의의(랜덤한) 비밀키 문자열 배정 ";
-    private Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-
-    //    private Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);  -- 운영시 사용
+//    private String secretKey = "충분히 긴 임의의(랜덤한) 비밀키 문자열 배정 ";
+//    private Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    //이렇게 되면 서버가 다운 됐을 경우 기존의 JWT토큰은 모두 사용할 수 없게된다.
+    //서버 다운 시 새로운 문자열이
+    //리프레쉬 토큰과 같이 유효기간이 긴 토큰에 경우 모두 무효됨
+    private Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);  //-- 운영시 사용
     // JWT 생성
     public String generateToken(String subject) {
         return Jwts.builder()
