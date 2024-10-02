@@ -21,13 +21,11 @@ import java.util.Map;
 @RequestMapping("/api/archive")
 public class ArchiveController {
     private final ArchiveService archiveService;
-    private final JwtProcessor jwtProcessor; // JwtProcessor 주입
     private final TokenUtil tokenUtil;
     @Autowired
-    public ArchiveController(ArchiveService archiveService, JwtProcessor jwtProcessor, TokenUtil tokenUtil) {
+    public ArchiveController(ArchiveService archiveService, TokenUtil tokenUtil) {
         System.out.println("ArchiveController created");
         this.archiveService = archiveService;
-        this.jwtProcessor = jwtProcessor;
         this.tokenUtil = tokenUtil;
 
     }
@@ -43,9 +41,11 @@ public class ArchiveController {
 
         if (authToken != null && !authToken.isEmpty()) {
             // 토큰이 있는 경우에만 사용자 ID를 추출
+            System.out.println("@@@@@@@@@@@토큰 있는 사용자의 아카이브 조회@@@@@@@@@@@@");
             userId = tokenUtil.getUserIdFromToken(authToken);
         }
-
+        System.out.println("token: "+authToken);
+        System.out.println("UserID: "+userId);
         // 자료 유형별 조회
         if (type != null) {
             if (type.equals("text")) {

@@ -64,6 +64,14 @@ public class ArchiveService {
         return archiveDAO.selectProgressByStatus(userId, status);
     }
 
+    // 특정 학습 자료와 사용자에 대한 학습 진행 상태를 조회
+    public ProgressVO getProgressForMaterialAndUser(int materialId, int userId) {
+        return archiveDAO.getProgressForMaterialAndUser(materialId, userId);
+    }
+    // 학습 진행 상태 추가
+    public void insertProgress(int userId, int materialId, String status, String startedAt) {
+        archiveDAO.insertProgress(userId, materialId, status, startedAt);
+    }
     // 학습 진행 상태 업데이트 (반환값을 int로 설정)
     public int updateProgressStatus(int userId, int materialId, String status) {
         return archiveDAO.updateProgressStatus(userId, materialId, status);

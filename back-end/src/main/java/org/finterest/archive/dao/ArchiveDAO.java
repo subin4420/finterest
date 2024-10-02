@@ -64,5 +64,16 @@ public class ArchiveDAO {
     public int updateProgressStatus(int userId, int materialId, String status) {
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).updateProgressStatus(userId, materialId, status);
     }
+    // 특정 학습 자료와 사용자의 학습 진행 상태 조회
+    public ProgressVO getProgressForMaterialAndUser(int materialId, int userId) {
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class)
+                .getProgressForMaterialAndUser(materialId, userId);
+    }
+
+    // 학습 진행 상태 추가
+    public void insertProgress(int userId, int materialId, String status, String startedAt) {
+        sqlSessionTemplate.getMapper(ArchiveMapper.class)
+                .insertProgress(userId, materialId, status, startedAt);
+    }
 
 }
