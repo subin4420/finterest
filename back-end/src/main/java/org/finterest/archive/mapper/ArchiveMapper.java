@@ -13,14 +13,17 @@ import java.util.List;
 public interface ArchiveMapper {
     List<ArchiveVO> selectAllArchive(@Param("userId") Integer userId);
     ArchiveVO selectArchiveById(int id);
-    List<ArchiveVO> selectArchiveByCategory(int category_id);
+
+    List<ArchiveVO> selectArchiveByCategory(int categoryId);
+    List<ArchiveVO> selectArchiveByCategoryWithFavorites(@Param("userId") Integer userId, @Param("categoryId") int categoryId);
+
     List<ArchiveVO> selectTextArchive(@Param("userId") Integer userId);
     List<ArchiveVO> selectVideoArchive(@Param("userId") Integer userId);
     ProgressVO getProgressForMaterial(int materialId);
     ProgressVO getProgressForUserId(Integer userId);
 
-    //void insertFavorite(int userId, int materialId);
-    //void deleteFavorite(int userId, int materialId);
+    // 즐겨찾기한 자료 조회
+    List<ArchiveVO> selectFavoritesArchive(@Param("userId") Integer userId);
 
     // 즐겨찾기 추가
     void insertFavorite(@Param("userId") int userId, @Param("materialId") int materialId);
@@ -32,7 +35,11 @@ public interface ArchiveMapper {
     List<ProgressDetailVO> selectAllProgress(@Param("userId") int userId);
     List<ProgressDetailVO> selectProgressByStatus(@Param("userId") int userId, @Param("status") String status);
 
-    // 학습 진행 상태 업데이트 (반환값을 int로 설정)
+    // 학습 진행 상태(incomplete) 추가
+    int insertProgressStatus(@Param("userId") int userId, @Param("materialId") int materialId);
+
+
+    // 학습 진행 상태(completed) 업데이트 (반환값을 int로 설정)
     int updateProgressStatus(@Param("userId") int userId, @Param("materialId") int materialId, @Param("status") String status);
 
     // 학습 진행 상태 조회

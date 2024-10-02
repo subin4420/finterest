@@ -30,9 +30,13 @@ public class ArchiveController {
 
     }
 
+
+    // 전체 자료 조회
     @GetMapping
     public Map<String, List<ArchiveVO>> selectAllArchive(
             @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "favorites", required = false) Boolean favorites,  // 즐겨찾기 여부 추가
+            @RequestParam(value = "categoryId", required = false) Integer categoryId,  // 카테고리 ID 추가
             @RequestHeader(value = "Authorization", required = false) String authToken) {
 
         List<ArchiveVO> archiveVOList;
@@ -43,20 +47,33 @@ public class ArchiveController {
             System.out.println("@@@@@@@@@@@토큰 있는 사용자의 아카이브 조회@@@@@@@@@@@@");
             userId = tokenUtil.getUserIdFromToken(authToken);
         }
-        System.out.println("token: "+authToken);
-        System.out.println("UserID: "+userId);
+        System.out.println("token: " + authToken);
+        System.out.println("UserID: " + userId);
 
-        // 자료 유형별 조회
-        if (type != null) {
-            if (type.equals("text")) {
-                archiveVOList = archiveService.selectTextArchive(userId); // 텍스트 자료만
-            } else if (type.equals("video")) {
-                archiveVOList = archiveService.selectVideoArchive(userId); // 영상 자료만
-            } else {
-                throw new IllegalArgumentException("Invalid type: " + type);
+        // 즐겨찾기 여부를 확인하고, 즐겨찾기 자료 조회
+        if (favorites != null && favorites) {
+            if (userId == null) {
+                throw new IllegalArgumentException("로그인 후 즐겨찾기 자료를 조회할 수 있습니다.");
             }
+            System.out.println("즐겨찾기한 자료만 조회");
+            archiveVOList = archiveService.getArchives(userId, favorites); // 즐겨찾기 자료만 조회
+        } else if (categoryId != null) {
+            // 카테고리 ID로 자료 조회
+            System.out.println("카테고리 ID로 자료 조회");
+            archiveVOList = archiveService.selectArchiveByCategory(userId, categoryId);;
         } else {
-            archiveVOList = archiveService.selectAllArchive(userId); // 모든 자료
+            // 자료 유형별 조회
+            if (type != null) {
+                if (type.equals("text")) {
+                    archiveVOList = archiveService.selectTextArchive(userId); // 텍스트 자료만
+                } else if (type.equals("video")) {
+                    archiveVOList = archiveService.selectVideoArchive(userId); // 영상 자료만
+                } else {
+                    throw new IllegalArgumentException("Invalid type: " + type);
+                }
+            } else {
+                archiveVOList = archiveService.selectAllArchive(userId); // 모든 자료
+            }
         }
 
         boolean isAuthenticated = (userId != null); // 사용자 ID가 있을 때만 인증된 상태로 간주
@@ -67,6 +84,7 @@ public class ArchiveController {
         return response;
     }
 
+
     // 특정 ID로 자료 조회
     @GetMapping("/{id}")
     public ArchiveVO one(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authToken) {
@@ -75,28 +93,6 @@ public class ArchiveController {
         return applyProgressDataToSingle(archiveVO, isAuthenticated); // 학습 진행 상태 추가
     }
 
-    // 특정 카테고리 ID로 자료 조회
-    @GetMapping(params = "categoryId")
-    public Map<String, List<ArchiveVO>> findByCategoryId(
-            @RequestParam int categoryId,
-            @RequestHeader(value = "Authorization", required = false) String authToken) {
-
-        List<ArchiveVO> archiveVOList = archiveService.selectArchiveByCategory(categoryId);
-
-        Integer userId = null;
-        boolean isAuthenticated = false;
-
-        if (authToken != null && !authToken.isEmpty()) {
-            // 토큰이 있는 경우에만 사용자 ID를 추출
-            userId = tokenUtil.getUserIdFromToken(authToken);
-            isAuthenticated = true;
-        }
-
-        Map<String, List<ArchiveVO>> response = new HashMap<>();
-        response.put("archives", applyProgressData(archiveVOList, isAuthenticated, userId));
-
-        return response;
-    }
 
     // JWT 토큰이 있는 경우 학습 진행 데이터를 추가하는 메서드
     private List<ArchiveVO> applyProgressData(List<ArchiveVO> archives, boolean isAuthenticated, Integer userId) {
@@ -195,8 +191,32 @@ public class ArchiveController {
         return response;
     }
 
-    // 학습 진행 상태 업데이트
+    // 학습 진행 상태 추가 (incomplete 상태로 학습 시작)
     @PostMapping("/{materialId}/progress")
+    public Map<String, String> insertProgress(
+            @PathVariable int materialId,
+            @RequestBody Map<String, String> requestBody,
+            @RequestHeader("Authorization") String token) {
+
+        int userId = tokenUtil.getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
+
+
+        String status = requestBody.get("status");
+        if (status == null || !status.equals("incomplete")) {
+            throw new IllegalArgumentException("Invalid status value. Only 'incomplete' is allowed.");
+        }
+
+        // 학습 진행 상태(incomplete) 추가 로직
+        archiveService.insertProgressStatus(userId, materialId);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "학습 진행 상태가 추가되었습니다.");
+        return response;
+    }
+
+
+    // 학습 진행 상태(completed) 업데이트
+    @PutMapping("/{materialId}/progress")
     public Map<String, String> updateProgress(
             @PathVariable int materialId,
             @RequestBody Map<String, String> requestBody,
@@ -220,6 +240,5 @@ public class ArchiveController {
         }
         return response;
     }
-
 
 }

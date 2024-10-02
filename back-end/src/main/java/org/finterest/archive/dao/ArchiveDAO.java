@@ -27,8 +27,14 @@ public class ArchiveDAO {
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectArchiveById(id);
     }
 
+    // 로그인 안 한 사용자의 카테고리 필터링
     public List<ArchiveVO> selectArchiveByCategory(int categoryId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectArchiveByCategory(categoryId);
+    }
+
+    // 로그인한 사용자의 카테고리 필터링
+    public List<ArchiveVO> selectArchiveByCategoryWithFavorites(Integer userId, int categoryId){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectArchiveByCategoryWithFavorites(userId, categoryId);
     }
 
     public List<ArchiveVO> selectTextArchive(Integer userId){
@@ -44,6 +50,11 @@ public class ArchiveDAO {
     }
     public ProgressVO getProgressForUserId(Integer userId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).getProgressForUserId(userId);
+    }
+
+    // 즐겨찾기한 자료 조회
+    public List<ArchiveVO> selectFavoritesArchive(Integer userId){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectFavoritesArchive(userId);
     }
 
     public void insertFavorite(int userId, int materialId){
@@ -62,7 +73,12 @@ public class ArchiveDAO {
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectProgressByStatus(userId, status);
     }
 
-    // 학습 진행 상태 업데이트 (반환값을 int로 설정)
+    // 학습 진행 상태(incomplete) 추가
+    public void insertProgressStatus(int userId, int materialId) {
+        sqlSessionTemplate.getMapper(ArchiveMapper.class).insertProgressStatus(userId, materialId);
+    }
+
+    // 학습 진행 상태(completed) 업데이트 (반환값을 int로 설정)
     public int updateProgressStatus(int userId, int materialId, String status) {
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).updateProgressStatus(userId, materialId, status);
     }

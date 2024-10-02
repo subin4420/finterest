@@ -29,9 +29,21 @@ public class ArchiveService {
     }
 
     // 특정 카테고리로 조회
-    public List<ArchiveVO> selectArchiveByCategory(int categoryId){
-        return archiveDAO.selectArchiveByCategory(categoryId);
+//    public List<ArchiveVO> selectArchiveByCategory(int categoryId){
+//        return archiveDAO.selectArchiveByCategory(categoryId);
+//    }
+
+    // 로그인 여부로 특정 카테고리 필터링
+    public List<ArchiveVO> selectArchiveByCategory(Integer userId, Integer categoryId) {
+        if (userId != null) {
+            return archiveDAO.selectArchiveByCategoryWithFavorites(userId, categoryId);
+        } else {
+            return archiveDAO.selectArchiveByCategory(categoryId);
+        }
     }
+
+
+
 
     // 텍스트 자료만 조회
     public List<ArchiveVO> selectTextArchive(Integer userId){
@@ -50,6 +62,15 @@ public class ArchiveService {
     // 학습 진행 상태 조회 (materialId 기준)
     public ProgressVO getProgressForUserId(Integer UserId) {
         return archiveDAO.getProgressForUserId(UserId);
+    }
+
+    // 즐겨찾기한 자료 조회
+    public List<ArchiveVO> getArchives(Integer userId, Boolean favorites) {
+        if (Boolean.TRUE.equals(favorites)) {
+            return archiveDAO.selectFavoritesArchive(userId);
+        } else {
+            return archiveDAO.selectAllArchive(userId);
+        }
     }
 
     public void insertFavorite(int userId, int materialId){
@@ -77,7 +98,13 @@ public class ArchiveService {
     public void insertProgress(int userId, int materialId, String status, String startedAt) {
         archiveDAO.insertProgress(userId, materialId, status, startedAt);
     }
-    // 학습 진행 상태 업데이트 (반환값을 int로 설정)
+
+    // 학습 진행 상태(incomplete) 추가
+    public void insertProgressStatus(int userId, int materialId){
+        archiveDAO.insertProgressStatus(userId, materialId);
+    }
+
+    // 학습 진행 상태(completed) 업데이트 (반환값을 int로 설정)
     public int updateProgressStatus(int userId, int materialId, String status) {
         return archiveDAO.updateProgressStatus(userId, materialId, status);
     }

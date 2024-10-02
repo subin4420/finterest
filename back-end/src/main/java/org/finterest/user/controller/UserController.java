@@ -41,7 +41,9 @@ public class UserController {
     }
     //회원가입
     @PostMapping("/join")
-    public ResponseEntity<UserDTO> join(@ModelAttribute UserJoinDTO userJoinDTO) {
+    public ResponseEntity<UserDTO> join(@RequestBody UserJoinDTO userJoinDTO) {
+        System.out.println("username :  " + userJoinDTO.getUsername());
+        System.out.println("password :  " + userJoinDTO.getPassword());
         return ResponseEntity.ok(userService.join(userJoinDTO));
     }
     //중복체크

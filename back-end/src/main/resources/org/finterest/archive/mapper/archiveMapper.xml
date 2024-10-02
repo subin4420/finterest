@@ -64,8 +64,17 @@
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
-        WHERE c.category_id = #{category_id}
+        WHERE c.category_id = #{categoryId}
     </select>
+
+    <!-- 로그인한 사용자의 카테고리 필터링 -->
+    <select id="selectArchiveByCategoryWithFavorites" parameterType="map" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.category_id = #{categoryId}
+    </select>
+
 
     <!-- 텍스트 자료만 조회 (link가 NULL) -->
     <select id="selectTextArchive" resultType="org.finterest.archive.domain.ArchiveVO">
@@ -82,6 +91,15 @@
         <include refid="BaseQuery" />
         WHERE lm.link IS NOT NULL
     </select>
+
+    <!-- 즐겨찾기한 자료만 조회 -->
+    <select id="selectFavoritesArchive" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE f.user_id = #{userId}  <!-- 사용자의 즐겨찾기 자료만 조회 -->
+    </select>
+
 
     <!-- 특정 자료의 학습 진행 상태 조회 -->
     <select id="getProgressForMaterial" parameterType="int" resultType="org.finterest.archive.domain.ProgressVO">
@@ -126,7 +144,13 @@
     </select>
 
 
-    <!-- 학습 진행 상태 업데이트 -->
+    <!-- 학습 진행 상태(incomplete) 추가 -->
+    <insert id="insertProgressStatus" parameterType="org.finterest.archive.domain.ProgressVO">
+        INSERT INTO Learning_Progress (user_id, material_id, status, started_at)
+        VALUES (#{userId}, #{materialId}, 'incomplete', NOW())
+    </insert>
+
+    <!-- 학습 진행 상태(completed) 업데이트 -->
     <update id="updateProgressStatus">
         UPDATE Learning_Progress
         SET status = #{status},
@@ -141,11 +165,13 @@
         FROM Learning_Progress
         WHERE material_id = #{materialId} AND user_id = #{userId}
     </select>
+
     <select id="getProgressForUserId" parameterType="Integer" resultType="org.finterest.archive.domain.ProgressVO">
         SELECT *
         FROM Learning_Progress
         WHERE user_id = #{userId}
     </select>
+
     <select id="getProgressForUserAndMaterial" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
         SELECT *
         FROM Learning_Progress
