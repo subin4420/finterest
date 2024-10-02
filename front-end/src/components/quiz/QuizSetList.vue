@@ -29,7 +29,7 @@ export default {
     QuizCard,
     QuizResultModal
   },
-  setup(props) {
+  setup() {
     const quizStore = useQuizStore();
     const isQuizModalVisible = ref(false); // 모달 상태 관리
     const selectedQuizSet = ref(null); // 선택된 퀴즈 세트 저장

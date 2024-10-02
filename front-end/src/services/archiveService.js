@@ -7,17 +7,24 @@ import api from './api';
 //   return response.data;
 // };
 
-// Authorization 헤더 추가
+// Authorization 헤더 추가 및 에러 핸들링 추가
 export const getArchive = async (params = {}) => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR...'; // 여기에 실제 테스트용 JWT 토큰을 추가하세요.
-  const response = await api.get('/api/archive', { 
-    params,
-    headers: {
+  try {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR...'; // 여기에 실제 테스트용 JWT 토큰을 추가하세요.
+    
+    const response = await api.get('/api/archive', { 
+      params,
+      headers: {
         Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
       },
-   }); // params를 쿼리로 전달
-  console.log("in service response.data: ", response.data);
-  return response.data;
+    }); // params를 쿼리로 전달
+    
+    console.log("in service response.data: ", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching archive:', error);
+    throw error; // 에러 발생 시 호출한 곳으로 에러 전달
+  }
 };
 
 // 학습 진행 상태 조회 API 호출 함수 (테스트용 Authorization 헤더 추가)

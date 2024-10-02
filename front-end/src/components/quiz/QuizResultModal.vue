@@ -1,6 +1,6 @@
 <template>
   <!-- isVisible와 cardData가 존재하고 quizzes가 있을 때만 모달을 렌더링 -->
-  <div v-if="isVisible && cardData && cardData.quizzes && cardData.quizzes.length > 0" class="modal-overlay" @click.self="closeModal">
+  <div v-if="isVisible && cardData && cardData.quizzes" class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
       <div class="modal-header">
         <button class="close-button" @click="closeModal">
@@ -34,7 +34,6 @@
               :name="'quiz-option'"
               :value="index"
               v-model="currentQuiz.selectedAnswer"
-              @change="updateAnsweredQuizzes"
             />
             {{ option }}
           </label>
@@ -62,7 +61,6 @@ export default {
   data() {
     return {
       currentQuizIndex: 0, // 현재 문제 번호
-      answeredQuizzes: {}, // 답변된 문제 상태
     };
   },
   computed: {
