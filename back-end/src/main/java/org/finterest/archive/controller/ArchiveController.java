@@ -5,6 +5,9 @@ import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.service.ArchiveService;
+import org.finterest.security.util.JwtProcessor;
+import org.finterest.user.dto.UserDTO;
+import org.finterest.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
@@ -17,24 +20,32 @@ import java.util.Map;
 @RequestMapping("/api/archive")
 public class ArchiveController {
     private final ArchiveService archiveService;
-
+    private final JwtProcessor jwtProcessor; // JwtProcessor 주입
+    private final UserService userService;
     @Autowired
-    public ArchiveController(ArchiveService archiveService) {
+    public ArchiveController(ArchiveService archiveService, JwtProcessor jwtProcessor, UserService userService) {
         System.out.println("ArchiveController created");
         this.archiveService = archiveService;
+        this.jwtProcessor = jwtProcessor;
+        this.userService = userService;
+
     }
 
-    // 모든 자료 조회
+    // 모든 자료 조회 (토큰 없이도 가능)
     @GetMapping
     public Map<String, List<ArchiveVO>> selectAllArchive(
             @RequestParam(value = "type", required = false) String type,
             @RequestHeader(value = "Authorization", required = false) String authToken) {
 
         List<ArchiveVO> archiveVOList;
+        Integer userId = null; // 토큰이 없는 경우를 고려하여 null로 설정
 
+        if (authToken != null && !authToken.isEmpty()) {
+            // 토큰이 있는 경우에만 사용자 ID를 추출
+            userId = getUserIdFromToken(authToken);
+        }
 
-       int userId = getUserIdFromToken(authToken);
-
+        // 자료 유형별 조회
         if (type != null) {
             if (type.equals("text")) {
                 archiveVOList = archiveService.selectTextArchive(userId); // 텍스트 자료만
@@ -47,7 +58,7 @@ public class ArchiveController {
             archiveVOList = archiveService.selectAllArchive(userId); // 모든 자료
         }
 
-        boolean isAuthenticated = (authToken != null && !authToken.isEmpty()); // JWT 토큰이 있는지 확인
+        boolean isAuthenticated = (userId != null); // 사용자 ID가 있을 때만 인증된 상태로 간주
 
         Map<String, List<ArchiveVO>> response = new HashMap<>();
         response.put("archives", applyProgressData(archiveVOList, isAuthenticated)); // 학습 진행 상태 추가
@@ -202,23 +213,22 @@ public class ArchiveController {
         return response;
     }
 
-    // 토큰에서 사용자 ID를 추출하는 예시 메서드
-    private int getUserIdFromToken(String authToken) {
-        // JWT 토큰이 존재하고 유효한지 확인
+    // JWT 토큰에서 사용자 ID를 추출하는 메서드
+    private Integer getUserIdFromToken(String authToken) {
         if (authToken == null || authToken.isEmpty()) {
             throw new IllegalArgumentException("Missing or invalid Authorization header");
         }
 
         // Bearer 토큰에서 실제 JWT 추출
         String token = authToken.startsWith("Bearer ") ? authToken.substring(7) : authToken;
-
-        // 토큰 검증 및 사용자 ID 추출
-        int userId;
         try {
-            userId = getUserIdFromToken(token);  // 토큰에서 사용자 ID를 추출하는 메서드
+            // JwtProcessor의 getUsername 메서드를 사용해 JWT에서 사용자 ID 추출
+            String username = jwtProcessor.getUsername(token);
+            UserDTO userDTO = userService.get(username);
+            int id = userDTO.toVO().getUserId();
+            return id;
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid token");
+            throw new IllegalArgumentException("Invalid token", e);
         }
-        return userId; // 테스트용으로 사용자 ID 1을 반환
     }
 }

@@ -20,7 +20,7 @@ public class UserDetailsMapperTest {
 
     @Test
     public void testGet() {
-        UserVO member = mapper.get("user1");
+        UserVO member = mapper.get("subin");
         log.info(member);
 
         for(AuthVO auth : member.getAuthList()) {

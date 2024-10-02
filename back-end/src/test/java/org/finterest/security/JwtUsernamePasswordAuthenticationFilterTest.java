@@ -1,5 +1,4 @@
 package org.finterest.security;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.finterest.security.account.dto.LoginDTO;
 import org.finterest.security.filter.JwtUsernamePasswordAuthenticationFilter;
@@ -24,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class JwtUsernamePasswordAuthenticationFilterTest {
 
@@ -46,8 +46,8 @@ public class JwtUsernamePasswordAuthenticationFilterTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(jwtUsernamePasswordAuthenticationFilter)
+        mockMvc = standaloneSetup(jwtUsernamePasswordAuthenticationFilter)
+                .addFilter(jwtUsernamePasswordAuthenticationFilter, "/api/auth/login") // 필터를 MockMvc에 직접 추가
                 .build();
     }
 
@@ -55,8 +55,8 @@ public class JwtUsernamePasswordAuthenticationFilterTest {
     public void testSuccessfulAuthentication() throws Exception {
         // Mock LoginDTO
         LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setUsername("user1");
-        loginDTO.setPassword("password1");
+        loginDTO.setUsername("subin");
+        loginDTO.setPassword("123456");
 
         // Mock Authentication
         Authentication authentication = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());

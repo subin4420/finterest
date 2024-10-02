@@ -18,6 +18,8 @@ public interface UserMapper {
 
     
     List<UserVO> getList();
+    // username으로 user_id 조회
+    int getUserIdByUsername(String username);
 
     UserVO get(String username);
 

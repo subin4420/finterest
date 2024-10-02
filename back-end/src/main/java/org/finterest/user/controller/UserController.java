@@ -10,6 +10,7 @@ import org.finterest.user.dto.UserJoinDTO;
 import org.finterest.user.dto.UserVerificationDTO;
 import org.finterest.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController
@@ -61,7 +63,20 @@ public class UserController {
         }
         UploadFiles.downloadImage(response, file);
     }
-
+    @GetMapping("/findId/{username}")
+    public ResponseEntity<Integer> findById(@PathVariable String username) {
+        try {
+            // UserService를 사용해 username으로 사용자 정보 조회
+            UserDTO userDTO = userService.get(username);
+            int id = userDTO.toVO().getUserId();
+            System.out.println("in findId/username: =>"+id);
+            // 사용자 정보가 존재하면 200 OK와 함께 반환
+            return ResponseEntity.ok(userDTO.toVO().getUserId());
+        } catch (NoSuchElementException e) {
+            // 사용자를 찾지 못한 경우 404 Not Found 응답 반환
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
 }
 

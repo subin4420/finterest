@@ -96,5 +96,10 @@
           AND full_name = #{fullName}
           AND email = #{email}
     </select>
+    <select id="getUserIdByUsername" parameterType="String" resultType="int">
+        SELECT user_id
+        FROM Users
+        WHERE username = #{username}
+    </select>
 
 </mapper>

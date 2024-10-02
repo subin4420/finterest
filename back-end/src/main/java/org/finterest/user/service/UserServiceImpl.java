@@ -36,7 +36,10 @@ public class UserServiceImpl implements UserService {
         UserVO member = userMapper.get(username);
         return member != null ? true : false;
     }
-
+    @Override
+    public int getUserIdByUsername(String username) {
+        return userMapper.getUserIdByUsername(username);
+    }
 
     private void saveAvatar(MultipartFile avatar, String username) {
         //아바타 업로드

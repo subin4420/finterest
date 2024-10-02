@@ -17,7 +17,7 @@ public interface UserService {
     UserDTO join(UserJoinDTO user);
     //아이디 삭제
     UserDTO delete(String username);
-
+    int getUserIdByUsername(String username);
     List<UserDTO> getList();
     boolean verifyUser(UserVerificationDTO request); // 사용자 확인 메서드
     void changePassword(ChangePasswordDTO changePasswordDTO); // 비밀번호 변경 메서드

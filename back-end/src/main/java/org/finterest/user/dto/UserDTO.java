@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserDTO {
+    private int userId;
     private String username;  // username
     //private String password;  // password
     private String email;  // email
@@ -36,6 +37,7 @@ public class UserDTO {
     // UserVO를 UserDTO로 변환
     public static UserDTO of(UserVO u) {
         return UserDTO.builder()
+                .userId(u.getUserId())
                 .username(u.getUsername())
 //                .password(u.getPassword())  // 보안상 주석 처리
                 .email(u.getEmail())
@@ -52,6 +54,7 @@ public class UserDTO {
     // UserDTO를 UserVO로 변환
     public UserVO toVO() {
         return UserVO.builder()
+                .userId(userId)
                 .username(username)
 //                .password(password)  // 보안상 주석 처리
                 .email(email)
