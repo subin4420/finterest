@@ -1,25 +1,27 @@
 <template>
   <div id="app">
-    <QuizImage />
-    <QuizNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
-    
-    <div class="content-section">
-      <h3>퀴즈 자료</h3>
-      <div class="content-grid">
-        <QuizCard 
-          v-for="quizSet in filteredQuizSets" 
-          :key="quizSet.setId" 
-          :cardData="quizSet" 
-          @click.native="openModal(quizSet)" 
-        />
+      <QuizImage />
+      <QuizNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
+      <!-- 퀴즈가 선택되지 않았을 때 -->
+      <div v-if="!isQuizSelected">
+        <div class="content-section">
+          <h3>퀴즈 자료</h3>
+          <div class="content-grid">
+            <QuizCard 
+              v-for="quizSet in filteredQuizSets" 
+              :key="quizSet.setId" 
+              :cardData="quizSet" 
+              @click.native="openQuizSet(quizSet)" 
+            />
+          </div>
+        </div>
       </div>
-    </div>
 
-    <QuizModal 
-      :isVisible="isModalVisible" 
-      :cardData="selectedCard" 
-      @update:isVisible="isModalVisible = $event" 
-    />
+
+    <!-- 퀴즈가 선택되었을 때 -->
+    <div v-else>
+      <QuizSubmit :quizSet="selectedQuizSet" @goBack="goBackToQuizList" />
+    </div>
   </div>
 </template>
 
@@ -28,6 +30,7 @@ import QuizImage from '@/components/quiz/QuizImage.vue';
 import QuizNavigationBar from '@/components/quiz/QuizNavigationBar.vue';
 import QuizCard from '@/components/quiz/QuizCard.vue';
 import QuizModal from '@/components/quiz/QuizModal.vue';
+import QuizSubmit from '@/components/quiz/QuizSubmit.vue'; // 새로 추가할 퀴즈 문제 컴포넌트
 import { onMounted, ref, computed } from "vue";
 import { useQuizStore } from "@/stores/quizStore";
 
@@ -37,15 +40,17 @@ export default {
     QuizImage,
     QuizCard,
     QuizModal,
-    QuizNavigationBar
+    QuizNavigationBar,
+    QuizSubmit // 퀴즈 문제 컴포넌트 추가
   },
   setup() {
     const quizStore = useQuizStore();
     const isModalVisible = ref(false);
     const selectedCard = ref({});
     const selectedCategory = ref(null); // 선택된 카테고리 상태 추가
-
     const quizSets = ref([]);
+    const isQuizSelected = ref(false); // 퀴즈 세트가 선택되었는지 여부
+    const selectedQuizSet = ref(null); // 선택된 퀴즈 세트 저장
 
     onMounted(async () => {
       await quizStore.fetchQuizSets(); // 퀴즈 세트 가져오기
@@ -72,16 +77,33 @@ export default {
         : quizSets.value;
     });
 
-    // 모달 열기 함수
-    function openModal(quiz) {
-      selectedCard.value = quiz;
-      isModalVisible.value = true;
-    }
+    // 퀴즈 세트 선택 시 호출
+    const openQuizSet = (quiz) => {
+      selectedQuizSet.value = quiz; // 선택된 퀴즈 세트 저장
+      isQuizSelected.value = true; // 퀴즈 세트가 선택되었음을 표시
+    };
 
-    return { filteredQuizSets, isModalVisible, selectedCard, openModal, filterByCategory, selectedCategory };
+    // 퀴즈 문제 풀이 영역에서 퀴즈 세트 목록으로 돌아가기
+    const goBackToQuizList = () => {
+      isQuizSelected.value = false; // 퀴즈 세트 선택 해제
+      selectedQuizSet.value = null; // 선택된 퀴즈 세트 초기화
+    };
+
+    return { 
+      filteredQuizSets, 
+      isModalVisible, 
+      selectedCard, 
+      filterByCategory, 
+      selectedCategory, 
+      openQuizSet, 
+      isQuizSelected, 
+      selectedQuizSet, 
+      goBackToQuizList 
+    };
   }
 }
 </script>
+
 
 
 

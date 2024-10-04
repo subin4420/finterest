@@ -34,21 +34,22 @@
         WHERE q.category_id = #{category_id}
     </sql>
 
-    <!-- 전체 조회 -->
+    <!-- 1. 전체 조회 -->
     <select id="selectAllQuizSets" resultType="org.finterest.quiz.domain.vo.QuizSetsVO">
         SELECT
         <include refid="QuizSetFields" />
         <include refid="QuizSetFromJoin" />
     </select>
 
-    <!-- 사용자별 퀴즈 세트 결과 조회 (점수와 완료 날짜 포함) -->
+    <!-- 1. 사용자별 퀴즈 세트 결과 조회 (점수와 완료 날짜 포함) -->
     <select id="selectQuizResultsByUserId" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizResultVO">
         SELECT
             set_id,
-            total_score,
+            MAX(total_score) AS total_score,  -- 각 set_id에 대해 가장 높은 점수
             completed_at
         FROM Quiz_Sets_Results
         WHERE user_id = #{userId}
+        GROUP BY set_id, completed_at  -- set_id별로 그룹화, 완료 날짜도 포함하여 그룹화
     </select>
 
     <!-- 카테고리별 조회 -->
