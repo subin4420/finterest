@@ -10,59 +10,6 @@ const state = reactive({
   videoArchives: [], // 비디오 자료
 });
 
-
-// // 전체 학습 자료 조회
-// const fetchAllArchives = async () => {
-//   try {
-//     const data = await getArchive(); // 전체 자료 조회
-//     state.archives = data.archives;
-//   } catch (error) {
-//     console.error('Error fetching all Archives:', error);
-//   }
-// };
-
-// // text, video 구분해서 자료 조회
-// const fetchArchive = async (type) => { // type 매개변수 추가 
-//   try {
-//     const data = await getArchive({ type }); // type을 객체로 전달
-//     state.archives = data.archives.map(archive => ({
-//       ...archive,
-//     }));
-//   } catch (error) {
-//     console.error('Error fetching Archive:', error);
-//   }
-// };
-
-// // 특정 카테고리 조회
-// const fetchArchivesByCategory = async (categoryId) => {
-//   try {
-//     const data = await getArchive({ categoryId }); // 카테고리 ID를 전달
-//     state.archives = data.archives;
-//   } catch (error) {
-//     console.error('Error fetching Archives by category:', error);
-//   }
-// };
-
-// // 즐겨찾기한 자료만 조회
-// const fetchFavoriteArchives = async () => {
-//   try {
-//     const data = await getArchive({ favorites: true }); // 즐겨찾기 자료 조회
-//     state.archives = data.archives;
-//   } catch (error) {
-//     console.error('Error fetching favorite Archives:', error);
-//   }
-// };
-
-// // 전체 학습 진행 상태 조회
-// const fetchProgressArchives = async () => {
-//   try {
-//     const data = await getArchiveProgress();
-//     state.archives = data.progress; // data.archives 대신 data.progress로 수정
-//   } catch (error) {
-//     console.error('Error fetching progress Archives:', error);
-//   }
-// };
-
 // text 자료 조회
 const fetchTextArchive = async () => {
   try {
@@ -208,10 +155,8 @@ const changeArchiveStatus = async (materialId, status) => {
 export const useArchiveStore = () => {
   return {
     ...toRefs(state),
-    //fetchArchive, // text, video 구분
     fetchAllArchives,
     fetchArchivesByCategory,
-    //fetchProgressArchives,
     fetchCompletedArchives,
     fetchInProgressArchives,
     fetchFavoriteArchives,
