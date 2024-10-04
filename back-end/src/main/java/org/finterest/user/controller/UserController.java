@@ -46,7 +46,7 @@ public class UserController {
     }
     //회원가입
     @PostMapping("/join")
-    public ResponseEntity<UserDTO> join(@ModelAttribute UserJoinDTO userJoinDTO) {
+    public ResponseEntity<UserDTO> join(UserJoinDTO userJoinDTO) {
         System.out.println("username :  " + userJoinDTO.getUsername());
         System.out.println("password :  " + userJoinDTO.getPassword());
         return ResponseEntity.ok(userService.join(userJoinDTO));
@@ -64,6 +64,7 @@ public class UserController {
     @GetMapping("/{username}/avatar")
     public void getAvatar(@PathVariable String username, HttpServletResponse response) {
         String filePath = avatarPath + "/" + username + ".png";
+        System.out.println("UserController-> getAvatar:->"+avatarPath);
         File file = new File(filePath);
         if(!file.exists()) {
             file = new File(avatarPath+"/unknown.png");

@@ -22,23 +22,37 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
+        //B팀
         "org.finterest.archive.mapper",
         "org.finterest.quiz.mapper",
-        "org.finterest.member.mapper",
         "org.finterest.user.mapper",
         "org.finterest.point.mapper",
         "org.finterest.notice.mapper",
+        //A팀
+        "org.finterest.invest.stock.overall.mapper",
+        "org.finterest.invest.conversion.mapper",
+        "org.finterest.invest.board.mapper",
+        "org.finterest.invest.comment.mapper",
+        "org.finterest.invest.stock.simulator.mapper",
+        "org.finterest.invest.scenario.mapper"
 
 })
 @ComponentScan(basePackages = {
         "org.finterest.security.config",
-        "org.finterest.archive",
         "org.finterest.common.config",
+
+        "org.finterest.user",
+        "org.finterest.archive",
         "org.finterest.quiz",
         "org.finterest.point",
         "org.finterest.notice",
-        //"org.finterest.member.service",
-        "org.finterest.user",
+
+        "org.finterest.invest.stock.overall.service",
+        "org.finterest.invest.stock.simulator.service",
+        "org.finterest.invest.board.service",
+        "org.finterest.invest.conversion.service",
+        "org.finterest.invest.comment.service",
+        "org.finterest.invest.scenario.service"
 
 })
 @Slf4j

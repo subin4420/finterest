@@ -1,6 +1,8 @@
 package org.finterest.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.finterest.user.exception.PasswordMissmatchException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

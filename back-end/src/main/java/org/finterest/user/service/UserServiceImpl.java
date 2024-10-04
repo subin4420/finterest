@@ -10,6 +10,8 @@ import org.finterest.user.dto.UserJoinDTO;
 import org.finterest.user.dto.UserVerificationDTO;
 import org.finterest.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,9 +28,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@PropertySource({"classpath:/application.properties"})
 public class UserServiceImpl implements UserService {
     final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+
+    @Value("${avatar.path}")
+    String avatarPath;
 
     //중복체크
     @Override
@@ -43,8 +49,9 @@ public class UserServiceImpl implements UserService {
 
     private void saveAvatar(MultipartFile avatar, String username) {
         //아바타 업로드
+        System.out.println("UserServiceImpl -> saveAvatar ->"+avatarPath);
         if(avatar != null && !avatar.isEmpty()) {
-            File dest = new File("/Users/park/Desktop/최종 프로젝트/avatar/", username + ".png");
+            File dest = new File(avatarPath, username + ".png");
             try {
                 avatar.transferTo(dest);
             } catch (IOException e) {

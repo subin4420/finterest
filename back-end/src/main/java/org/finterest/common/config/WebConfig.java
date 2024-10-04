@@ -19,7 +19,7 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 
 
     // application.properties에서 업로드 경로를 가져옴
-    @Value("${upload.path}")
+    @Value("${upload.path:/Users/park/Desktop/upload}")
     private String LOCATION;
     final long MAX_FILE_SIZE = 1024 * 1024 * 10L;
     final long MAX_REQUEST_SIZE = 1024 * 1024 * 20L;
@@ -43,7 +43,9 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         // 경로 유효성 검사 및 디렉토리 생성
-        File uploadDir = new File(LOCATION);
+        log.info("Upload path: " + LOCATION);
+
+        File uploadDir = new File("/Users/park/Desktop/upload");
         if (!uploadDir.exists()) {
             boolean dirCreated = uploadDir.mkdirs();  // 디렉토리 생성
             if (dirCreated) {
