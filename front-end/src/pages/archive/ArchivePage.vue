@@ -28,6 +28,7 @@
     </div>
 
     <ArchiveModal 
+      v-if="selectedCard && isModalVisible"
       :isVisible="isModalVisible" 
       :cardData="selectedCard" 
       @update:isVisible="isModalVisible = $event" 

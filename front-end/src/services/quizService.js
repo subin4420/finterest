@@ -1,4 +1,17 @@
 import api from './api';
+import { useAuthStore } from '@/stores/auth'; // auth 스토어 import
+
+// 토큰을 가져오는 헬퍼 함수
+const getToken = () => {
+  const authStore = useAuthStore();
+  const token = authStore.getToken();
+  // if (!token) {
+  //   throw new Error('인증 토큰이 없습니다. 로그인이 필요합니다.');
+  // }
+  // return token;
+  console.log("Fetched token:", token);
+  return token || null;
+};
 
 // 퀴즈 세트 가져오기
 // export const getQuizSets = async () => {
@@ -9,7 +22,8 @@ import api from './api';
 
 // Authorization 헤더 추가
 export const getQuizSets = async (params = {}) => {
-  const token = 'eyJhbGciOiJIUzI1NiIsInR...'; // 여기에 실제 테스트용 JWT 토큰을 추가하세요.
+  const token = getToken();
+  
   const response = await api.get('/api/quiz-sets', { 
     params,
     headers: {

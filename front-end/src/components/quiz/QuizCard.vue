@@ -4,7 +4,10 @@
             <img :src="cardData.setImg || defaultImage" alt="썸네일 이미지" />
         </div>
         <div class="card-info">
-            <div class="category-title">[{{ cardData.categoryName }}]</div>
+            <div class="category-score-wrapper">
+                <div class="category-title">[{{ cardData.categoryName }}]</div>
+                <div class="score" v-if="cardData.userScore">{{ cardData.userScore }}점</div>
+            </div>
             <div class="title">{{ cardData.setName }}</div>
             <p class="summary">{{ cardData.description }}</p>
         </div>
@@ -12,6 +15,7 @@
 </template>
 
 <script>
+import { useQuizStore } from '@/stores/quizStore';
 export default {
     name: 'QuizCard',
     props: {
@@ -82,6 +86,21 @@ export default {
     text-align: left;
     width: 100%;
     flex-grow: 1; /* 공간을 차지하도록 설정 */
+}
+
+.category-score-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.score{
+    color: #00C4D1;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 .category-title {
