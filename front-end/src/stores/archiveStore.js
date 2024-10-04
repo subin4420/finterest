@@ -1,5 +1,5 @@
 import { reactive, toRefs } from 'vue';
-import { getArchive, getArchiveProgress, addFavorite, removeFavorite, updateArchiveStatus } from '@/services/archiveService';
+import { getArchive, getArchiveProgress, addFavorite, removeFavorite, updateArchiveStatus, insertArchiveStatus } from '@/services/archiveService';
 
 const state = reactive({
   archives: [], // 초기값 설정
@@ -9,20 +9,6 @@ const state = reactive({
   textArchives: [], // 텍스트 자료
   videoArchives: [], // 비디오 자료
 });
-
-// 학습 상태 업데이트
-const changeArchiveStatus = async (materialId, status) => {
-  try {
-    await updateArchiveStatus(materialId, { status }); // 상태 업데이트 요청
-    // 상태 업데이트 후, 로컬 상태를 업데이트
-    const archive = state.archives.find(archive => archive.materialId === materialId);
-    if (archive) {
-      archive.status = status; // 로컬 상태 업데이트
-    }
-  } catch (error) {
-    console.error('Error changing archive status:', error);
-  }
-};
 
 
 // // 전체 학습 자료 조회
@@ -169,7 +155,7 @@ const addToFavorites = async (materialId) => {
     if (archive) {
       archive.favorite = true; // 즐겨찾기 상태로 변경
     }
-    filterByCategory(selectedCategory.value); // 필터링 다시 적용
+    // filterByCategory(selectedCategory.value); // 필터링 다시 적용
   } catch (error) {
     console.error('Error adding favorite:', error);
   }
@@ -185,11 +171,40 @@ const removeFromFavorites = async (materialId) => {
     if (archive) {
       archive.favorite = false; // 즐겨찾기 상태 제거
     }
-    filterByCategory(selectedCategory.value); // 필터링 다시 적용
+    // filterByCategory(selectedCategory.value); // 필터링 다시 적용
   } catch (error) {
     console.error('Error removing favorite:', error);
   }
 };
+
+// 학습 상태(incomplet) 추가
+const addArchiveStatus = async(materialId, status) => {
+  try {
+        const response = await insertArchiveStatus(materialId, { status });
+        console.log('Server response:', response.data); // 서버 응답 로그
+        const archive = state.archives.find(archive => archive.materialId == materialId);
+        if (archive) {
+            archive.status = status;
+        }
+    } catch (error) {
+        console.log('Error adding archive status:', error);
+    }
+};
+
+// 학습 상태(completed) 업데이트
+const changeArchiveStatus = async (materialId, status) => {
+  try {
+        const response = await updateArchiveStatus(materialId, { status });
+        console.log('Server response:', response.data); // 서버 응답 로그
+        const archive = state.archives.find(archive => archive.materialId === materialId);
+        if (archive) {
+            archive.status = status;
+        }
+    } catch (error) {
+        console.error('Error changing archive status:', error);
+    }
+};
+
 export const useArchiveStore = () => {
   return {
     ...toRefs(state),
@@ -202,6 +217,7 @@ export const useArchiveStore = () => {
     fetchFavoriteArchives,
     addToFavorites,
     removeFromFavorites,
+    addArchiveStatus,
     changeArchiveStatus, // 추가된 메서드
 
     fetchTextArchive,  // 텍스트 자료 조회 함수 내보내기
