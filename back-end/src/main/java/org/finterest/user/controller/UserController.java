@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -25,6 +26,10 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
+
+    @Value("${avatar.path}")  // application.properties에서 경로 주입
+    private String avatarPath;
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -41,7 +46,7 @@ public class UserController {
     }
     //회원가입
     @PostMapping("/join")
-    public ResponseEntity<UserDTO> join(@RequestBody UserJoinDTO userJoinDTO) {
+    public ResponseEntity<UserDTO> join(@ModelAttribute UserJoinDTO userJoinDTO) {
         System.out.println("username :  " + userJoinDTO.getUsername());
         System.out.println("password :  " + userJoinDTO.getPassword());
         return ResponseEntity.ok(userService.join(userJoinDTO));
@@ -58,10 +63,10 @@ public class UserController {
     }
     @GetMapping("/{username}/avatar")
     public void getAvatar(@PathVariable String username, HttpServletResponse response) {
-        String avatarPath = "/Users/park/Desktop/최종 프로젝트/avatar/" + username + ".png";
-        File file = new File(avatarPath);
+        String filePath = avatarPath + "/" + username + ".png";
+        File file = new File(filePath);
         if(!file.exists()) {
-            file = new File("/Users/park/Desktop/최종 프로젝트/avatar/unknown.png");
+            file = new File(avatarPath+"/unknown.png");
         }
         UploadFiles.downloadImage(response, file);
     }
