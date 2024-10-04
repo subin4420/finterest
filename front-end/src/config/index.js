@@ -14,7 +14,7 @@ export default {
     },
     {
       title: '모의투자',
-      url: '/trade/TradePage',
+      url: '/trade',
       icon: 'fa-solid fa-chart-line', // 상승 차트 아이콘
     },
   ],
