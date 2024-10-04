@@ -11,7 +11,7 @@ import java.util.List;
 public interface ConversionMapper {
 
     // 조회, 비율 조정 관련 mapper
-    ConversionRateDTO getLatestRate(String conversionType); // 최신 환전 비율
+    ConversionRateDTO getLatestRate(); // 최신 환전 비율
 
     void insertConversionRate(ConversionRateDTO rateDTO); // 환전비율 입력
 

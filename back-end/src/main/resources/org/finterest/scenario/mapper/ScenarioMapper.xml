@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.finterest.invest.scenario.mapper.ScenarioMapper">
+
+    <!-- 모든 시나리오 가져오기 -->
+    <select id="getAllScenarios" resultType="org.finterest.invest.scenario.domain.ScenarioVO">
+        SELECT
+            scenario_id AS scenarioId,
+            description,
+            market_sector AS marketSector,
+            stock_effect AS stockEffect,
+            global_effect AS globalEffect
+        FROM Scenario
+    </select>
+
+    <!-- 모든 시나리오 변환 가져오기 -->
+    <select id="getAllScenarioConversions" resultType="org.finterest.invest.scenario.domain.ScenarioConversionVO">
+        SELECT
+            id,
+            stock_name AS stockName,
+            initial_price AS initialPrice,
+            market_sector AS marketSector,
+            scenario_id AS scenarioId,
+            srtnCd AS srtnCd
+        FROM Scenario_Conversion
+    </select>
+
+
+
+</mapper>

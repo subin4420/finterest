@@ -27,7 +27,8 @@ import javax.sql.DataSource;
         "org.finterest.invest.conversion.mapper",
         "org.finterest.invest.board.mapper",
         "org.finterest.invest.comment.mapper",
-        "org.finterest.invest.stock.simulator.mapper"
+        "org.finterest.invest.stock.simulator.mapper",
+        "org.finterest.invest.scenario.mapper"
 })
 
 @ComponentScan(basePackages = {
@@ -39,7 +40,9 @@ import javax.sql.DataSource;
         "org.finterest.user.service",
         "org.finterest.invest.board.service",
         "org.finterest.invest.conversion.service",
-        "org.finterest.invest.comment.service"
+        "org.finterest.invest.comment.service",
+        "org.finterest.invest.scenario.service"
+
 })
 @Slf4j
 @EnableTransactionManagement

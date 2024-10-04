@@ -43,7 +43,7 @@ public class ConversionService {
         }
 
         // 최신 환전 비율 조회
-        ConversionRateDTO rate = conversionMapper.getLatestRate("points_to_money");
+        ConversionRateDTO rate = conversionMapper.getLatestRate();
         if (rate == null) {
             return "환전 비율을 조회할 수 없습니다.";
         }
@@ -85,7 +85,7 @@ public class ConversionService {
         }
 
         // 최신 환전 비율 조회
-        ConversionRateDTO rate = conversionMapper.getLatestRate("money_to_points");
+        ConversionRateDTO rate = conversionMapper.getLatestRate();
         if (rate == null) {
             return "환전 비율을 조회할 수 없습니다.";
         }
@@ -130,8 +130,8 @@ public class ConversionService {
     }
 
 
-    public ConversionRateDTO getLatestConversionRate(String conversionType) {
-        ConversionRateDTO rate = conversionMapper.getLatestRate(conversionType);
+    public ConversionRateDTO getLatestConversionRate() {
+        ConversionRateDTO rate = conversionMapper.getLatestRate();
         if (rate == null) {
             throw new RuntimeException("환전 비율을 조회할 수 없습니다.");
         }
@@ -142,7 +142,7 @@ public class ConversionService {
         conversionMapper.updateConversionRate(rateDTO);
     }
 
-//
+    //
     public List<ConversionRateDTO> getAllConversionRates() {
         return conversionMapper.getAllRates();
     }

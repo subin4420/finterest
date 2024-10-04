@@ -24,7 +24,7 @@ public class ConversionController {
      * @param pointAmount 환전할 포인트 양
      * @return 환전 성공 여부 메시지
      */
-    @PostMapping("/convert/points-to-money")
+    @PostMapping("/points-to-money")
     public ResponseEntity<String> convertPointsToMoney(@RequestParam String username, @RequestParam int pointAmount) {
         String message = conversionService.convertPointsToMoney(username, pointAmount);
         return ResponseEntity.ok(message);
@@ -37,7 +37,7 @@ public class ConversionController {
      * @param moneyAmount 환전할 가상 자금 양
      * @return 환전 성공 여부 메시지
      */
-    @PostMapping("/convert/money-to-points")
+    @PostMapping("/money-to-points")
     public ResponseEntity<String> convertMoneyToPoints(@RequestParam String username, @RequestParam double moneyAmount) {
         String message = conversionService.convertMoneyToPoints(username, BigDecimal.valueOf(moneyAmount));
         return ResponseEntity.ok(message);
@@ -58,22 +58,15 @@ public class ConversionController {
 
     /**
      * 최신 환전 비율을 조회하는 API
-     *
-     * @param conversionType 환전 종류 (예: points_to_money, money_to_points)
-     * @return 최신 환전 비율 DTO
      */
     @GetMapping("/rate/latest")
-    public ResponseEntity<ConversionRateDTO> getLatestConversionRate(@RequestParam String conversionType) {
-        ConversionRateDTO rate = conversionService.getLatestConversionRate(conversionType);
+    public ResponseEntity<ConversionRateDTO> getLatestConversionRate() {
+        ConversionRateDTO rate = conversionService.getLatestConversionRate();
         return ResponseEntity.ok(rate);
     }
 
-    /**
-     * 환전 비율을 업데이트하는 API
-     *
-     * @param rateDTO 새로운 환전 비율 DTO
-     * @return 업데이트 성공 여부 메시지
-     */
+
+    /** 환전 비율을 업데이트하는 API*/
     @PutMapping("/rate/update")
     public ResponseEntity<String> updateConversionRate(@RequestBody ConversionRateDTO rateDTO) {
         conversionService.updateConversionRate(rateDTO);

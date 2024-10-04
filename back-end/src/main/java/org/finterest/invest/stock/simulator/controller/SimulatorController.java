@@ -22,11 +22,17 @@ public class SimulatorController {
     private final SimulatorService service;
     private final SimulatorMapper mapper;
 
-    @PostMapping("/userId/{userId}")
+    @GetMapping("/userId/{userId}")
     public ResponseEntity<Map<String, Object>> viewStockHeld(@PathVariable Integer userId) {
         Map<String, Object> response = service.viewStockHeld(userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+//
+//    @PostMapping("/userId/{userId}")
+//    public ResponseEntity<Map<String, Object>> viewStockHeld(@PathVariable Integer userId) {
+//        Map<String, Object> response = service.viewStockHeld(userId);
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 
     @PostMapping("/stock/buy")
     public ResponseEntity<String> buyStock(
