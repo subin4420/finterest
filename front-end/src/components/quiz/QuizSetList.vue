@@ -45,17 +45,14 @@ export default {
 
     // userScore가 null이 아닌 퀴즈 세트만 필터링
     const filteredQuizSets = computed(() => {
-      return quizStore.quizSets.value;  // 테스트용: 모든 퀴즈 세트 반환
+      return quizStore.quizSets.value.filter(quiz => quiz.userScore !== null);  // userScore가 있는 퀴즈 세트만 반환
     });
 
     // 모달 열기
     const openQuizModal = (quiz) => {
-      // 중복 호출 확인을 위해 이벤트 발생 지점 단일화
-      //if (!isQuizModalVisible.value) {
-        console.log('Selected Quiz:', quiz);  // 선택한 퀴즈 로그 확인
-        selectedQuizSet.value = quiz;
-        isQuizModalVisible.value = true;
-      //}
+      console.log('Selected Quiz:', quiz);  // 선택한 퀴즈 로그 확인
+      selectedQuizSet.value = quiz;
+      isQuizModalVisible.value = true;
     };
 
     return {
@@ -67,6 +64,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .cards {
   width: 100%;

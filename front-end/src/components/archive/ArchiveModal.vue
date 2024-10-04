@@ -67,9 +67,15 @@ export default {
         }
     },
     mounted() {
-        console.log('Modal mounted with cardData:', this.cardData);
+        if (!this.cardData || !this.cardData.materialId) {
+            console.error('Material ID is undefined or cardData is missing.');
+            return;
+        }
 
-        //cardData.status가 존재하지 않으면 null로 초기화
+        console.log('Modal mounted with cardData:', this.cardData);
+        console.log('Material ID:', this.cardData.materialId);  // materialId가 있는지 확인
+
+        // cardData.status가 존재하지 않으면 null로 초기화
         if (this.cardData.status == 'N/A' || !this.cardData.status) {
             this.cardData.status = null;
             console.log('Setting status to null.');
