@@ -20,20 +20,17 @@ public class SimulatorService {
     private final SimulatorMapper mapper;
 
     public void buyStock(SimulatorVO vo) {
-        // Long 변환 대신 BigDecimal 그대로 사용
-        BigDecimal price = vo.getPrice();
-        Long quantity = vo.getQuantity();
-
-        // 현재 총 거래 금액 계산
-        BigDecimal totalPrice = selectTotalPrice(vo.getStockCode(), vo.getUserId());
-        BigDecimal currentTotalPrice = price.multiply(BigDecimal.valueOf(quantity));
+        long quantity = vo.getQuantity();
+        String stockName = getStockName(vo.getStockCode());
 
         // 현재 보유 수량 계산
         Long currentQuantity = selectTotalQuantity(vo.getStockCode(), vo.getUserId());
+        log.info("현재 총 수량 (currentQuantity): " + currentQuantity);
 
-        // BigDecimal과 Long 연산
+        // vo에 담기
+        vo.setUserId(1);
+        vo.setStockName(stockName);
         vo.setTradeType("매수");
-        vo.setTotalPrice(totalPrice.add(currentTotalPrice));  // 가격 * 수량
         vo.setTotalStockHoldings(currentQuantity + quantity);  // 총 보유량 갱신
         vo.setCreatedAt(new Date());
         vo.setUpdatedAt(new Date());
@@ -42,20 +39,17 @@ public class SimulatorService {
     }
 
     public void sellStock(SimulatorVO vo) {
-        // Long 변환 대신 BigDecimal 그대로 사용
-        BigDecimal price = vo.getPrice();
-        Long quantity = vo.getQuantity();
-
-        // 현재 총 거래 금액 계산
-        BigDecimal totalPrice = selectTotalPrice(vo.getStockCode(), vo.getUserId());
-        BigDecimal currentTotalPrice = price.multiply(BigDecimal.valueOf(quantity));
+        long quantity = vo.getQuantity();
+        String stockName = getStockName(vo.getStockCode());
 
         // 현재 보유 수량 계산
         Long currentQuantity = selectTotalQuantity(vo.getStockCode(), vo.getUserId());
+        log.info("현재 총 수량 (currentQuantity): " + currentQuantity);
 
-        // BigDecimal과 Long 연산
+        // vo에 담기
+        vo.setUserId(1);
+        vo.setStockName(stockName);
         vo.setTradeType("매도");
-        vo.setTotalPrice(totalPrice.subtract(currentTotalPrice));  // 가격 * 수량
         vo.setTotalStockHoldings(currentQuantity - quantity);  // 총 보유량 갱신
         vo.setCreatedAt(new Date());
         vo.setUpdatedAt(new Date());
@@ -64,6 +58,7 @@ public class SimulatorService {
     }
 
     public Long selectTotalQuantity(String stockCode, Integer userId) {
+        log.info("stockCode: " + stockCode + ", userId: " + userId);
         Long result = mapper.selectTotalQuantity(stockCode,userId);
         if (result == null){
             return 0L;
@@ -87,5 +82,9 @@ public class SimulatorService {
         response.put("money", money);
         response.put("stock",result);
         return response;
+    }
+
+    public String getStockName(String stockCode) {
+        return mapper.getStockName(stockCode);
     }
 }

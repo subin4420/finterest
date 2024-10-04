@@ -51,6 +51,12 @@
     <select id="getOauthToken" resultType="java.lang.String">
         SELECT * FROM oauth_token
     </select>
+    <select id="getStockName"
+            parameterType="string"
+            resultType="java.lang.String">
+        SELECT itmsNm FROM kospi_stock_list
+        WHERE srtnCd = #{VALUE}
+    </select>
 
     <insert id="tradeStock" parameterType="org.finterest.invest.stock.simulator.domain.SimulatorVO">
         INSERT INTO trade (stock_code, stock_name, price, quantity, trade_type, total_price, total_stock_holdings, user_id, created_at, updated_at)

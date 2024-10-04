@@ -82,8 +82,8 @@ import { useTradeStore } from "@/stores/tradeStore";
 import axios from "axios";
 
 const tradeStore = useTradeStore();
-const selectStockcode = tradeStore.getSelectedStockCode;
-const price = tradeStore.getStockPrice;
+const selectStockcode = computed(() => tradeStore.getSelectedStockCode);
+const price = computed(() => tradeStore.getStockPrice);
 
 const isBuying = ref(true); // 구매/판매 토글 상태
 const amount = ref(1); // 구매 수량
@@ -140,13 +140,41 @@ const setMaxAmount = () => {
 };
 
 // 주문 처리
-const handleOrder = () => {
+const handleOrder = async () => {
   if (isBuying.value) {
-    console.log(`구매: ${amount.value}주, 총 금액: ${totalAmount.value}`);
+    console.log(`종목 코드: ${selectStockcode.value}`);
+    console.log(
+      `구매: ${price.value}원, ${amount.value}주, 총 금액: ${totalAmount.value}`
+    );
+    try {
+      const response = await axios.post("/api/trade/stock/buy", {
+        stockCode: selectStockcode.value,
+        price: price.value,
+        quantity: amount.value,
+        totalPrice: totalAmount.value,
+      });
+      console.log("서버 응답:", response.data);
+    } catch (error) {
+      console.error("구매 요청 중 오류 발생:", error);
+    }
   } else {
-    console.log(`판매: ${amount.value}주, 총 금액: ${totalAmount.value}`);
+    console.log(`종목 코드: ${selectStockcode}`);
+    console.log(
+      `판매: ${price.value}원, ${amount.value}주, 총 금액: ${totalAmount.value}`
+    );
+    try {
+      const response = await axios.post("/api/trade/stock/sell", {
+        stockCode: selectStockcode.value,
+        price: price.value,
+        quantity: amount.value,
+        totalPrice: totalAmount.value,
+      });
+
+      console.log("서버 응답:", response.data);
+    } catch (error) {
+      console.error("구매 요청 중 오류 발생:", error);
+    }
   }
-  // 여기에 추가적인 주문 처리 로직을 추가하세요.
 };
 onMounted(() => {
   viewStockHeld(); // 컴포넌트가 로드되면 API 요청을 실행

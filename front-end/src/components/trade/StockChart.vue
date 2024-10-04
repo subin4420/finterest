@@ -6,7 +6,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, defineProps, toRef } from "vue";
+import {
+  ref,
+  onMounted,
+  watch,
+  defineProps,
+  toRef,
+  onBeforeUnmount,
+} from "vue";
 import * as echarts from "echarts";
 import { useTradeStore } from "@/stores/tradeStore";
 import axios from "axios";
@@ -14,7 +21,8 @@ import axios from "axios";
 const chartDom = ref(null);
 let myChart = null; // 차트 인스턴스 저장
 let data0 = { categoryData: [], values: [], volumes: [] }; // 초기 차트 데이터
-let w = null;
+const tradeStore = useTradeStore();
+var w = null;
 
 const props = defineProps({
   selectStockCode: String,
@@ -279,11 +287,18 @@ const loadChartData = async (selectStockcode) => {
 
 // WebSocket 연결 및 실시간 데이터 수신
 const connectWebSocketForBid = (stockcode) => {
+  if (!stockcode) {
+    console.log(
+      "Stock code is null or undefined, skipping WebSocket connection."
+    );
+    return;
+  }
   const g_app_key = "PSRXymebdmx9Kvgesb6qEHaj3zo5j6FHIftE";
   const g_appsecret =
     "1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=";
   const g_personalseckey =
     "1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=";
+  // var w;
 
   try {
     const url = "ws://ops.koreainvestment.com:31000"; // WebSocket 서버 주소
@@ -305,6 +320,7 @@ const connectWebSocketForBid = (stockcode) => {
 
     w.onclose = function () {
       console.log("[Connection Closed]");
+      w = null;
     };
   } catch (e) {
     console.log(e);
@@ -320,19 +336,20 @@ let endVolume = 0; // 딜레이 주기 동안 누적 거래량
 let endCurPrice = null; // 딜레이가 끝날 때의 종가 (최종 curPrice 값 저장)
 
 const handleBidData = (e) => {
-  const recvdata = e.data;
-  const parts = recvdata.split("|");
-  const bodydata = parts[3];
-  const bodyParts = bodydata.split("^");
+  var recvdata = e.data;
+  var parts = recvdata.split("|");
+  var bodydata = parts[3];
+  var bodyParts = bodydata.split("^");
   const time = bodyParts[1]; // 체결 시간
   const curPrice = parseFloat(bodyParts[2]); // 현재가 (실시간 데이터)
   const curVolume = parseFloat(bodyParts[12]); // 거래량을 숫자로 변환
 
-  console.log("현재가:", curPrice);
+  console.log("현재가:", curPrice, "StockCode: ", stockCode.value);
 
   if (!deleyTime) {
     deleyTime = true;
     savedStartPrice = curPrice; // 딜레이 시작 시의 현재가를 시가로 저장
+    console.log("시가: ", savedStartPrice);
     tradeStore.setStockPrice(savedStartPrice);
     endVolume = 0; // 누적 거래량 초기화
     highPrice = curPrice; // 시작 시 고가 초기화
@@ -368,7 +385,7 @@ const handleBidData = (e) => {
       savedStartPrice = null;
       highPrice = curPrice;
       lowPrice = curPrice;
-    }, 60000); // 1분 딜레이
+    }, 10000); // 1분 딜레이
   } else {
     endCurPrice = curPrice;
     // 딜레이 중에도 curPrice가 계속 갱신됨
@@ -388,6 +405,26 @@ onMounted(() => {
   renderChart(); // 초기 차트 렌더링
   loadChartData(stockCode.value); // 과거 데이터 로딩
   connectWebSocketForBid(stockCode.value); // 실시간 데이터 WebSocket 연결
+});
+onBeforeUnmount(() => {
+  if (w) {
+    console.log("컴포넌트 언마운트 시 WebSocket 닫기");
+    w.close();
+    w = null;
+  }
+});
+watch(stockCode, (newStockCode, oldStockCode) => {
+  // WebSocket이 이미 열려 있으면 먼저 닫기
+  if (w) {
+    console.log("기존 WebSocket 연결 닫기");
+    w.close();
+    w = null;
+  }
+
+  if (newStockCode) {
+    console.log("새로운 주식 코드로 WebSocket 연결:", newStockCode);
+    connectWebSocketForBid(newStockCode);
+  }
 });
 </script>
 

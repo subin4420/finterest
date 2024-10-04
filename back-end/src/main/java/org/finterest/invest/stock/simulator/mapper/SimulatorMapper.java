@@ -22,4 +22,6 @@ public interface SimulatorMapper {
     String updateOauthToken(String token);
 
     String getOauthToken();
+
+    String getStockName(String stockCode);
 }
