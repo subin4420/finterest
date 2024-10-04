@@ -77,9 +77,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useTradeStore } from '@/stores/tradeStore';
-import axios from 'axios';
+import { ref, computed, onMounted } from "vue";
+import { useTradeStore } from "@/stores/tradeStore";
+import axios from "axios";
 
 const tradeStore = useTradeStore();
 const selectStockcode = computed(() => tradeStore.getSelectedStockCode);
@@ -96,9 +96,9 @@ const viewStockHeld = async () => {
     const response = await axios.post(`/api/trade/userId/${userId}`);
     const data = response.data; // API에서 받은 전체 데이터
     availableFunds.value = data.money;
-    console.log('조회 성공:', data);
+    console.log("조회 성공:", data);
   } catch (error) {
-    console.error('조회 실패:', error);
+    console.error("조회 실패:", error);
   }
 };
 
@@ -182,13 +182,13 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type='number'] {
+input[type="number"] {
   -moz-appearance: textfield; /* Firefox용 */
 }
 /* 테두리 제거 */
