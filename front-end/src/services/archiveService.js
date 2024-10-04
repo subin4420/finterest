@@ -9,6 +9,7 @@ const getToken = () => {
   //   throw new Error('인증 토큰이 없습니다. 로그인이 필요합니다.');
   // }
   // return token;
+  console.log("Fetched token:", token);
   return token || null;
 };
 
@@ -101,13 +102,36 @@ export const removeFavorite = async (materialId) => {
   return response.data;
 };
 
-// 학습 상태 업데이트 함수
-export const updateArchiveStatus = async (materialId, data) => {
+// 학습 상태(incomplete) 추가
+export const insertArchiveStatus = async(materialId, statusData) => {
   const token = getToken();
-  const response = await api.put(`/api/archive/${materialId}/progress`, data,{    
+  try {
+    const response = await api.post(`/api/archive/${materialId}/progress`, statusData,{
       headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log('Server response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error in insertArchiveStatus:', error.response?.data || error.message);
+    throw error; // 에러 발생 시 다시 throw
+  }
+};
+
+// 학습 상태(completed) 업데이트 함수
+export const updateArchiveStatus = async (materialId, statusData) => {
+  const token = getToken();
+  try {
+    const response = await api.put(`/api/archive/${materialId}/progress`, statusData,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log('Server response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error in updateArchiveStatus:', error.response?.data || error.message);
+    throw error; // 에러 발생 시 다시 throw
+  }
 };

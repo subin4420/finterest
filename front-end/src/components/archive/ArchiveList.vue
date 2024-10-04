@@ -6,6 +6,7 @@
         v-for="archive in filteredArchives" 
         :key="archive.materialId" 
         :cardData="archive" 
+        :showFavoriteButton="false" 
         @click.native="openModal(archive)"  
       />
     </div>
@@ -14,6 +15,7 @@
       :isVisible="isModalVisible" 
       :cardData="selectedCard" 
       :status="selectedCard?.status"
+      :materialId="selectedCard?.materialId"
       @update:isVisible="isModalVisible = $event" 
     />
   </div>

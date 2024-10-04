@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close-button" @click="closeModal">
-                    <i class="fas fa-times"></i> <!-- X 아이콘 추가 -->
+                    <i class="fas fa-times"></i>
                 </button>
                 <span class="learning-status" v-if="cardData.status" :class="['status', statusClass]">
                     <i :class="statusIcon"></i> {{ statusText }}
@@ -66,7 +66,35 @@ export default {
             return this.cardData.status === 'completed' ? 'fas fa-check-circle' : 'fas fa-clock';
         }
     },
+    mounted() {
+        console.log('Modal mounted with cardData:', this.cardData);
+
+        //cardData.status가 존재하지 않으면 null로 초기화
+        if (this.cardData.status == 'N/A' || !this.cardData.status) {
+            this.cardData.status = null;
+            console.log('Setting status to null.');
+        }
+
+        this.checkAndAddStatus(); // 모달이 열릴 때 학습 상태가 null이면 추가
+    },
     methods: {
+        async checkAndAddStatus() {
+            console.log('Checking status in checkAndAddStatus function:', this.cardData.status);
+            if (!this.cardData.status || this.cardData.status === null) {  // status가 없거나 null로 강제 설정
+                try {
+                    console.log('Status is null, adding archive status.');
+                    const archiveStore = useArchiveStore();
+                    await archiveStore.addArchiveStatus(this.cardData.materialId, 'incomplete'); // 학습 상태 추가
+                    console.log('Successfully added archive status.');
+                    this.cardData.status = 'incomplete'; // 로컬 상태 업데이트
+                } catch (error) {
+                    console.error('Error adding archive status:', error);
+                }
+            } else {
+                console.log('Status is not null, skipping status addition.');
+            }
+        },
+
         closeModal() {
             this.$emit('update:isVisible', false);
         },
@@ -74,7 +102,8 @@ export default {
             if (this.cardData.status !== 'completed') {
                 try {
                     const archiveStore = useArchiveStore();
-                    await archiveStore.changeArchiveStatus(this.cardData.materialId, 'completed');
+                    await archiveStore.changeArchiveStatus(this.cardData.materialId, 'completed'); // 학습 완료 상태로 변경
+                    this.cardData.status = 'completed'; // 로컬 상태 업데이트
                     this.closeModal(); // 모달 닫기
                 } catch (error) {
                     console.error('Error updating archive status:', error);
@@ -84,6 +113,7 @@ export default {
     }
 }
 </script>
+
 
 <style scoped>
 .modal-overlay {
@@ -210,7 +240,8 @@ img {
 
 .complete-button:disabled {
     opacity: 0.6;
-    cursor: not-allowed;
+    cursor: default;
+    /* cursor: not-allowed; */
 }
 
 .complete-button i {

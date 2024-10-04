@@ -3,7 +3,11 @@
         <!-- 이미지 섹션 -->
         <div class="image-wrapper">
             <img :src="cardData.materialImg || defaultImage" alt="썸네일 이미지" />
-            <button class="favorite-button" @click.stop="toggleFavorite">
+            <button 
+             v-if="showFavoriteButton"
+            class="favorite-button" 
+            @click.stop="toggleFavorite"
+            >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 50 50">
                     <path :d="favoriteIcon" />
                 </svg>
@@ -31,6 +35,10 @@ export default {
         cardData: {
             type: Object,
             required: true
+        },
+        showFavoriteButton: {   // 이 prop으로 favorite 버튼 표시 여부를 결정
+            type: Boolean,
+            default: true
         }
     },
     data() {
