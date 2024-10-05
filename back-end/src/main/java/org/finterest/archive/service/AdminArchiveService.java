@@ -1,6 +1,7 @@
 package org.finterest.archive.service;
 
 import org.finterest.archive.dao.AdminArchiveDAO;
+import org.finterest.archive.domain.ArchiveDetailVO;
 import org.finterest.archive.domain.ArchiveVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class AdminArchiveService {
 
 
     public List<ArchiveVO> selectArchiveByCategoryAndFavorites(String categoryName,
-                                                               Boolean favorites){
+                                                                     Boolean favorites){
         return adminArchiveDAO.selectArchiveByCategoryAndFavorites(categoryName, favorites);
     }
 

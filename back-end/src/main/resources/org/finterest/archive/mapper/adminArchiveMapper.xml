@@ -16,9 +16,9 @@
 
     <!-- 학습 자료 컬럼 정의 -->
     <sql id="ArchiveColumns">
-        lm.material_id AS material_id,
+        lm.material_id AS materialId,
         lm.title AS title,
-        lm.material_img AS material_img,
+        lm.material_img AS materialImg,
         lm.link AS link,
         lm.description AS description,
         lm.content AS content,
@@ -30,7 +30,7 @@
     <!-- 기본 FROM 및 JOIN 구조 -->
     <sql id="BaseQuery">
         FROM learning_materials lm
-        JOIN categories c ON lm.category_id = c.category_id
+        LEFT JOIN categories c ON lm.category_id = c.category_id
     </sql>
 
     <!-- 전체 학습 자료 목록 조회 -->
@@ -38,7 +38,7 @@
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
-        ORDER BY lm.created_at DESC
+        ORDER BY lm.created_at, c.category_id
     </select>
 
     <!-- 즐겨찾기된 학습 자료 조회 (특정 사용자) -->
@@ -57,7 +57,7 @@
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
-        JOIN Favorites f ON lm.material_id = f.material_id
+        LEFT JOIN Favorites f ON lm.material_id = f.material_id
         WHERE 1=1
         <if test="categoryName != null">
             AND c.category_name = #{categoryName}
@@ -65,7 +65,7 @@
         <if test="favorites != null and favorites == true">
             AND f.material_id IS NOT NULL
         </if>
-        ORDER BY lm.created_at DESC
+        ORDER BY lm.created_at, c.category_id
     </select>
 
     <!-- 학습 자료 수정 (카테고리명을 기반으로 업데이트) -->
@@ -87,6 +87,7 @@
         DELETE FROM Learning_Materials
         WHERE material_id = #{materialId}
     </delete>
+
     <select id="getProgressForMaterialAndUser" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
         SELECT
             progress_id AS progressId,

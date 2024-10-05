@@ -1,7 +1,7 @@
 package org.finterest.archive.service;
 
 import org.finterest.archive.dao.ArchiveDAO;
-import org.finterest.archive.domain.ArchiveVO;
+import org.finterest.archive.domain.ArchiveDetailVO;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,12 @@ public class ArchiveService {
     }
 
     // 모든 자료 조회
-    public List<ArchiveVO> selectAllArchive(Integer userId){
+    public List<ArchiveDetailVO> selectAllArchive(Integer userId){
         return archiveDAO.selectAllArchive(userId);
     }
 
     // 특정 ID로 조회
-    public ArchiveVO selectArchiveById(int id){
+    public ArchiveDetailVO selectArchiveById(int id){
         return archiveDAO.selectArchiveById(id);
     }
 
@@ -34,7 +34,7 @@ public class ArchiveService {
 //    }
 
     // 로그인 여부로 특정 카테고리 필터링
-    public List<ArchiveVO> selectArchiveByCategory(Integer userId, Integer categoryId) {
+    public List<ArchiveDetailVO> selectArchiveByCategory(Integer userId, Integer categoryId) {
         if (userId != null) {
             return archiveDAO.selectArchiveByCategoryWithFavorites(userId, categoryId);
         } else {
@@ -46,12 +46,12 @@ public class ArchiveService {
 
 
     // 텍스트 자료만 조회
-    public List<ArchiveVO> selectTextArchive(Integer userId){
+    public List<ArchiveDetailVO> selectTextArchive(Integer userId){
         return archiveDAO.selectTextArchive(userId);
     }
 
     // 영상 자료만 조회
-    public List<ArchiveVO> selectVideoArchive(Integer userId){
+    public List<ArchiveDetailVO> selectVideoArchive(Integer userId){
         return archiveDAO.selectVideoArchive(userId);
     }
 
@@ -65,7 +65,7 @@ public class ArchiveService {
     }
 
     // 즐겨찾기한 자료 조회
-    public List<ArchiveVO> getArchives(Integer userId, Boolean favorites) {
+    public List<ArchiveDetailVO> getArchives(Integer userId, Boolean favorites) {
         if (Boolean.TRUE.equals(favorites)) {
             return archiveDAO.selectFavoritesArchive(userId);
         } else {

@@ -2,6 +2,7 @@ package org.finterest.point.controller;
 
 import org.finterest.point.domain.PointRulesVO;
 import org.finterest.point.service.AdminPointRulesService;
+import org.finterest.security.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,24 @@ import java.util.Map;
 public class AdminPointRulesController {
 
     private final AdminPointRulesService adminPointRulesService;
+    private final TokenUtil tokenUtil;
 
     @Autowired
-    public AdminPointRulesController(AdminPointRulesService adminPointRulesService) {
+    public AdminPointRulesController(AdminPointRulesService adminPointRulesService, TokenUtil tokenUtil) {
         this.adminPointRulesService = adminPointRulesService;
+        this.tokenUtil = tokenUtil;
     }
 
     // 1. 포인트 정책 전체 조회 API
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllPointRules(
             @RequestHeader("Authorization") String adminToken) {
+        // 관리자 권한 확인
+        if (!tokenUtil.isAdmin(adminToken)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "관리자 권한이 없습니다."));
+        }
+
         List<PointRulesVO> pointRules = adminPointRulesService.getAllPointRules();
 
         // 응답 데이터를 Map으로 감싸서 "pointRules"로 리턴
@@ -42,6 +51,12 @@ public class AdminPointRulesController {
     public ResponseEntity<String> addPointRule(
             @RequestHeader("Authorization") String adminToken,
             @RequestBody PointRulesVO pointRule) {
+        // 관리자 권한 확인
+        if (!tokenUtil.isAdmin(adminToken)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("관리자 권한이 없습니다.");
+        }
+
         boolean isAdded = adminPointRulesService.addPointRule(pointRule);
 
         HttpHeaders headers = new HttpHeaders();
@@ -60,6 +75,12 @@ public class AdminPointRulesController {
             @RequestHeader("Authorization") String adminToken,
             @PathVariable("ruleId") int ruleId,
             @RequestBody PointRulesVO pointRule) {
+        // 관리자 권한 확인
+        if (!tokenUtil.isAdmin(adminToken)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("관리자 권한이 없습니다.");
+        }
+
         pointRule.setRuleId(ruleId);  // Path variable을 VO 객체에 설정
         boolean isUpdated = adminPointRulesService.updatePointRule(pointRule);
 
@@ -78,6 +99,11 @@ public class AdminPointRulesController {
     public ResponseEntity<String> deletePointRule(
             @RequestHeader("Authorization") String adminToken,
             @PathVariable("ruleId") int ruleId) {
+        // 관리자 권한 확인
+        if (!tokenUtil.isAdmin(adminToken)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("관리자 권한이 없습니다.");
+        }
 
         boolean isDeleted = adminPointRulesService.deletePointRule(ruleId);
 
@@ -91,9 +117,4 @@ public class AdminPointRulesController {
         }
     }
 
-    // 토큰에서 사용자 ID를 추출하는 예시 메서드
-    private int getUserIdFromToken(String token) {
-        // 실제 토큰에서 사용자 ID를 추출하는 로직 필요
-        return 1; // 테스트용으로 사용자 ID 1을 반환
-    }
 }

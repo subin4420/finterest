@@ -1,29 +1,28 @@
 package org.finterest.archive.mapper;
 
 import org.apache.ibatis.annotations.Param;
-import org.finterest.archive.domain.ArchiveVO;
+import org.finterest.archive.domain.ArchiveDetailVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
 @Mapper
 public interface ArchiveMapper {
-    List<ArchiveVO> selectAllArchive(@Param("userId") Integer userId);
-    ArchiveVO selectArchiveById(int id);
+    List<ArchiveDetailVO> selectAllArchive(@Param("userId") Integer userId);
+    ArchiveDetailVO selectArchiveById(int id);
 
-    List<ArchiveVO> selectArchiveByCategory(int categoryId);
-    List<ArchiveVO> selectArchiveByCategoryWithFavorites(@Param("userId") Integer userId, @Param("categoryId") int categoryId);
+    List<ArchiveDetailVO> selectArchiveByCategory(int categoryId);
+    List<ArchiveDetailVO> selectArchiveByCategoryWithFavorites(@Param("userId") Integer userId, @Param("categoryId") int categoryId);
 
-    List<ArchiveVO> selectTextArchive(@Param("userId") Integer userId);
-    List<ArchiveVO> selectVideoArchive(@Param("userId") Integer userId);
+    List<ArchiveDetailVO> selectTextArchive(@Param("userId") Integer userId);
+    List<ArchiveDetailVO> selectVideoArchive(@Param("userId") Integer userId);
     ProgressVO getProgressForMaterial(int materialId);
     ProgressVO getProgressForUserId(Integer userId);
 
     // 즐겨찾기한 자료 조회
-    List<ArchiveVO> selectFavoritesArchive(@Param("userId") Integer userId);
+    List<ArchiveDetailVO> selectFavoritesArchive(@Param("userId") Integer userId);
 
     // 즐겨찾기 추가
     void insertFavorite(@Param("userId") int userId, @Param("materialId") int materialId);

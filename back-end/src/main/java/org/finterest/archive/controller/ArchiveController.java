@@ -1,14 +1,11 @@
 package org.finterest.archive.controller;
 
-import org.finterest.archive.domain.ArchiveVO;
+import org.finterest.archive.domain.ArchiveDetailVO;
 
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.service.ArchiveService;
-import org.finterest.security.util.JwtProcessor;
 import org.finterest.security.util.TokenUtil;
-import org.finterest.user.dto.UserDTO;
-import org.finterest.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +30,13 @@ public class ArchiveController {
 
     // 전체 자료 조회
     @GetMapping
-    public Map<String, List<ArchiveVO>> selectAllArchive(
+    public Map<String, List<ArchiveDetailVO>> selectAllArchive(
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "favorites", required = false) Boolean favorites,  // 즐겨찾기 여부 추가
             @RequestParam(value = "categoryId", required = false) Integer categoryId,  // 카테고리 ID 추가
             @RequestHeader(value = "Authorization", required = false) String authToken) {
 
-        List<ArchiveVO> archiveVOList;
+        List<ArchiveDetailVO> archiveVOList;
         Integer userId = null; // 토큰이 없는 경우를 고려하여 null로 설정
 
         if (authToken != null && !authToken.isEmpty()) {
@@ -78,7 +75,7 @@ public class ArchiveController {
 
         boolean isAuthenticated = (userId != null); // 사용자 ID가 있을 때만 인증된 상태로 간주
 
-        Map<String, List<ArchiveVO>> response = new HashMap<>();
+        Map<String, List<ArchiveDetailVO>> response = new HashMap<>();
         response.put("archives", applyProgressData(archiveVOList, isAuthenticated, userId)); // 학습 진행 상태 추가
 
         return response;
@@ -87,17 +84,17 @@ public class ArchiveController {
 
     // 특정 ID로 자료 조회
     @GetMapping("/{id}")
-    public ArchiveVO one(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authToken) {
-        ArchiveVO archiveVO = archiveService.selectArchiveById(id);
+    public ArchiveDetailVO one(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authToken) {
+        ArchiveDetailVO archiveVO = archiveService.selectArchiveById(id);
         boolean isAuthenticated = (authToken != null && !authToken.isEmpty());
         return applyProgressDataToSingle(archiveVO, isAuthenticated); // 학습 진행 상태 추가
     }
 
 
     // JWT 토큰이 있는 경우 학습 진행 데이터를 추가하는 메서드
-    private List<ArchiveVO> applyProgressData(List<ArchiveVO> archives, boolean isAuthenticated, Integer userId) {
+    private List<ArchiveDetailVO> applyProgressData(List<ArchiveDetailVO> archives, boolean isAuthenticated, Integer userId) {
         if (isAuthenticated && userId != null) {
-            for (ArchiveVO archive : archives) {
+            for (ArchiveDetailVO archive : archives) {
                 // 학습 자료 ID와 사용자 ID로 학습 진행 정보를 조회
                 ProgressVO progress = archiveService.getProgressForUserAndMaterial(userId, archive.getMaterialId());
                 if (progress != null) {
@@ -107,7 +104,7 @@ public class ArchiveController {
                 }
             }
         } else {
-            for (ArchiveVO archive : archives) {
+            for (ArchiveDetailVO archive : archives) {
                 // 토큰이 없는 경우 null로 설정
                 archive.setStatus(null);
                 archive.setStartedAt(null);
@@ -118,7 +115,7 @@ public class ArchiveController {
     }
 
     // JWT 토큰이 있는 경우 학습 진행 데이터를 추가하는 메서드 (단일 자료용)
-    private ArchiveVO applyProgressDataToSingle(ArchiveVO archive, boolean isAuthenticated) {
+    private ArchiveDetailVO applyProgressDataToSingle(ArchiveDetailVO archive, boolean isAuthenticated) {
         if (isAuthenticated) {
             ProgressVO progress = archiveService.getProgressForMaterial(archive.getMaterialId());
             if (progress != null) {

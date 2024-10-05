@@ -1,6 +1,6 @@
 package org.finterest.archive.dao;
 
-import org.finterest.archive.domain.ArchiveVO;
+import org.finterest.archive.domain.ArchiveDetailVO;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.mapper.ArchiveMapper;
@@ -19,29 +19,29 @@ public class ArchiveDAO {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
 
-    public List<ArchiveVO> selectAllArchive(Integer userId){
+    public List<ArchiveDetailVO> selectAllArchive(Integer userId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectAllArchive(userId);
     }
 
-    public ArchiveVO selectArchiveById(int id){
+    public ArchiveDetailVO selectArchiveById(int id){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectArchiveById(id);
     }
 
     // 로그인 안 한 사용자의 카테고리 필터링
-    public List<ArchiveVO> selectArchiveByCategory(int categoryId){
+    public List<ArchiveDetailVO> selectArchiveByCategory(int categoryId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectArchiveByCategory(categoryId);
     }
 
     // 로그인한 사용자의 카테고리 필터링
-    public List<ArchiveVO> selectArchiveByCategoryWithFavorites(Integer userId, int categoryId){
+    public List<ArchiveDetailVO> selectArchiveByCategoryWithFavorites(Integer userId, int categoryId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectArchiveByCategoryWithFavorites(userId, categoryId);
     }
 
-    public List<ArchiveVO> selectTextArchive(Integer userId){
+    public List<ArchiveDetailVO> selectTextArchive(Integer userId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectTextArchive(userId);
     }
 
-    public List<ArchiveVO> selectVideoArchive(Integer userId){
+    public List<ArchiveDetailVO> selectVideoArchive(Integer userId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectVideoArchive(userId);
     }
 
@@ -53,7 +53,7 @@ public class ArchiveDAO {
     }
 
     // 즐겨찾기한 자료 조회
-    public List<ArchiveVO> selectFavoritesArchive(Integer userId){
+    public List<ArchiveDetailVO> selectFavoritesArchive(Integer userId){
         return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectFavoritesArchive(userId);
     }
 

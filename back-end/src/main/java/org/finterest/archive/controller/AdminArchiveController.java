@@ -1,8 +1,11 @@
 package org.finterest.archive.controller;
 
+import org.finterest.archive.domain.ArchiveDetailVO;
 import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.archive.service.AdminArchiveService;
+import org.finterest.security.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +17,13 @@ import java.util.Map;
 @RequestMapping("/api/admin/archive")
 public class AdminArchiveController {
     private final AdminArchiveService adminArchiveService;
+    private final TokenUtil tokenUtil;
 
     @Autowired
-    public AdminArchiveController(AdminArchiveService adminArchiveService) {
+    public AdminArchiveController(AdminArchiveService adminArchiveService, TokenUtil tokenUtil) {
         System.out.println("AdminArchiveController created");
         this.adminArchiveService = adminArchiveService;
+        this.tokenUtil = tokenUtil;
     }
 
     // 학습 자료 생성
@@ -26,6 +31,12 @@ public class AdminArchiveController {
     public ResponseEntity<Map<String, String>> createArchive(
             @RequestBody Map<String, String> requestBody,
             @RequestHeader("Authorization") String token) {
+
+        if (!tokenUtil.isAdmin(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "관리자 권한이 없습니다."));
+        }
+
         // Request Body에서 데이터 가져오기
         String title = requestBody.get("title");
         String description = requestBody.get("description");
@@ -51,15 +62,26 @@ public class AdminArchiveController {
             @RequestParam(value = "userId", required = false) Integer userId,  // userId 필터 추가
             @RequestHeader("Authorization") String token) {
 
+        if (!tokenUtil.isAdmin(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "관리자 권한이 없습니다."));
+        }
+
         List<ArchiveVO> materials;
 
         // 즐겨찾기 필터가 적용된 경우
         if (favorites != null && favorites && userId != null) {
             // 특정 사용자의 즐겨찾기 자료 조회
             materials = adminArchiveService.selectFavoritesByUser(userId);
-        } else {
-            // 카테고리 및 일반 자료 조회
+        }
+        // 카테고리 또는 일반 자료 조회
+        else if (categoryName != null || favorites != null) {
             materials = adminArchiveService.selectArchiveByCategoryAndFavorites(categoryName, favorites);
+        }
+        // 전체 조회
+        else {
+            // 필터 없이 모든 자료 조회
+            materials = adminArchiveService.selectAllArchive();
         }
 
         // 응답 구성
@@ -74,6 +96,12 @@ public class AdminArchiveController {
             @PathVariable int materialId,
             @RequestBody Map<String, String> requestBody,
             @RequestHeader("Authorization") String token) {
+
+        if (!tokenUtil.isAdmin(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "관리자 권한이 없습니다."));
+        }
+
         // Request Body에서 데이터 가져오기
         String title = requestBody.get("title");
         String description = requestBody.get("description");
@@ -96,6 +124,12 @@ public class AdminArchiveController {
     public ResponseEntity<Map<String, String>> deleteArchive(
             @PathVariable int materialId,
             @RequestHeader("Authorization") String token) {
+
+        if (!tokenUtil.isAdmin(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "관리자 권한이 없습니다."));
+        }
+
 
         // 학습 자료 삭제
         adminArchiveService.deleteArchive(materialId);
