@@ -47,22 +47,42 @@
       </div>
       <!-- <button @click="submitQuiz" :disabled="!allQuestionsAnswered" class="submit-button">퀴즈 제출</button> -->
     </div>
+    
+    <!-- 모달 컨테이너를 body에 추가 -->
+    <teleport to="body">
+      <QuizResultModal 
+        :show="showResultModal"
+        :result="quizResult"
+        @close="closeResultModal"
+        @view-answers="openAnswersModal"
+        @go-to-quiz-list="goToQuizList"
+      />
+
+      <QuizAnswersModal
+        :show="showAnswersModal"
+        :answers="detailedAnswers"
+        @close="closeAnswersModal"
+        @go-to-quiz-list="goToQuizList"
+      />
+    </teleport>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useQuizStore } from '@/stores/quizStore';
+import QuizResultModal from './QuizResultModal.vue';
+import QuizAnswersModal from './QuizAnswersModal.vue';
 
 export default {
-  name: 'QuizSubmit',
-  props: {
-    quizSet: {
-      type: Object,
-      required: true
-    }
+  components: {
+    QuizResultModal,
+    QuizAnswersModal
   },
-  emits: ['changeQuizSet', 'goBack', 'quizSubmitted', 'updateQuizProgress'],
+  props: {
+    quizSet: Object,
+  },
+  emits: ['goBack', 'changeQuizSet', 'quizSubmitted', 'updateQuizProgress'],
   setup(props, { emit }) {
     const quizStore = useQuizStore();
     const questions = ref([]);
@@ -136,6 +156,12 @@ export default {
       emit('goBack');
     };
 
+    // 결과 모달 관련 상태 추가
+    const showResultModal = ref(false);
+    const quizResult = ref(null);
+    const showAnswersModal = ref(false);
+    const detailedAnswers = ref(null);
+
     const submitQuiz = async () => {
       if (!allQuestionsAnswered.value) return;
 
@@ -156,11 +182,37 @@ export default {
       console.log("Final submit data:", JSON.stringify(submitData, null, 2));
 
       try {
-        await quizStore.submitQuizAnswers(props.quizSet.setId, submitData);
-        emit('quizSubmitted');
+        const result = await quizStore.submitQuizAnswers(props.quizSet.setId, submitData);
+        console.log("Quiz submission result:", result);
+        quizResult.value = result;
+        showResultModal.value = true;
+        emit('quizSubmitted', result);
       } catch (error) {
-        console.error('퀴즈 제출 실패:', error);
+        console.error('퀴즈 출 실패:', error);
       }
+    };
+
+    const closeResultModal = () => {
+      showResultModal.value = false;
+    };
+
+    const openAnswersModal = async (resultId) => {
+      try {
+        const answers = await quizStore.fetchQuizAnswers(props.quizSet.setId, resultId);
+        detailedAnswers.value = answers;
+        showResultModal.value = false; // 결과 모달 닫기
+        showAnswersModal.value = true; // 답변 모달 열기
+      } catch (error) {
+        console.error('퀴즈 답변 조회 실패:', error);
+      }
+    };
+
+    const closeAnswersModal = () => {
+      showAnswersModal.value = false;
+    };
+
+    const goToQuizList = () => {
+      emit('goBack');
     };
 
     return {
@@ -177,7 +229,15 @@ export default {
       userAnswers,
       allQuestionsAnswered,
       submitQuiz,
-      updateQuizProgress
+      updateQuizProgress,
+      showResultModal,
+      quizResult,
+      closeResultModal,
+      showAnswersModal,
+      detailedAnswers,
+      openAnswersModal,
+      closeAnswersModal,
+      goToQuizList
     };
   }
 }
@@ -316,5 +376,28 @@ li:hover {
 .submit-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+/* 모달 스타일 추가 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow-y: auto;
 }
 </style>

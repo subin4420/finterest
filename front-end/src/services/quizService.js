@@ -59,3 +59,16 @@ export const submitQuizAnswers = async (setId, answers) => {
   console.log("Quiz submission response:", response.data);
   return response.data;
 };
+
+// 퀴즈 결과 답변 가져오기
+export const getQuizAnswers = async (setId, resultId) => {
+  const token = getToken();
+  
+  const response = await api.get(`/api/quiz-sets/${setId}/results/${resultId}/answers`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log("Quiz answers response:", response.data);
+  return response.data;
+};

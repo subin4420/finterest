@@ -1,5 +1,5 @@
 import { reactive, toRefs } from 'vue';
-import { getQuizSets, getQuizQuestions, submitQuizAnswers as submitQuizAnswersService } from '../services/quizService';
+import { getQuizSets, getQuizQuestions, submitQuizAnswers as submitQuizAnswersService, getQuizAnswers } from '../services/quizService';
 
 const state = reactive({
   quizSets: [], // 퀴즈 세트를 저장할 상태
@@ -42,11 +42,23 @@ const submitQuizAnswers = async (setId, answers) => {
   }
 };
 
+// 퀴즈 답변 상세 결과 가져오기
+const fetchQuizAnswers = async (setId, resultId) => {
+  try {
+    const response = await getQuizAnswers(setId, resultId);
+    return response.answers;
+  } catch (error) {
+    console.error("Failed to fetch quiz answers:", error);
+    throw error;
+  }
+};
+
 export const useQuizStore = () => {
   return {
     ...toRefs(state), // state를 toRefs로 반환하여 반응성 유지
     fetchQuizSets,
     fetchQuizQuestions,
     submitQuizAnswers,
+    fetchQuizAnswers,
   };
 };
