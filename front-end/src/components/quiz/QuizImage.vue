@@ -37,6 +37,7 @@ const slides = ref([
   height: 60vh; /* 고정된 높이 설정 (원하는 높이로 조정 가능) */
   overflow: hidden;
   margin-top: -60px; /* 헤더 높이만큼 위로 올림 */
+  z-index: 1; /* z-index 값을 낮게 설정 */
 }
 
 .slider {

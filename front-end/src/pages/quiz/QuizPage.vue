@@ -1,26 +1,40 @@
 <template>
   <div id="app">
-      <QuizImage />
-      <QuizNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
-      <!-- 퀴즈가 선택되지 않았을 때 -->
-      <div v-if="!isQuizSelected">
-        <div class="content-section">
-          <h3>퀴즈 자료</h3>
-          <div class="content-grid">
-            <QuizCard 
-              v-for="quizSet in filteredQuizSets" 
-              :key="quizSet.setId" 
-              :cardData="quizSet" 
-              @click.native="openQuizSet(quizSet)" 
-            />
-          </div>
-        </div>
+    <QuizImage />
+    <div :class="{'navigation-container': !isQuizSelected, 'quiz-top-container': isQuizSelected}">
+      <QuizNavigationBar v-if="!isQuizSelected" @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
+      <QuizTopBar v-else 
+        :currentQuestionIndex="currentQuestionIndex" 
+        :totalQuestions="totalQuestions" 
+        :score="score"
+        :allQuestionsAnswered="allQuestionsAnswered"
+        @end-quiz="goBackToQuizList"
+        @submit-quiz="submitQuiz"
+      />
+    </div>
+    <!-- 퀴즈가 선택되지 않았을 때 -->
+    <div v-if="!isQuizSelected" class="content-section">
+      <h3>퀴즈 자료</h3>
+      <div class="content-grid">
+        <QuizCard 
+          v-for="quizSet in filteredQuizSets" 
+          :key="quizSet.setId" 
+          :cardData="quizSet" 
+          @click.native="openQuizSet(quizSet)" 
+        />
       </div>
-
+    </div>
 
     <!-- 퀴즈가 선택되었을 때 -->
-    <div v-else>
-      <QuizSubmit :quizSet="selectedQuizSet" @goBack="goBackToQuizList" />
+    <div v-else class="content-section">
+      <QuizSubmit 
+        ref="quizSubmitRef"
+        :quizSet="selectedQuizSet" 
+        @goBack="goBackToQuizList"
+        @changeQuizSet="changeQuizSet"
+        @quizSubmitted="handleQuizSubmitted"
+        @updateQuizProgress="updateQuizProgress"
+      />
     </div>
   </div>
 </template>
@@ -30,7 +44,8 @@ import QuizImage from '@/components/quiz/QuizImage.vue';
 import QuizNavigationBar from '@/components/quiz/QuizNavigationBar.vue';
 import QuizCard from '@/components/quiz/QuizCard.vue';
 import QuizModal from '@/components/quiz/QuizModal.vue';
-import QuizSubmit from '@/components/quiz/QuizSubmit.vue'; // 새로 추가할 퀴즈 문제 컴포넌트
+import QuizSubmit from '@/components/quiz/QuizSubmit.vue';
+import QuizTopBar from '@/components/quiz/QuizTopBar.vue'; // 새로 추가
 import { onMounted, ref, computed } from "vue";
 import { useQuizStore } from "@/stores/quizStore";
 
@@ -41,25 +56,33 @@ export default {
     QuizCard,
     QuizModal,
     QuizNavigationBar,
-    QuizSubmit // 퀴즈 문제 컴포넌트 추가
+    QuizSubmit,
+    QuizTopBar // 새로 추가한 컴포넌트
   },
   setup() {
     const quizStore = useQuizStore();
     const isModalVisible = ref(false);
     const selectedCard = ref({});
-    const selectedCategory = ref(null); // 선택된 카테고리 상태 추가
+    const selectedCategory = ref(null);
     const quizSets = ref([]);
-    const isQuizSelected = ref(false); // 퀴즈 세트가 선택되었는지 여부
-    const selectedQuizSet = ref(null); // 선택된 퀴즈 세트 저장
+    const isQuizSelected = ref(false);
+    const selectedQuizSet = ref(null);
+
+    // QuizTopBar에 필요한 상태들
+    const currentQuestionIndex = ref(1);
+    const totalQuestions = ref(0);
+    const score = ref(0);
+    const allQuestionsAnswered = ref(false);
+
+    const quizSubmitRef = ref(null);
 
     onMounted(async () => {
-      await quizStore.fetchQuizSets(); // 퀴즈 세트 가져오기
-      const fetchedQuizSets = quizStore.quizSets.value; // .value를 통해 배열에 접근
-      console.log('Fetched Quiz Sets:', fetchedQuizSets); // 가져온 데이터 확인
-      quizSets.value = fetchedQuizSets; // 퀴즈 세트 저장
+      await quizStore.fetchQuizSets();
+      const fetchedQuizSets = quizStore.quizSets.value;
+      console.log('Fetched Quiz Sets:', fetchedQuizSets);
+      quizSets.value = fetchedQuizSets;
     });
 
-    // 카테고리 필터링 함수
     const filterByCategory = (category) => {
       selectedCategory.value = category;
       if (category === '즐겨찾기') {
@@ -67,26 +90,59 @@ export default {
       }
     };
 
-    // 필터링된 퀴즈 세트
     const filteredQuizSets = computed(() => {
       if (selectedCategory.value === '즐겨찾기') {
-        return quizSets.value.filter(quizSet => quizSet.favorite); // 즐겨찾기된 퀴즈만 필터링
+        return quizSets.value.filter(quizSet => quizSet.favorite);
       }
       return selectedCategory.value 
         ? quizSets.value.filter(quizSet => quizSet.categoryName === selectedCategory.value) 
         : quizSets.value;
     });
 
-    // 퀴즈 세트 선택 시 호출
     const openQuizSet = (quiz) => {
-      selectedQuizSet.value = quiz; // 선택된 퀴즈 세트 저장
-      isQuizSelected.value = true; // 퀴즈 세트가 선택되었음을 표시
+      selectedQuizSet.value = quiz;
+      isQuizSelected.value = true;
+      totalQuestions.value = quiz.questions ? quiz.questions.length : 0;
+      currentQuestionIndex.value = 1;
+      score.value = 0;
     };
 
-    // 퀴즈 문제 풀이 영역에서 퀴즈 세트 목록으로 돌아가기
     const goBackToQuizList = () => {
-      isQuizSelected.value = false; // 퀴즈 세트 선택 해제
-      selectedQuizSet.value = null; // 선택된 퀴즈 세트 초기화
+      isQuizSelected.value = false;
+      selectedQuizSet.value = null;
+    };
+
+    const changeQuizSet = (newQuizSet) => {
+      selectedQuizSet.value = newQuizSet;
+      totalQuestions.value = newQuizSet.questions ? newQuizSet.questions.length : 0;
+      currentQuestionIndex.value = 1;
+      score.value = 0;
+    };
+
+    const bookmarkQuestion = () => {
+      // 북마크 기능 구현
+    };
+
+    const showHint = () => {
+      // 힌트 기능 구현
+    };
+
+    const handleQuizSubmitted = () => {
+      // 퀴즈 제출 후 처리 (예: 결과 페이지로 이동)
+      console.log('퀴즈가 성공적으로 제출되었습니다.');
+      // 여기에 추가 로직을 구현할 수 있습니다.
+    };
+
+    const updateQuizProgress = (progress) => {
+      currentQuestionIndex.value = progress.currentQuestionIndex;
+      totalQuestions.value = progress.totalQuestions;
+      allQuestionsAnswered.value = progress.allQuestionsAnswered;
+    };
+
+    const submitQuiz = () => {
+      if (quizSubmitRef.value) {
+        quizSubmitRef.value.submitQuiz();
+      }
     };
 
     return { 
@@ -98,16 +154,43 @@ export default {
       openQuizSet, 
       isQuizSelected, 
       selectedQuizSet, 
-      goBackToQuizList 
+      goBackToQuizList,
+      changeQuizSet,
+      currentQuestionIndex,
+      totalQuestions,
+      score,
+      allQuestionsAnswered,
+      updateQuizProgress,
+      submitQuiz,
+      bookmarkQuestion,
+      showHint,
+      handleQuizSubmitted,
+      quizSubmitRef
     };
   }
 }
 </script>
 
-
-
-
 <style scoped>
+.navigation-container {
+  width: 80%;
+  margin: -20px auto 0; /* 원래 네비바에 대해서는 마이너스 마진 제거 */
+  max-width: 1200px;
+  position: relative;
+  z-index: 1002;
+  border-radius: 10px;
+}
+
+.quiz-top-container {
+  width: 80%;
+  margin: -20px auto 0; /* 퀴즈 탑바에 대해서만 마이너스 마진 적용 */
+  max-width: 1200px;
+  position: relative;
+  z-index: 1002;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
 h3 {
   font-size: 1.8rem; /* 폰트 크기를 조금 더 키워서 눈에 띄게 */
   font-weight: bold; /* 텍스트를 굵게 */
@@ -122,6 +205,7 @@ h3 {
   margin-bottom: 2rem; /* 섹션 간의 간격 */
   width: 80%; /* 전체 화면의 80%만 차지 */
   margin: 0 auto; /* 화면 중앙 정렬 */
+  max-width: 1200px; /* 최대 너비 설정 */
 }
 
 .content-grid {

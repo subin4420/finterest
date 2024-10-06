@@ -126,7 +126,7 @@ public class QuizSetsController {
         int userId = tokenUtil.getUserIdFromToken(token);
 
         // 제출된 퀴즈 데이터를 처리하고 결과 반환
-        QuizResultDetailVO result = quizSetsService.submitQuiz(setId, submission);
+        QuizResultDetailVO result = quizSetsService.submitQuiz(setId, userId ,submission);
         return ResponseEntity.ok(result);
     }
 
