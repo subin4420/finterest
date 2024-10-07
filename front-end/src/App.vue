@@ -12,7 +12,7 @@ watch(() => route.path, (newPath) => {
   if (newPath === '/'
   || newPath === '/archive/ArchivePage'  
   || newPath === '/quiz/QuizPage' 
-  || newPath === '/trade/TradePage'
+  || newPath === '/trade'
   ) {
     backgroundColor.value = 'transparent';
   } else {

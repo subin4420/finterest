@@ -25,8 +25,11 @@
     </div>
     
     <div class="quiz-problem">
-      <h2>{{ quizSet.setName }} 문제 풀기</h2>
-      <div v-if="questions.length > 0" class="question-container">
+      <div class="quiz-header">
+        <h2>{{ quizSet.setName }}</h2>
+      </div>
+      <div v-if="questions.length > 0" class="question-card">
+        <div class="question-number">문제 {{ currentQuestionIndex + 1 }} / {{ questions.length }}</div>
         <div class="question">
           <h3>{{ currentQuestion.question }}</h3>
           <ul class="choices">
@@ -42,10 +45,9 @@
           <button @click="nextQuestion" :disabled="currentQuestionIndex === questions.length - 1">다음 문제</button>
         </div>
       </div>
-      <div v-else>
+      <div v-else class="loading">
         문제를 불러오는 중입니다...
       </div>
-      <!-- <button @click="submitQuiz" :disabled="!allQuestionsAnswered" class="submit-button">퀴즈 제출</button> -->
     </div>
     
     <!-- 모달 컨테이너를 body에 추가 -->
@@ -318,12 +320,36 @@ li:hover {
   text-align: center;
 }
 
-.question {
-  margin-bottom: 1.5rem;
+.quiz-header {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  border-radius: 8px;
 }
 
-.question-container {
+.quiz-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.question-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
   margin-bottom: 2rem;
+}
+
+.question-number {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.question h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
 }
 
 .choices {
@@ -332,36 +358,42 @@ li:hover {
 }
 
 .choices li {
-  margin-bottom: 0.5rem;
-  padding: 10px;
+  margin-bottom: 1rem;
+  padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .choices li:hover {
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
 }
 
 .choices li.selected {
   background-color: #e6f2ff;
   border-color: #007bff;
+  color: #007bff;
 }
 
 .navigation-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .navigation-buttons button {
-  padding: 10px 20px;
+  padding: 0.5rem 1rem;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.navigation-buttons button:hover:not(:disabled) {
+  background-color: #0056b3;
 }
 
 .navigation-buttons button:disabled {
@@ -370,24 +402,33 @@ li:hover {
 }
 
 .submit-button {
-  margin-top: 1rem;
-  padding: 10px 20px;
-  background-color: #4CAF50;
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  margin-top: 2rem;
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
 .submit-button:hover:not(:disabled) {
-  background-color: #45a049;
+  background-color: #218838;
 }
 
 .submit-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+  color: #666;
 }
 
 /* 모달 스타일 추가 */
