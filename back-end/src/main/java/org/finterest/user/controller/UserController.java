@@ -4,17 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.finterest.common.util.UploadFiles;
-import org.finterest.user.dto.ChangePasswordDTO;
-import org.finterest.user.dto.UserDTO;
-import org.finterest.user.dto.UserJoinDTO;
-import org.finterest.user.dto.UserVerificationDTO;
+import org.finterest.user.dto.*;
 import org.finterest.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -56,6 +56,10 @@ public class UserController {
     public ResponseEntity<Boolean> checkUsername(@PathVariable String username) {
         return ResponseEntity.ok().body(userService.checkDuplicate(username));
     }
+    @PutMapping("/{username}")
+    public ResponseEntity<UserDTO> changeProfile(UserUpdateDTO member) {
+        return ResponseEntity.ok(userService.update(member));
+    }
     //회원탈퇴
     @DeleteMapping("/{username}")
     public ResponseEntity<UserDTO> delete(@PathVariable String username) {
@@ -63,6 +67,7 @@ public class UserController {
     }
     @GetMapping("/{username}/avatar")
     public void getAvatar(@PathVariable String username, HttpServletResponse response) {
+        String aP = "/Users/park/Desktop/upload/avatar";
         String filePath = avatarPath + "/" + username + ".png";
         File file = new File(filePath);
         if(!file.exists()) {
@@ -82,6 +87,30 @@ public class UserController {
         } catch (NoSuchElementException e) {
             // 사용자를 찾지 못한 경우 404 Not Found 응답 반환
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+    @PutMapping("/{username}/changepassword")
+    public ResponseEntity<?> changePassword(
+            @PathVariable String username,
+            @RequestBody ChangePasswordDTO changePasswordDTO,
+            Authentication authentication) {
+
+        String authenticatedUsername = authentication.getName();
+
+        // 인증된 사용자와 요청된 사용자가 동일한지 확인
+        if (!authenticatedUsername.equals(username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only change your own password.");
+        }
+
+        try {
+            userService.changePassword(username, changePasswordDTO);
+            return ResponseEntity.ok().body("Password changed successfully.");
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
         }
     }
 

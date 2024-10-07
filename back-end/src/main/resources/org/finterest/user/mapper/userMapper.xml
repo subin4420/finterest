@@ -7,8 +7,8 @@
 
     <!-- 사용자 추가 -->
     <insert id="insert">
-        INSERT INTO Users (username, password, email, full_name, account_status, money, signup_date, last_login, total_points)
-        VALUES (#{username}, #{password}, #{email}, #{fullName}, #{accountStatus}, #{money}, now(), null, 0)
+        INSERT INTO Users (username, password, email, full_name, account_status, money, signup_date, update_date , last_login, total_points)
+        VALUES (#{username}, #{password}, #{email}, #{fullName}, #{accountStatus}, #{money}, now(), now() ,null, 0)
     </insert>
 
     <!-- 사용자 정보 업데이트 -->
@@ -17,8 +17,6 @@
         SET
             email = #{email},
             full_name = #{fullName},
-            account_status = #{accountStatus},
-            money = #{money},
             update_date = now()
         WHERE username = #{username}
     </update>
@@ -29,6 +27,22 @@
         SET
             password = #{newPassword},
             update_date = now()
+        WHERE username = #{username}
+    </update>
+    <update id="updateUser" parameterType="org.finterest.user.dto.UserUpdateDTO">
+        <set>
+
+            <!-- fullName이 null이 아니면 업데이트 -->
+            <if test="fullname != null">
+                full_name = #{fullname},
+            </if>
+
+            <!-- email이 null이 아니면 업데이트 -->
+            <if test="email != null">
+                email = #{email},
+            </if>
+            update_date = NOW()  <!-- 업데이트 날짜는 항상 변경 -->
+        </set>
         WHERE username = #{username}
     </update>
 
@@ -100,6 +114,9 @@
         SELECT user_id
         FROM Users
         WHERE username = #{username}
+    </select>
+    <select id="findByUsername"  parameterType="String" resultType="org.finterest.security.account.domain.UserVO">
+            SELECT * FROM users WHERE username = #{username}
     </select>
 
 </mapper>

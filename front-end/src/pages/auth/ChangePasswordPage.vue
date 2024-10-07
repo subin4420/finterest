@@ -29,7 +29,14 @@ const onSubmit = async () => {
   }
 
   try {
-    await authApi.changePassword(changePassword);
+    // 서버로 보낼 데이터를 새로 구성
+    const passwordData = {
+      username: changePassword.username,
+      oldPassword: changePassword.oldPassword,
+      newPassword: changePassword.newPassword
+    };
+
+    await authApi.changePassword(passwordData);
     alert('비밀번호를 수정했습니다.');
     router.push({ name: 'profile' });
   } catch (e) {

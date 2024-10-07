@@ -9,6 +9,7 @@ const avatar = ref(null);
 const avatarPath = `/api/users/${auth.username}/avatar`;
 const member = reactive({
   username: auth.username,
+  fullName: auth.fullName, // fullName 추가
   email: auth.email,
   password: '',
   avatar: null,
@@ -16,7 +17,7 @@ const member = reactive({
 
 const error = ref('');
 
-const disableSubmit = computed(() => !member.email || !member.password);
+const disableSubmit = computed(() => !member.email || !member.password || !member.fullName);
 
 const onSubmit = async () => {
   if (avatar.value.files.length > 0) {
@@ -50,6 +51,15 @@ const onSubmit = async () => {
           아바타 이미지:
         </label>
         <input type="file" class="form-control" ref="avatar" id="avatar" accept="image/png, image/jpeg" />
+      </div>
+
+      <!-- fullName 입력 필드 추가 -->
+      <div class="mb-3 mt-3">
+        <label for="fullName" class="form-label">
+          <i class="fa-solid fa-user"></i>
+          이름
+        </label>
+        <input type="text" class="form-control" placeholder="이름" id="fullName" v-model="member.fullName" />
       </div>
 
       <div class="mb-3 mt-3">

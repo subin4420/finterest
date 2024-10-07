@@ -2,12 +2,10 @@ package org.finterest.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.finterest.common.exception.PasswordMissmatchException;
 import org.finterest.security.account.domain.AuthVO;
 import org.finterest.security.account.domain.UserVO;
-import org.finterest.user.dto.ChangePasswordDTO;
-import org.finterest.user.dto.UserDTO;
-import org.finterest.user.dto.UserJoinDTO;
-import org.finterest.user.dto.UserVerificationDTO;
+import org.finterest.user.dto.*;
 import org.finterest.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,7 +42,7 @@ public class UserServiceImpl implements UserService {
     private void saveAvatar(MultipartFile avatar, String username) {
         //아바타 업로드
         if(avatar != null && !avatar.isEmpty()) {
-            File dest = new File("/Users/park/Desktop/최종 프로젝트/avatar/", username + ".png");
+            File dest = new File("/Users/park/Desktop/upload/avatar/", username + ".png");
             try {
                 avatar.transferTo(dest);
             } catch (IOException e) {
@@ -96,9 +94,37 @@ public class UserServiceImpl implements UserService {
         return user != null; // 사용자 존재 여부 반환
     }
 
-    @Override
-    public void changePassword(ChangePasswordDTO changePasswordDTO) {
-        userMapper.updatePassword(changePasswordDTO); // DTO를 사용하여 비밀번호 업데이트
+    public void changePassword(String username, ChangePasswordDTO changePasswordDTO) {
+        // 사용자 정보 조회
+        UserVO userVO = userMapper.findByUsername(username);
+        if (userVO == null) {
+            throw new UsernameNotFoundException("User not found.");
+        }
+
+        // 기존 비밀번호 확인 (optional)
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), userVO.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect.");
+        }
+
+        // 새로운 비밀번호 암호화 및 DTO 업데이트
+        String encodedPassword = passwordEncoder.encode(changePasswordDTO.getNewPassword());
+        changePasswordDTO.setNewPassword(encodedPassword);
+        changePasswordDTO.setUsername(username);
+
+        // 비밀번호 업데이트 호출
+        userMapper.updatePassword(changePasswordDTO);
     }
+
+    @Override
+    public UserDTO update(UserUpdateDTO user) {
+        UserVO vo = userMapper.get(user.getUsername());
+        if(!passwordEncoder.matches(user.getPassword(),vo.getPassword())) {
+            throw new PasswordMissmatchException();
+        }
+        userMapper.update(user.toVO());
+        saveAvatar(user.getAvatar(), user.getUsername());
+        return get(user.getUsername());
+    }
+
 
 }
