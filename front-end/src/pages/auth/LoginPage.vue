@@ -1,3 +1,22 @@
+<template>
+  <div class="login-page container d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
+    <h1 class="mb-5 fw-bold logo" @click="goToHome">finterest</h1>
+    <form @submit.prevent="login" class="w-100" style="max-width: 400px;">
+      <div class="mb-4">
+        <input type="text" class="form-control form-control-lg" placeholder="아이디" v-model="user.username" required />
+      </div>
+      <div class="mb-4">
+        <input type="password" class="form-control form-control-lg" placeholder="패스워드" v-model="user.password" required />
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" :disabled="disableSubmit">로그인</button>
+      <div class="d-flex justify-content-between">
+        <router-link :to="{ name: 'findpassword' }" class="text-primary no-underline">비밀번호 찾기</router-link>
+        <router-link :to="{ name: 'join' }" class="text-primary no-underline">회원가입</router-link>
+      </div>
+    </form>
+  </div>
+</template>
+
 <script setup>
 import { computed, reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
@@ -7,7 +26,6 @@ const cr = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
-  //////////////////////////////////////////////////////////
 const user = reactive({
   username: '',
   password: '',
@@ -27,45 +45,62 @@ const login = async () => {
       router.push('/');
     }
   } catch (e) {
-    // 로그인 에러
     console.log('에러=======', e);
     error.value = e.response?.data?.message || '로그인에 실패했습니다.';
   }
 };
-  //////////////////////////////////////////////////////////
+
+const goToHome = () => {
+  router.push('/');
+};
 </script>
 
-<template>
-  <div class="mt-5 mx-auto" style="width: 500px">
-    <h1 class="my-5">
-      <i class="fa-solid fa-right-to-bracket"></i>
-      로그인
-    </h1>
+<style scoped>
+.login-page {
+  padding: 20px;
+  background-color: #ffffff;
+}
 
-    <form @submit.prevent="login">
-      <div class="mb-3 mt-3">
-        <label for="username" class="form-label">
-          <i class="fa-solid fa-user"></i>
-          사용자 ID:
-        </label>
-        <input type="text" class="form-control" placeholder="사용자 ID" v-model="user.username" required />
-      </div>
+h1 {
+  font-size: 2.5rem;
+  color: #00C4D1;
+}
 
-      <div class="mb-3">
-        <label for="password" class="form-label">
-          <i class="fa-solid fa-lock"></i>
-          비밀번호:
-        </label>
-        <input type="password" class="form-control" placeholder="비밀번호" v-model="user.password" required />
-      </div>
+.logo {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
 
-      <div v-if="error" class="text-danger">{{ error }}</div>
+.logo:hover {
+  color: #0098a8;
+}
 
-      <button type="submit" class="btn btn-primary mt-4" :disabled="disableSubmit">
-        <i class="fa-solid fa-right-to-bracket"></i>
-        로그인
-      </button>
-    </form>
+.form-control {
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1.2rem;
+}
 
-  </div>
-</template>
+.btn-primary {
+  background-color: #00C4D1;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0098a8;
+}
+
+.text-primary {
+  color: #00C4D1;
+  font-weight: bold;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.no-underline:hover {
+  text-decoration: underline;
+}
+</style>

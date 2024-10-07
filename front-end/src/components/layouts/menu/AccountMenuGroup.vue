@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/auth';
 import LogoutMenuItem from './LogoutMenuItem.vue';
 import { computed } from 'vue';
 
-const { login, join, myLearning, news } = config.accoutMenus;
+const { login, myLearning, news } = config.accoutMenus;
 const auth = useAuthStore();
 
 const islogin = computed(() => auth.isLogin);
@@ -24,7 +24,6 @@ const username = computed(() => auth.username);
     </template>
     <template v-else>
       <MenuItem :menu="login" />
-      <MenuItem :menu="join" />
     </template>
   </ul>
 </template>

@@ -6,6 +6,7 @@ import TradePage from '../pages/trade/TradePage.vue';
 import MyLearningPage from '../pages/myLearning/MyLearningPage.vue';
 import NoticePage from '../pages/notice/NoticePage.vue';
 import authRoutes from './auth';
+import NoticeDetailPage from '@/pages/notice/NoticeDetailPage.vue';
 import tradeRoutes from './trade';
 
 const router = createRouter({
@@ -41,10 +42,18 @@ const router = createRouter({
       name: 'notice',
       component: NoticePage,
     },
+    {
+      path: '/notices/:id',
+      name: 'NoticeDetail',
+      component: NoticeDetailPage
+    },
+
+
     ...authRoutes,
     ...tradeRoutes,
 
   ],
+
 });
 
 export default router;

@@ -1,11 +1,9 @@
 package org.finterest.user.service;
 
-import org.finterest.user.dto.UserDTO;
-import org.finterest.user.dto.UserJoinDTO;
-import org.finterest.user.dto.UserVerificationDTO;
-import org.finterest.user.dto.ChangePasswordDTO;
+import org.finterest.user.dto.*;
 
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService {
@@ -20,11 +18,11 @@ public interface UserService {
     int getUserIdByUsername(String username);
     List<UserDTO> getList();
     boolean verifyUser(UserVerificationDTO request); // 사용자 확인 메서드
-    void changePassword(ChangePasswordDTO changePasswordDTO); // 비밀번호 변경 메서드
+    void changePassword(String username, ChangePasswordDTO changePasswordDTO); // 비밀번호 변경 메서드
     //boolean resetPassword(String username, ChangePasswordDTO request); // 비밀번호 변경 요청 처
     //비밀번호변경
     //void changePassword(ChangePasswordDTO changePassword);
     //회원 정보 수정
-    //UserDTO update(UserUpdateDTO user);
-
+    UserDTO update(UserUpdateDTO user);
+    //void updateUser(UserUpdateDTO userUpdateDTO) throws IOException;
 }

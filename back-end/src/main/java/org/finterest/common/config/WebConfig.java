@@ -19,8 +19,8 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 
 
     // application.properties에서 업로드 경로를 가져옴
-    @Value("${upload.path:/Users/park/Desktop/upload}")
-    private String LOCATION;
+    @Value("${upload.path}")
+    private String location;
     final long MAX_FILE_SIZE = 1024 * 1024 * 10L;
     final long MAX_REQUEST_SIZE = 1024 * 1024 * 20L;
     final int FILE_SIZE_THRESHOLD = 1024 * 1024 * 5;
@@ -43,22 +43,23 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         // 경로 유효성 검사 및 디렉토리 생성
-        log.info("Upload path: " + LOCATION);
-
-        File uploadDir = new File("/Users/park/Desktop/upload");
+        String a = "/Users/park/Desktop/upload";
+        System.out.println("location is "+location);
+        File uploadDir = new File(a);
         if (!uploadDir.exists()) {
             boolean dirCreated = uploadDir.mkdirs();  // 디렉토리 생성
             if (dirCreated) {
-                log.info("Created upload directory: " + LOCATION);
+                log.info("Created upload directory: " + a);
             } else {
-                log.error("Failed to create upload directory: " + LOCATION);
+                log.error("Failed to create upload directory: " + a);
             }
         }
+
 
         // 파일 업로드 설정
         MultipartConfigElement multipartConfig =
                 new MultipartConfigElement(
-                        LOCATION,           // 업로드 처리 디렉토리 경로
+                        location,           // 업로드 처리 디렉토리 경로
                         MAX_FILE_SIZE,      // 업로드 가능한 파일 하나의 최대 크기
                         MAX_REQUEST_SIZE,   // 업로드 가능한 전체 최대 크기(여러 파일 업로드 하는 경우)
                         FILE_SIZE_THRESHOLD // 메모리 파일의 최대 크기(이보다 작으면 실제 메모리에서만 작업)

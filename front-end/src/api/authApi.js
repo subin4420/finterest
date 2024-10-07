@@ -50,6 +50,7 @@ export default {
   async update(member) {
     const formData = new FormData();
     formData.append('username', member.username);
+    formData.append('fullName', member.fullName);
     formData.append('password', member.password);
     formData.append('email', member.email);
 
