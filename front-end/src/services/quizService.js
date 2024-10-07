@@ -60,6 +60,21 @@ export const submitQuizAnswers = async (setId, answers) => {
   return response.data;
 };
 
+// 퀴즈 결과 조회 API 호출
+export const fetchQuizResults = async (userId) => {
+  const token = getToken();
+  
+  const response = await api.get('/api/quiz-sets/results', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: { userId },  // userId를 쿼리 파라미터로 전달
+  });
+  
+  console.log("Quiz results response:", response.data);
+  return response.data;
+};
+
 // 퀴즈 결과 답변 가져오기
 export const getQuizAnswers = async (setId, resultId) => {
   const token = getToken();
