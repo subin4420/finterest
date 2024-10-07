@@ -2,68 +2,95 @@
   <div>
     <div class="cards">
       <QuizCard 
-        v-for="quiz in filteredQuizSets" 
+        v-for="quiz in quizResults" 
         :key="quiz.setId" 
-        :cardData="quiz" 
+        :cardData="mapQuizToCardData(quiz)"
         @click="openQuizModal(quiz)"  
       />
     </div>
-    <QuizResultModal 
-      v-if="selectedQuizSet" 
-      :isVisible="isQuizModalVisible" 
-      :cardData="selectedQuizSet" 
-      @update:isVisible="isQuizModalVisible = $event"
+
+    <!-- 퀴즈 답변 모달 -->
+    <QuizAnswersModal 
+      v-if="isQuizAnswersModalVisible" 
+      :show="isQuizAnswersModalVisible" 
+      :answers="quizAnswers" 
+      @close="isQuizAnswersModalVisible = false"
+      @go-to-quiz-list="closeQuizAnswersModal"
     />
   </div>
 </template>
 
 <script>
 import QuizCard from '@/components/quiz/QuizCard.vue';
-import QuizResultModal from '@/components/quiz/QuizResultModal.vue';
-import { ref, onMounted, computed } from 'vue';
+import QuizAnswersModal from '@/components/quiz/QuizAnswersModal.vue';
+import { ref, onMounted } from 'vue';
 import { useQuizStore } from '@/stores/quizStore';
 
 export default {
   name: 'QuizSetList',
   components: {
     QuizCard,
-    QuizResultModal
+    QuizAnswersModal
   },
   setup() {
     const quizStore = useQuizStore();
-    const isQuizModalVisible = ref(false); // 모달 상태 관리
+    const isQuizAnswersModalVisible = ref(false); // 퀴즈 답변 모달 상태 관리
     const selectedQuizSet = ref(null); // 선택된 퀴즈 세트 저장
+    const quizResults = ref([]); // 퀴즈 세트 결과를 저장할 배열
+    const quizAnswers = ref([]); // 퀴즈 답변을 저장할 배열
 
     // 컴포넌트가 마운트될 때 퀴즈 세트를 가져오는 로직
     onMounted(async () => {
       try {
-        await quizStore.fetchQuizSets(); // 스토어의 fetchQuizSets 호출하여 데이터를 가져옴
+        // userId를 필요에 따라 동적으로 설정 가능
+        await quizStore.fetchQuizResults(1); // 스토어에서 fetchQuizResults 호출
+        quizResults.value = quizStore.quizResults.value; // 스토어에서 결과를 가져와 로컬 상태에 저장
       } catch (error) {
-        console.error('Error fetching quizSets', error);
+        console.error('Error fetching quiz results:', error);
       }
     });
 
-    // userScore가 null이 아닌 퀴즈 세트만 필터링
-    const filteredQuizSets = computed(() => {
-      return quizStore.quizSets.value.filter(quiz => quiz.userScore !== null);  // userScore가 있는 퀴즈 세트만 반환
-    });
+    // `quizResults` 데이터를 `QuizCard`에서 사용할 수 있도록 매핑하는 함수
+    const mapQuizToCardData = (quiz) => {
+      return {
+        ...quiz,
+        userScore: quiz.totalScore // totalScore를 userScore로 매핑
+      };
+    };
 
-    // 모달 열기
-    const openQuizModal = (quiz) => {
+    // 퀴즈 답변 모달 열기
+    const openQuizModal = async (quiz) => {
       console.log('Selected Quiz:', quiz);  // 선택한 퀴즈 로그 확인
       selectedQuizSet.value = quiz;
-      isQuizModalVisible.value = true;
+
+      // 퀴즈 답변 가져오기
+      try {
+        const answers = await quizStore.fetchQuizAnswers(quiz.setId, quiz.resultId); // API 호출로 답변 가져오기
+        quizAnswers.value = answers; // 퀴즈 답변을 저장
+        isQuizAnswersModalVisible.value = true; // 퀴즈 답변 모달 열기
+      } catch (error) {
+        console.error('Error fetching quiz answers:', error);
+      }
+    };
+
+    // 퀴즈 답변 모달 닫기
+    const closeQuizAnswersModal = () => {
+      isQuizAnswersModalVisible.value = false;
     };
 
     return {
-      filteredQuizSets, // 필터링된 퀴즈 세트를 반환
-      isQuizModalVisible,
+      quizResults,
+      isQuizAnswersModalVisible,
       selectedQuizSet,
+      quizAnswers,
       openQuizModal,
+      closeQuizAnswersModal,
+      mapQuizToCardData
     };
   }
 };
 </script>
+
 
 <style scoped>
 .cards {

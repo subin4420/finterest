@@ -34,8 +34,7 @@ export const getAllPoints = async (params = {}) => {
 export const getTotalPoints = async () => {
   try {
     const token = getToken();
-    const response = await api.get('/api/total_points',{
-      params,
+    const response = await api.get('/api/total_points', { // params 제거
       headers: {
         Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
       },

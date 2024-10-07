@@ -1,9 +1,10 @@
 import { reactive, toRefs } from 'vue';
-import { getQuizSets, getQuizQuestions, submitQuizAnswers as submitQuizAnswersService, getQuizAnswers } from '../services/quizService';
+import { getQuizSets, getQuizQuestions, submitQuizAnswers as submitQuizAnswersService, getQuizAnswers,  fetchQuizResults as fetchQuizResultsService } from '../services/quizService';
 
 const state = reactive({
   quizSets: [], // 퀴즈 세트를 저장할 상태
   currentQuizQuestions: null,
+  quizResults: [],  // 퀴즈 결과를 저장할 상태
 });
 
 // 퀴즈 세트 가져오기
@@ -42,6 +43,17 @@ const submitQuizAnswers = async (setId, answers) => {
   }
 };
 
+// 퀴즈 결과 조회하기
+const fetchQuizResults = async (userId) => {
+  try {
+    const data = await fetchQuizResultsService(userId); // API 호출
+    state.quizResults = data.quizResults || []; // 퀴즈 결과 상태에 저장
+    console.log("Fetched quiz results:", state.quizResults);
+  } catch (error) {
+    console.error("Failed to fetch quiz results:", error);
+  }
+};
+
 // 퀴즈 답변 상세 결과 가져오기
 const fetchQuizAnswers = async (setId, resultId) => {
   try {
@@ -60,5 +72,6 @@ export const useQuizStore = () => {
     fetchQuizQuestions,
     submitQuizAnswers,
     fetchQuizAnswers,
+    fetchQuizResults
   };
 };

@@ -15,6 +15,16 @@
             </a>
           </li>
         </ul>
+
+        <!-- 포인트 이력 탭일 때만 포인트 박스 표시 -->
+        <div v-if="activeTab === 'points'" class="points-summary">
+          <div class="points-box">
+            <div class="points-title">포인트</div>
+            <div class="points-value">
+              <span class="icon">P</span> {{ totalPoints.toLocaleString() }}
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 콘텐츠 -->
@@ -47,11 +57,13 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import ArchiveList from '@/components/archive/ArchiveList.vue';
 import QuizSetList from '@/components/quiz/QuizSetList.vue';
 import InvestmentList from '@/components/invest/InvestmentList.vue';
 import PointHistoryList from '@/components/point/PointList.vue';
+import { usePointStore } from '@/stores/pointStore'; // fetchTotalPoints 함수 import
+
 
 export default {
   name: 'MyLearningPage',
@@ -67,6 +79,8 @@ export default {
     const pointStatus = ref('all');
     const isModalVisible = ref(false); // 모달 표시 여부
     const selectedCard = ref(null); // 선택된 카드 데이터
+    const pointStore = usePointStore();
+    const totalPoints = ref(); // 총 포인트 값
 
     const learningStatuses = ref([
       { value: 'incomplete', label: '진행중인 학습' },
@@ -122,6 +136,17 @@ export default {
       }
     };
 
+    // 총 포인트 가져오는 함수 실행
+    onMounted(async () => {
+      try {
+        await pointStore.fetchTotalPoints(); // fetchTotalPoints 호출
+        totalPoints.value = pointStore.totalPoints.value; // store에서 totalPoints 값 가져오기
+      } catch (error) {
+        console.error('Error fetching total points:', error);
+      }
+    });
+
+
     // 모달 열기 함수
     const openModal = (card) => {
       selectedCard.value = card;
@@ -136,9 +161,10 @@ export default {
       pointStatus,
       setLearningStatus,
       setTab,
-      isModalVisible, 
-      selectedCard, 
-      openModal, 
+      isModalVisible,
+      selectedCard,
+      openModal,
+      totalPoints, // 총 포인트 상태 추가
     };
   },
   data() {
@@ -169,6 +195,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style scoped>
@@ -285,4 +312,51 @@ h3{
   border-bottom: 2px solid #00C4D1;
 }
 
+
+.points-summary {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.points-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  background-color: #FFFFFF;
+  border-radius: px;
+}
+
+.points-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  margin-bottom: 1rem; /* 제목 아래쪽에 간격 추가 */
+  padding-bottom: 1rem; /* 제목과 카드 사이에 간격 */
+  border-bottom: 2px solid #b3b3b3; /* 제목 아래에 구분선 추가 */
+}
+
+
+.points-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  color: #ffc107;
+  font-size: 20px;
+  margin-right: 5px;
+  background-color: #ffc107; /* 노란 배경 */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white; /* 글자색을 흰색으로 */
+}
 </style>
