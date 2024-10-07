@@ -34,21 +34,22 @@
         WHERE q.category_id = #{category_id}
     </sql>
 
-    <!-- 전체 조회 -->
+    <!-- 1. 전체 조회 -->
     <select id="selectAllQuizSets" resultType="org.finterest.quiz.domain.vo.QuizSetsVO">
         SELECT
         <include refid="QuizSetFields" />
         <include refid="QuizSetFromJoin" />
     </select>
 
-    <!-- 사용자별 퀴즈 세트 결과 조회 (점수와 완료 날짜 포함) -->
-    <select id="selectQuizResultsByUserId" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizResultVO">
+    <!-- 1. 사용자별 퀴즈 세트 결과 조회 (점수와 완료 날짜 포함) -->
+    <select id="selectQuizResultsByUserId" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizResultDetailVO">
         SELECT
             set_id,
-            total_score,
+            MAX(total_score) AS total_score,  -- 각 set_id에 대해 가장 높은 점수
             completed_at
         FROM Quiz_Sets_Results
         WHERE user_id = #{userId}
+        GROUP BY set_id, completed_at  -- set_id별로 그룹화, 완료 날짜도 포함하여 그룹화
     </select>
 
     <!-- 카테고리별 조회 -->
@@ -62,7 +63,7 @@
 
 
 
-    <!-- 퀴즈 세트 정보 조회 -->
+    <!-- 2. 퀴즈 세트 정보 조회 -->
     <select id="selectQuizSetById" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizSetsVO">
         SELECT
         <include refid="QuizSetFields" />
@@ -83,7 +84,7 @@
         WHERE q.category_id = (SELECT category_id FROM Quiz_Sets WHERE set_id = #{set_id})
     </select>
 
-    <!-- 특정 퀴즈 문제 조회 -->
+    <!-- 3. 특정 퀴즈 문제 조회 -->
     <select id="selectQuizById" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizVO">
         SELECT
             quiz_id AS quizId,
@@ -91,19 +92,20 @@
             choice1,
             choice2,
             choice3,
-            choice4
+            choice4,
+            correct_choice AS correctChoice
         FROM Quizzes
         WHERE quiz_id = #{quizId}
     </select>
 
     <!-- 퀴즈의 정답 선택지를 조회 -->
     <select id="selectCorrectChoiceByQuizId" parameterType="int" resultType="int">
-        SELECT correct_choice
+        SELECT correct_choice AS correctChoice
         FROM Quizzes
         WHERE quiz_id = #{quizId}
     </select>
 
-    <!-- 퀴즈 결과 저장 -->
+    <!-- 4. 퀴즈 결과 저장 -->
     <insert id="insertQuizResult" useGeneratedKeys="true" keyProperty="resultId">
         INSERT INTO Quiz_Sets_Results (user_id, set_id, total_score, max_score, completed_at)
         VALUES (#{userId}, #{setId}, #{totalScore}, #{maxScore}, NOW())
@@ -126,30 +128,42 @@
         WHERE activity_name = '퀴즈'
     </select>
 
-    <!-- 퀴즈 결과 조회 (특정 사용자 및 퀴즈 세트) -->
-    <select id="selectQuizResultByUserAndSet" parameterType="map" resultType="org.finterest.quiz.domain.vo.QuizResultVO">
+    <!-- 5. 사용자별 퀴즈 결과 조회 -->
+    <select id="selectQuizResultsByUser" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizResultVO">
         SELECT
-            result_id AS resultId,
-            user_id AS userId,
-            set_id AS setId,
-            total_score AS totalScore,
-            max_score AS maxScore,
-            completed_at AS completedAt
-        FROM Quiz_Sets_Results
-        WHERE user_id = #{userId}
-          AND set_id = #{setId}
+            qsr.result_id AS resultId,
+            qsr.user_id AS userId,
+            qs.set_id AS setId,
+            qs.set_name AS setName,
+            qs.set_img AS setImg,
+            c.category_name AS categoryName,
+            qsr.total_score AS totalScore,
+            qsr.max_score AS maxScore,
+            qsr.completed_at AS completedAt
+        FROM Quiz_Sets_Results qsr
+                 JOIN Quiz_Sets qs ON qsr.set_id = qs.set_id
+                 JOIN Categories c ON qs.category_id = c.category_id
+        WHERE qsr.user_id = #{userId}
+        ORDER BY qsr.completed_at DESC
     </select>
 
-    <!-- 특정 resultId와 userId에 대한 사용자 답변 목록 조회 -->
+
+    <!-- 6. 특정 resultId와 userId에 대한 사용자 답변 목록 조회 -->
     <select id="selectUserAnswers" parameterType="map" resultType="org.finterest.quiz.domain.vo.UserAnswerVO">
-        SELECT DISTINCT
-            quiz_id,
-            user_answer AS selectedChoice,
-            is_correct AS isCorrect,
-            (SELECT correct_choice FROM Quizzes WHERE Quizzes.quiz_id = User_Answers.quiz_id) AS correctChoice
-        FROM User_Answers
-        WHERE result_id = #{resultId}
-          AND user_id = #{userId}
+        SELECT
+        ua.quiz_id AS quizId,
+        q.question AS question,        <!-- 문제 내용 추가 -->
+        q.choice1 AS choice1,          <!-- 선택지 1 -->
+        q.choice2 AS choice2,          <!-- 선택지 2 -->
+        q.choice3 AS choice3,          <!-- 선택지 3 -->
+        q.choice4 AS choice4,          <!-- 선택지 4 -->
+        ua.user_answer AS selectedChoice,  <!-- 사용자가 선택한 답변 -->
+        q.correct_choice AS correctChoice, <!-- 정답 -->
+        ua.is_correct AS isCorrect     <!-- 정답 여부 -->
+        FROM User_Answers ua
+        JOIN Quizzes q ON ua.quiz_id = q.quiz_id
+        WHERE ua.result_id = #{resultId}
+        AND ua.user_id = #{userId}
     </select>
 
 </mapper>

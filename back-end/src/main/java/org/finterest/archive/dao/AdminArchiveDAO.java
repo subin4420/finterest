@@ -1,6 +1,7 @@
 package org.finterest.archive.dao;
 
 
+import org.finterest.archive.domain.ArchiveDetailVO;
 import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.archive.mapper.AdminArchiveMapper;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -42,7 +43,7 @@ public class AdminArchiveDAO {
 
 
     public List<ArchiveVO> selectArchiveByCategoryAndFavorites(String categoryName,
-                                                               Boolean favorites){
+                                                                     Boolean favorites){
         return sqlSessionTemplate.getMapper(AdminArchiveMapper.class).selectArchiveByCategoryAndFavorites(categoryName, favorites);
     }
 

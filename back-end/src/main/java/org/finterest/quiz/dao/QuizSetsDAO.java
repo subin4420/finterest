@@ -1,9 +1,6 @@
 package org.finterest.quiz.dao;
 
-import org.finterest.quiz.domain.vo.QuizResultVO;
-import org.finterest.quiz.domain.vo.QuizSetsVO;
-import org.finterest.quiz.domain.vo.QuizVO;
-import org.finterest.quiz.domain.vo.UserAnswerVO;
+import org.finterest.quiz.domain.vo.*;
 import org.finterest.quiz.mapper.QuizSetsMapper;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +21,7 @@ public class QuizSetsDAO {
         return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectAllQuizSets();
     }
 
-    public List<QuizResultVO> selectQuizResultsByUserId(int userId){
+    public List<QuizResultDetailVO> selectQuizResultsByUserId(int userId){
         return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectQuizResultsByUserId(userId);
     }
 
@@ -65,8 +62,8 @@ public class QuizSetsDAO {
         return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectPointsForQuiz();
     }
 
-    public QuizResultVO getQuizResult(int userId, int setId) {
-        return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectQuizResultByUserAndSet(userId, setId);
+    public List<QuizResultVO> getQuizResult(int userId) {
+        return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectQuizResultsByUser(userId);
     }
 
     public List<UserAnswerVO> selectUserAnswers(int resultId, int userId){

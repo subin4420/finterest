@@ -9,7 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserAnswerVO {
     private int quizId;
-    private int selectedChoice;
-    private int correctChoice;
-    private boolean isCorrect;
+    private String question;       // 문제 내용
+    private String choice1;        // 선택지 1
+    private String choice2;        // 선택지 2
+    private String choice3;        // 선택지 3
+    private String choice4;        // 선택지 4
+    private int selectedChoice;    // 사용자가 선택한 답변
+    private int correctChoice;     // 정답
+    private boolean isCorrect;     // 정답 여부
 }

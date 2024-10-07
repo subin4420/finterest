@@ -33,3 +33,42 @@ export const getQuizSets = async (params = {}) => {
   console.log("in service response.data: ", response.data);
   return response.data;
 };
+
+// 특정 퀴즈 세트의 문제들 가져오기
+export const getQuizQuestions = async (setId) => {
+  const token = getToken();
+  
+  const response = await api.get(`/api/quiz-sets/${setId}/questions`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log("Quiz questions response:", response.data);
+  return response.data;
+};
+
+// 퀴즈 답변 제출
+export const submitQuizAnswers = async (setId, answers) => {
+  const token = getToken();
+  
+  const response = await api.post(`/api/quiz-sets/${setId}/submit`, answers, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log("Quiz submission response:", response.data);
+  return response.data;
+};
+
+// 퀴즈 결과 답변 가져오기
+export const getQuizAnswers = async (setId, resultId) => {
+  const token = getToken();
+  
+  const response = await api.get(`/api/quiz-sets/${setId}/results/${resultId}/answers`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log("Quiz answers response:", response.data);
+  return response.data;
+};

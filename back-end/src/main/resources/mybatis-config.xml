@@ -29,5 +29,6 @@
         <mapper resource="org/finterest/point/mapper/adminPointRulesMapper.xml"/>
         <mapper resource="org/finterest/notice/mapper/noticeMapper.xml"/>
         <mapper resource="org/finterest/notice/mapper/adminNoticeMapper.xml"/>
+        <mapper resource="org/finterest/quiz/mapper/adminQuizMapper.xml"/>
     </mappers>
 </configuration>

@@ -3,8 +3,11 @@ package org.finterest.point.controller;
 import org.finterest.point.domain.PointVO;
 import org.finterest.point.domain.UserPointVO;
 import org.finterest.point.service.AdminPointService;
+import org.finterest.security.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,10 +21,12 @@ import java.util.Map;
 public class AdminPointController {
 
     private final AdminPointService adminPointService;
+    private final TokenUtil tokenUtil;
 
     @Autowired
-    public AdminPointController(AdminPointService adminPointService) {
+    public AdminPointController(AdminPointService adminPointService, TokenUtil tokenUtil) {
         this.adminPointService = adminPointService;
+        this.tokenUtil = tokenUtil;
     }
 
 
@@ -35,6 +40,13 @@ public class AdminPointController {
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
             @RequestParam(value = "viewType", required = false, defaultValue = "summary") String viewType
     ) {
+        // 관리자 권한 확인
+        if (!tokenUtil.isAdmin(adminToken)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "관리자 권한이 없습니다."));
+        }
+
+
         Map<String, Object> response = new HashMap<>();
 
         if ("detail".equalsIgnoreCase(viewType)) {
@@ -56,6 +68,11 @@ public class AdminPointController {
             @RequestHeader("Authorization") String adminToken,
             @RequestBody Map<String, Object> requestBody
     ) {
+        // 관리자 권한 확인
+        if (!tokenUtil.isAdmin(adminToken)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "관리자 권한이 없습니다."));
+        }
         // 값이 null인 경우 예외 처리
         if (requestBody.get("userId") == null || requestBody.get("activityName") == null || requestBody.get("pointsChange") == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid request: missing required fields."));

@@ -2,6 +2,7 @@ package org.finterest.archive.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.finterest.archive.domain.ArchiveDetailVO;
 import org.finterest.archive.domain.ArchiveVO;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface AdminArchiveMapper {
 
     // 카테고리 및 즐겨찾기 필터링이 적용된 학습 자료 조회
     List<ArchiveVO> selectArchiveByCategoryAndFavorites(@Param("categoryName") String categoryName,
-                                                        @Param("favorites") Boolean favorites);
+                                                              @Param("favorites") Boolean favorites);
 
     // 학습 자료 수정 (카테고리명을 사용)
     void updateArchive(@Param("materialId") int materialId,

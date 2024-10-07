@@ -44,7 +44,7 @@
     </sql>
 
     <!-- 모든 항목 조회 -->
-    <select id="selectAllArchive"  resultType="org.finterest.archive.domain.ArchiveVO">
+    <select id="selectAllArchive"  resultType="org.finterest.archive.domain.ArchiveDetailVO">
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
@@ -52,7 +52,7 @@
 
 
     <!-- 특정 ID로 조회 -->
-    <select id="selectArchiveById" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
+    <select id="selectArchiveById" parameterType="int" resultType="org.finterest.archive.domain.ArchiveDetailVO">
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
@@ -60,7 +60,7 @@
     </select>
 
     <!-- 카테고리로 필터링 -->
-    <select id="selectArchiveByCategory" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
+    <select id="selectArchiveByCategory" parameterType="int" resultType="org.finterest.archive.domain.ArchiveDetailVO">
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
@@ -68,7 +68,7 @@
     </select>
 
     <!-- 로그인한 사용자의 카테고리 필터링 -->
-    <select id="selectArchiveByCategoryWithFavorites" parameterType="map" resultType="org.finterest.archive.domain.ArchiveVO">
+    <select id="selectArchiveByCategoryWithFavorites" parameterType="map" resultType="org.finterest.archive.domain.ArchiveDetailVO">
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
@@ -77,7 +77,7 @@
 
 
     <!-- 텍스트 자료만 조회 (link가 NULL) -->
-    <select id="selectTextArchive" resultType="org.finterest.archive.domain.ArchiveVO">
+    <select id="selectTextArchive" resultType="org.finterest.archive.domain.ArchiveDetailVO">
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
@@ -85,7 +85,7 @@
     </select>
 
     <!-- 영상 자료만 조회 (link가 NULL이 아닌 경우) -->
-    <select id="selectVideoArchive" resultType="org.finterest.archive.domain.ArchiveVO">
+    <select id="selectVideoArchive" resultType="org.finterest.archive.domain.ArchiveDetailVO">
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />
@@ -93,7 +93,7 @@
     </select>
 
     <!-- 즐겨찾기한 자료만 조회 -->
-    <select id="selectFavoritesArchive" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
+    <select id="selectFavoritesArchive" parameterType="int" resultType="org.finterest.archive.domain.ArchiveDetailVO">
         SELECT
         <include refid="ArchiveColumns" />
         <include refid="BaseQuery" />

@@ -2,10 +2,7 @@ package org.finterest.quiz.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.finterest.quiz.domain.vo.QuizResultVO;
-import org.finterest.quiz.domain.vo.QuizSetsVO;
-import org.finterest.quiz.domain.vo.QuizVO;
-import org.finterest.quiz.domain.vo.UserAnswerVO;
+import org.finterest.quiz.domain.vo.*;
 
 import java.util.List;
 
@@ -15,7 +12,7 @@ public interface QuizSetsMapper {
     List<QuizSetsVO> selectAllQuizSets();
 
     // 1-1. 사용자가 푼 퀴즈 결과 조회
-    List<QuizResultVO> selectQuizResultsByUserId(int userId);
+    List<QuizResultDetailVO> selectQuizResultsByUserId(int userId);
 
     // 1-2. 카테고리별 퀴즈 세트 목록 조회
     List<QuizSetsVO> selectQuizSetsByCategory(int categoryId);
@@ -46,8 +43,8 @@ public interface QuizSetsMapper {
     // 퀴즈 포인트 조회
     int selectPointsForQuiz();
 
-    // 5. 퀴즈 결과 조회
-    QuizResultVO selectQuizResultByUserAndSet(@Param("userId") int userId, @Param("setId") int setId);
+    /// 5. 사용자별 퀴즈 결과 조회
+    List<QuizResultVO> selectQuizResultsByUser(@Param("userId") int userId);
 
     // 특정 resultId와 userId에 대한 사용자 답변 목록 조회
     List<UserAnswerVO> selectUserAnswers(@Param("resultId") int resultId, @Param("userId") int userId);
