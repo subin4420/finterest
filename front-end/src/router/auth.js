@@ -21,4 +21,9 @@ export default [
     name: 'changepassword',
     component: () => import('../pages/auth/ChangePasswordPage.vue'),
   },
+  {
+    path: '/auth/findpassword',
+    name: 'findpassword',
+    component: () => import('../pages/auth/FindPasswordPage.vue'),
+  },
 ];

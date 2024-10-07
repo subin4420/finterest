@@ -29,12 +29,12 @@ export default {
       url: '/auth/join',
       title: '회원가입',
       icon: 'fa-solid fa-user-plus',
- },
+    },
     myLearning: { 
       title: '나의학습', 
       url: '/myLearning/MyLearningPage' },
     news: { 
-      title: '소식', 
+      title: '공지사항', 
       url: '/notice/NoticePage' }
   },
 };

@@ -10,7 +10,7 @@
           v-for="archive in filteredTextArchives" 
           :key="archive.materialId" 
           :cardData="archive"
-          @click.native="openModal(archive)" 
+          @click="handleCardClick(archive)" 
         />
       </div>
     </div>
@@ -22,7 +22,7 @@
           v-for="archive in filteredVideoArchives" 
           :key="archive.materialId" 
           :cardData="archive" 
-          @click.native="openModal(archive)" 
+          @click="handleCardClick(archive)" 
         />
       </div>
     </div>
@@ -33,6 +33,12 @@
       :cardData="selectedCard" 
       @update:isVisible="isModalVisible = $event" 
     />
+
+    <LoginRequiredModal
+      v-if="showLoginModal"
+      @close="showLoginModal = false"
+      @login="goToLogin"
+    />
   </div>
 </template>
 
@@ -41,8 +47,11 @@ import ArchiveImage from '@/components/archive/ArchiveImage.vue';
 import ArchiveNavigationBar from '@/components/archive/ArchiveNavigationBar.vue';
 import ArchiveCard from '@/components/archive/ArchiveCard.vue';
 import ArchiveModal from '@/components/archive/ArchiveModal.vue';
+import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
 import { onMounted, ref, computed } from "vue";
 import { useArchiveStore } from "@/stores/archiveStore";
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'ArchivePage',
@@ -50,80 +59,66 @@ export default {
     ArchiveImage,
     ArchiveCard,
     ArchiveModal,
-    ArchiveNavigationBar
+    ArchiveNavigationBar,
+    LoginRequiredModal
   },
   setup() {
     const archiveStore = useArchiveStore();
+    const authStore = useAuthStore();
+    const router = useRouter();
     const isModalVisible = ref(false);
     const selectedCard = ref({});
-    const selectedCategory = ref(null); // 선택된 카테고리 상태 추가
+    const selectedCategory = ref(null);
+    const showLoginModal = ref(false);
 
-    // const textArchives = ref([]);
-    // const videoArchives = ref([]);
-
-    // 텍스트 및 비디오 아카이브 데이터
     const { textArchives, videoArchives } = archiveStore;
 
     onMounted(async () => {
-      // await archiveStore.fetchArchive('text'); // 텍스트 자료 가져오기
-      // const Tarchives = archiveStore.archives.value; // .value를 통해 배열에 접근
-      // console.log('Text Archives:', Tarchives); // 추가된 로그
-      // await archiveStore.fetchArchive('video'); // 영상 자료 가져오기
-      // const Varchives = archiveStore.archives.value; // .value를 통해 배열에 접근
-      // console.log('Video Archives:', Varchives); // 추가된 로그
-      // 자료를 구분하여 저장
-      // textArchives.value = Tarchives.filter(archive => archive.link === null);
-      // videoArchives.value = Varchives.filter(archive => archive.link !== null);
-
       try {
-        // 텍스트 자료 가져오기
         await archiveStore.fetchTextArchive();
-        
-        // 영상 자료 가져오기
         await archiveStore.fetchVideoArchive();
-        
         console.log('Text Archives:', textArchives.value);
         console.log('Video Archives:', videoArchives.value);
       } catch (error) {
         console.error('Error during archive fetch:', error);
       }
-
-  
     });
 
-    // 카테고리 필터링 함수
     const filterByCategory = (category) => {
       selectedCategory.value = category;
-      if (category === '즐겨찾기') {
-        // 페이지 새로고침
-      }
     };
 
-    // 필터링된 텍스트 아카이브
     const filteredTextArchives = computed(() => {
       if (!textArchives.value) return [];
       if (selectedCategory.value === '즐겨찾기') {
-        return textArchives.value.filter(archive => archive.favorite); // 즐겨찾기된 카드만 필터링
+        return textArchives.value.filter(archive => archive.favorite);
       }
       return selectedCategory.value 
         ? textArchives.value.filter(archive => archive.categoryName === selectedCategory.value) 
         : textArchives.value;
     });
 
-    // 필터링된 영상 아카이브
     const filteredVideoArchives = computed(() => {
       if (!videoArchives.value) return [];
       if (selectedCategory.value === '즐겨찾기') {
-        return videoArchives.value.filter(archive => archive.favorite); // 즐겨찾기된 카드만 필터링
+        return videoArchives.value.filter(archive => archive.favorite);
       }
       return selectedCategory.value 
         ? videoArchives.value.filter(archive => archive.categoryName === selectedCategory.value) 
         : videoArchives.value;
     });
 
-    function openModal(archive) {
-      selectedCard.value = archive;
-      isModalVisible.value = true;
+    function handleCardClick(archive) {
+      if (!authStore.isAuthenticated) {
+        showLoginModal.value = true;
+      } else {
+        selectedCard.value = archive;
+        isModalVisible.value = true;
+      }
+    }
+
+    function goToLogin() {
+      router.push({ name: 'login' });
     }
 
     return { 
@@ -131,9 +126,11 @@ export default {
       filteredVideoArchives, 
       isModalVisible, 
       selectedCard, 
-      openModal, 
+      handleCardClick, 
       filterByCategory, 
-      selectedCategory 
+      selectedCategory,
+      showLoginModal,
+      goToLogin
     };
   }
 }
