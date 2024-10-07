@@ -75,13 +75,17 @@ export default {
         console.log('ArchiveCard mounted. cardData:', this.cardData);
     },
     methods: {
-        toggleFavorite() {
+        async toggleFavorite() {
             const archiveStore = useArchiveStore();
-            this.isFavorite = !this.isFavorite;
+            this.isFavorite = !this.isFavorite; // 로컬 상태 업데이트
+
+            // 즐겨찾기 추가 또는 제거
             if (this.isFavorite) {
-                archiveStore.addToFavorites(this.cardData.materialId);
+                await archiveStore.addToFavorites(this.cardData.materialId);
+                this.cardData.favorite = true; // UI에 즉시 반영
             } else {
-                archiveStore.removeFromFavorites(this.cardData.materialId);
+                await archiveStore.removeFromFavorites(this.cardData.materialId);
+                this.cardData.favorite = false; // UI에 즉시 반영
             }
         }
     }

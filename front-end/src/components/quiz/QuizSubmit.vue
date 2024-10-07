@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, toRef } from 'vue';
 import { useQuizStore } from '@/stores/quizStore';
 import QuizResultModal from './QuizResultModal.vue';
 import QuizAnswersModal from './QuizAnswersModal.vue';
@@ -90,6 +90,9 @@ export default {
     const currentQuestionIndex = ref(0);
     const userAnswers = ref([]);
 
+    // props.quizSet을 반응형 참조로 변환
+    const currentQuizSet = toRef(props, 'quizSet');
+
     const allQuestionsAnswered = computed(() => {
       return userAnswers.value.every(answer => answer !== null);
     });
@@ -106,19 +109,28 @@ export default {
 
     watch([userAnswers, currentQuestionIndex], updateQuizProgress);
 
-    onMounted(async () => {
+    const loadQuizQuestions = async (setId) => {
       try {
-        await quizStore.fetchQuizQuestions(props.quizSet.setId);
+        await quizStore.fetchQuizQuestions(setId);
         questions.value = quizStore.currentQuizQuestions.value.questions;
         console.log("Fetched questions:", JSON.stringify(questions.value, null, 2));
         userAnswers.value = new Array(questions.value.length).fill(null);
-        
-        await quizStore.fetchQuizSets();
-        allQuizSets.value = quizStore.quizSets.value;
+        currentQuestionIndex.value = 0; // 첫 번째 문제로 리셋
         updateQuizProgress();
       } catch (error) {
         console.error('데이터를 불러오는 데 실패했습니다:', error);
       }
+    };
+
+    onMounted(async () => {
+      await loadQuizQuestions(currentQuizSet.value.setId);
+      await quizStore.fetchQuizSets();
+      allQuizSets.value = quizStore.quizSets.value;
+    });
+
+    // quizSet이 변경될 때마다 새로운 퀴즈 문제를 불러옵니다.
+    watch(currentQuizSet, (newQuizSet) => {
+      loadQuizQuestions(newQuizSet.setId);
     });
 
     const categories = computed(() => {

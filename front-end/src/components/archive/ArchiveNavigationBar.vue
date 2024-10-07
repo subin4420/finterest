@@ -7,7 +7,7 @@
             <li @click="selectCategory('세금')" :class="{ active: selectedCategory === '세금' }"><a href="#!">세금</a></li>
             <li @click="selectCategory('재무관리')" :class="{ active: selectedCategory === '재무관리' }"><a href="#!">재무관리</a></li>
             <li @click="selectCategory('기타')" :class="{ active: selectedCategory === '기타' }"><a href="#!">기타</a></li>
-            <li @click="selectCategory('즐겨찾기')" :class="{ active: selectedCategory === '즐겨찾기' }"><a href="#!">즐겨찾기</a></li>
+            <li @click="selectCategory('즐겨찾기')" :class="{ active: selectedCategory === '즐겨찾기' }"><a href="#">즐겨찾기</a></li>
         </ul>
     </nav>
 </template>
