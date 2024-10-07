@@ -28,6 +28,10 @@ public class PointService {
         return pointDAO.selectTotalPoints(userId);
     }
 
+    public int getTotalMoney(@Param("userId") int userId){
+        return pointDAO.selectTotalMoney(userId);
+    }
+
     public UserPointVO getUserById(int userId){
         return pointDAO.getUserById(userId);
     }

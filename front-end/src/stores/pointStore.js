@@ -1,9 +1,10 @@
 import { reactive, toRefs } from 'vue';
-import { getAllPoints, getTotalPoints } from '@/services/pointService';
+import { getAllPoints, getTotalPoints, getTotalMoney } from '@/services/pointService';
 
 const state = reactive({
   points: [], // 포인트 내역
   totalPoints: 0, // 누적 포인트
+  totalMoney: 0, // 누적 가상자금
 });
 
 // 1. 전체 포인트 내역 조회
@@ -56,6 +57,17 @@ const fetchTotalPoints = async () => {
   }
 };
 
+// 6. 누적 가상자금 조회
+const fetchTotalMoney = async () => {
+  try {
+    const data = await getTotalMoney(); // 누적 포인트 조회
+    state.totalMoney = data.totalMoney;
+  } catch (error) {
+    console.error('Error fetching total points:', error);
+  }
+};
+
+
 export const usePointStore = () => {
   return {
     ...toRefs(state),
@@ -64,5 +76,6 @@ export const usePointStore = () => {
     fetchDeductedPoints,
     fetchPointsByDateRange,
     fetchTotalPoints,
+    fetchTotalMoney
   };
 };

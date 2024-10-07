@@ -21,7 +21,21 @@
           <div class="points-box">
             <div class="points-title">포인트</div>
             <div class="points-value">
-              <span class="icon">P</span> {{ totalPoints.toLocaleString() }}
+              <span class="icon">P</span>
+              <!-- totalPoints가 undefined가 아니면 toLocaleString 호출 -->
+              {{ totalPoints !== undefined ? totalPoints.toLocaleString() : '0' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 모의투자 이력 탭일 때만 가상자금 박스 표시 -->
+        <div v-if="activeTab === 'investment'" class="money-summary">
+          <div class="money-box">
+            <div class="money-title">가상 자금</div>
+            <div class="money-value">
+              <span class="icon">₩</span>
+              <!-- totalMoney가 undefined가 아니면 toLocaleString 호출 -->
+              {{ totalMoney !== undefined ? totalMoney.toLocaleString() : '0' }}
             </div>
           </div>
         </div>
@@ -64,7 +78,6 @@ import InvestmentList from '@/components/invest/InvestmentList.vue';
 import PointHistoryList from '@/components/point/PointList.vue';
 import { usePointStore } from '@/stores/pointStore'; // fetchTotalPoints 함수 import
 
-
 export default {
   name: 'MyLearningPage',
   components: {
@@ -81,6 +94,7 @@ export default {
     const selectedCard = ref(null); // 선택된 카드 데이터
     const pointStore = usePointStore();
     const totalPoints = ref(); // 총 포인트 값
+    const totalMoney = ref(); // 총 가상 자금 값
 
     const learningStatuses = ref([
       { value: 'incomplete', label: '진행중인 학습' },
@@ -141,11 +155,13 @@ export default {
       try {
         await pointStore.fetchTotalPoints(); // fetchTotalPoints 호출
         totalPoints.value = pointStore.totalPoints.value; // store에서 totalPoints 값 가져오기
+
+        await pointStore.fetchTotalMoney(); // fetchTotalMoney 호출
+        totalMoney.value = pointStore.totalMoney.value; // store에서 totalMoney 값 가져오기
       } catch (error) {
-        console.error('Error fetching total points:', error);
+        console.error('Error fetching totals:', error);
       }
     });
-
 
     // 모달 열기 함수
     const openModal = (card) => {
@@ -165,6 +181,7 @@ export default {
       selectedCard,
       openModal,
       totalPoints, // 총 포인트 상태 추가
+      totalMoney, // 총 가상 자금 상태 추가
     };
   },
   data() {
@@ -195,6 +212,7 @@ export default {
   },
 };
 </script>
+
 
 
 
@@ -271,9 +289,9 @@ h3{
   color: #00C4D1;
 }
 
-.sidebar-link::after {
+.sidebar-link.active::after {
   content: '';
-  display: none;
+  display: block;
   position: absolute;
   right: 40px;
   top: 50%;
@@ -284,16 +302,24 @@ h3{
   transform: translateY(-50%);
 }
 
-.sidebar-link:hover::after,
+.sidebar-link::after {
+  content: '';
+  display: none;
+}
+
 .sidebar-link.active::after {
   display: block;
 }
 
-
-.tabs {
-  margin-bottom: 20px;
+/* 마우스를 올렸을 때 동그라미가 나오지 않도록 설정 */
+.sidebar-link:hover::after {
+  display: none;
 }
 
+.sidebar-link.active {
+  background-color: #f5f5f5;
+  color: #00C4D1;
+}
 .tabs button {
   background: none;
   border: none;
@@ -313,37 +339,38 @@ h3{
 }
 
 
-.points-summary {
+/* 스타일은 기존과 동일하게 유지 */
+.points-summary, .money-summary {
   margin-top: 20px;
   padding: 10px;
 }
 
-.points-box {
+.points-box, .money-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 15px;
   background-color: #FFFFFF;
-  border-radius: px;
+  border-radius: 5px;
 }
 
-.points-title {
+.points-title, .money-title {
   font-size: 20px;
   font-weight: bold;
   color: #333;
   margin-bottom: 5px;
-  margin-bottom: 1rem; /* 제목 아래쪽에 간격 추가 */
-  padding-bottom: 1rem; /* 제목과 카드 사이에 간격 */
-  border-bottom: 2px solid #b3b3b3; /* 제목 아래에 구분선 추가 */
-}
+ 
+} 
 
-
-.points-value {
+.points-value, .money-value {
   font-size: 24px;
   font-weight: bold;
   color: #333;
   display: flex;
   align-items: center;
+  border-top: 2px solid #b3b3b3; /* 제목 아래에 구분선 추가 */
+  margin-top: 1rem; /* 제목 아래쪽에 간격 추가 */
+  padding-top: 1rem; /* 제목과 카드 사이에 간격 */
 }
 
 .icon {
