@@ -8,6 +8,7 @@ import org.finterest.security.account.domain.UserVO;
 import org.finterest.user.dto.*;
 import org.finterest.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class UserServiceImpl implements UserService {
     final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
+    @Value("${avatar.path}")  // application.properties에서 경로 주입
+    private String avatarPath;
+
     //중복체크
     @Override
     public boolean checkDuplicate(String username) {
@@ -42,7 +46,7 @@ public class UserServiceImpl implements UserService {
     private void saveAvatar(MultipartFile avatar, String username) {
         //아바타 업로드
         if(avatar != null && !avatar.isEmpty()) {
-            File dest = new File("/Users/park/Desktop/upload/avatar/", username + ".png");
+            File dest = new File(avatarPath, username + ".png");
             try {
                 avatar.transferTo(dest);
             } catch (IOException e) {
