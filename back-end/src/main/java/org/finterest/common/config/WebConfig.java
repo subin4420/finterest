@@ -49,9 +49,9 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         if (!uploadDir.exists()) {
             boolean dirCreated = uploadDir.mkdirs();  // 디렉토리 생성
             if (dirCreated) {
-                log.info("Created upload directory: " + location);
+                log.info("Created upload directory: " + a);
             } else {
-                log.error("Failed to create upload directory: " + location);
+                log.error("Failed to create upload directory: " + a);
             }
         }
 

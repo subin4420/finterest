@@ -1,7 +1,6 @@
-import { ref, computed, reactive } from 'vue';
+import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
-
 
 const initState = {
   token: '',
@@ -10,13 +9,16 @@ const initState = {
     email: '',
     roles: [],
   },
+  avatarUpdated: 0,
 };
-
 
 export const useAuthStore = defineStore('auth', () => {
   const state = ref({ ...initState });
 
   const isLogin = computed(() => !!state.value.user.username);
+  const username = computed(() => state.value.user.username);
+  const email = computed(() => state.value.user.email);
+  const avatarUpdated = computed(() => state.value.avatarUpdated);
 
   // state.value.user.username이 존재하면 그 값은 truthy이므로, 
   // ---> !!state.value.user.username은 true를 반환
@@ -25,8 +27,10 @@ export const useAuthStore = defineStore('auth', () => {
   // 따라서 computed 함수는 사용자가 로그인 상태인지 (username이 있는지) 여부를 계산하여 
   // isLogin이라는 계산된 속성에 할당
 
-  const username = computed(() => state.value.user.username);
-  const email = computed(() => state.value.user.email);
+  const updateAvatar = () => {
+    state.value.avatarUpdated = Date.now();
+    localStorage.setItem('auth', JSON.stringify(state.value));
+  };
 
   const load = () => {
     const auth = localStorage.getItem('auth');
@@ -57,25 +61,17 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-// 로그인 요청을 보내고, 서버로부터 받은 인증 정보를 상태와 localStorage에 저장하는 역할
-// axios.post('/api/auth/login', member): member 정보를 사용해 /api/auth/login API에 로그인 요청을 보냄.
-// { data } = await axios.post(...): API 요청이 완료되면 서버에서 받은 응답 데이터를 data에 저장
-// state.value = { ...data };: 받은 데이터를 state.value에 저장
-// localStorage.setItem('auth', JSON.stringify(state.value));: state.value를 문자열로 변환해 localStorage에 'auth'라는 키로 저장
-
   const logout = () => {
     localStorage.clear();
     state.value = { ...initState };
   };
 
-//로그아웃 시 저장된 데이터를 지우고, 상태를 초기화하는 역할
-// localStorage.clear(): localStorage에 저장된 모든 데이터를 삭제
-// state.value = { ...initState };: 애플리케이션의 상태를 초기 상태(initState)로 재설정
-
-const getToken = () => state.value.token;
+  const getToken = () => state.value.token;
 
   const changeProfile = (member) => {
     state.value.user.email = member.email;
+    state.value.user.fullName = member.fullName; // fullName 업데이트 추가
+    state.value.avatarUpdated += 1; // 아바타 업데이트 시 증가
     localStorage.setItem('auth', JSON.stringify(state.value));
   };
 
@@ -86,5 +82,16 @@ const getToken = () => state.value.token;
 // changeProfile(member): 사용자의 이메일을 주어진 member.email로 변경하고, 변경된 상태를 localStorage에 저장합니다.
 // load(): 페이지가 로드될 때 localStorage에서 저장된 인증 정보를 불러와 state에 설정
 
-  return { state, username, email, isLogin, changeProfile, login, logout, getToken };
+  return { 
+    state, 
+    username, 
+    email, 
+    isLogin, 
+    changeProfile, 
+    login, 
+    logout, 
+    getToken,
+    avatarUpdated,
+    updateAvatar
+  };
 });
