@@ -10,12 +10,20 @@ import org.springframework.web.servlet.config.annotation.*;
 @ComponentScan(basePackages = {
         "org.finterest.controller",
         "org.finterest.exception",
-        "org.finterest.member.controller",
+
+        //B_Team
         "org.finterest.quiz.controller",
         "org.finterest.archive.controller",
         "org.finterest.user.controller",
         "org.finterest.point.controller",
         "org.finterest.notice.controller",
+        //A_Team
+        "org.finterest.invest.board.controller",
+        "org.finterest.invest.stock.overall.controller",
+        "org.finterest.invest.stock.simulator.controller",
+        "org.finterest.invest.conversion.controller",
+        "org.finterest.invest.comment.controller",
+        "org.finterest.invest.scenario.controller"
 
 })
 public class ServletConfig  implements WebMvcConfigurer {

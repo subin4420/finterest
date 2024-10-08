@@ -55,7 +55,8 @@ dependencies {
 
   // Jackson - Json 처리
   implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
-
+  implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+  implementation 'org.json:json:20230227'
   // 데이터베이스
   implementation 'com.mysql:mysql-connector-j:8.1.0'
   implementation 'com.zaxxer:HikariCP:2.7.4'

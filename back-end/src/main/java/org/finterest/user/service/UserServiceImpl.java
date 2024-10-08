@@ -9,6 +9,8 @@ import org.finterest.user.dto.*;
 import org.finterest.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,12 +27,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@PropertySource({"classpath:/application.properties"})
 public class UserServiceImpl implements UserService {
     final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    @Value("${avatar.path}")  // application.properties에서 경로 주입
-    private String avatarPath;
+    @Value("${avatar.path}")
+    String avatarPath;
 
     //중복체크
     @Override

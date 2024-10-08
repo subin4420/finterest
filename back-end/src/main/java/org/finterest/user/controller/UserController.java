@@ -71,6 +71,7 @@ public class UserController {
         //String aP = "/Users/park/Desktop/upload/avatar";
         String filePath = avatarPath + "/" + username + ".png";
         log.info("avatar Path :  " + filePath);
+        System.out.println("UserController-> getAvatar:->"+avatarPath);
         File file = new File(filePath);
         if(!file.exists()) {
             file = new File(avatarPath+"/unknown.png");

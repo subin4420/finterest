@@ -15,29 +15,63 @@ const member = reactive({
   password2: '12',
   avatar: null,
 });
-  //////////////////////////////////////////////////////////
+
 const disableSubmit = ref(true);
-const checkUsername = async () => {
-  if (!member.username) {
-    return alert('사용자 ID를 입력하세요.');
+
+// 유효성 검사 상태
+const validationErrors = reactive({
+  username: '',
+  email: '',
+  password: ''
+});
+
+// 아이디 유효성 검사 (영어와 숫자만 가능)
+const validateUsername = () => {
+  const usernameRegex = /^[a-zA-Z0-9]+$/;
+  if (!usernameRegex.test(member.username)) {
+    validationErrors.username = '아이디는 영어와 숫자의 조합만 가능합니다.';
+    return false;
   }
+  validationErrors.username = '';
+  return true;
+};
+
+// 이메일 유효성 검사
+const validateEmail = () => {
+  const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+  if (!emailRegex.test(member.email)) {
+    validationErrors.email = '유효한 이메일 주소를 입력하세요.';
+    return false;
+  }
+  validationErrors.email = '';
+  return true;
+};
+
+// 비밀번호 유효성 검사
+const validatePassword = () => {
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{8,}$/;
+  if (!passwordRegex.test(member.password)) {
+    validationErrors.password = '비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수 문자를 포함해야 합니다.';
+    return false;
+  }
+  validationErrors.password = '';
+  return true;
+};
+
+const checkUsername = async () => {
+  if (!validateUsername()) return;
 
   disableSubmit.value = await authApi.checkUsername(member.username);
-  console.log(disableSubmit.value, typeof disableSubmit.value);
   checkError.value = disableSubmit.value ? '이미 사용중인 ID입니다.' : '사용가능한 ID입니다.';
 };
 
-const changeUsername = () => {
-  disableSubmit.value = true;
-  if (member.username) {
-    checkError.value = 'ID 중복 체크를 하셔야 합니다.';
-  } else {
-    checkError.value = '';
-  }
-};
-
 const join = async () => {
-  if (member.password != member.password2) {
+  // 입력 값 유효성 검사
+  if (!validateUsername() || !validateEmail() || !validatePassword()) {
+    return alert('입력값을 확인하세요.');
+  }
+
+  if (member.password !== member.password2) {
     return alert('비밀번호가 일치하지 않습니다.');
   }
 
@@ -64,9 +98,7 @@ const goBack = () => {
       <div class="col-md-8">
         <div class="card shadow-lg">
           <div class="card-header bg-primary text-white text-center py-3">
-            <h2 class="mb-0">
-              회원 가입
-            </h2>
+            <h2 class="mb-0">회원 가입</h2>
           </div>
           <div class="card-body p-5">
             <form @submit.prevent="join">
@@ -75,10 +107,10 @@ const goBack = () => {
                   <i class="fa-solid fa-user me-2"></i>사용자 ID
                 </label>
                 <div class="input-group">
-                  <input type="text" class="form-control" placeholder="사용자 ID" id="username" @input="changeUsername" v-model="member.username" />
+                  <input type="text" class="form-control" placeholder="사용자 ID" id="username" @input="validateUsername" v-model="member.username" />
                   <button type="button" class="btn btn-outline-primary" @click="checkUsername">ID 중복 확인</button>
                 </div>
-                <small :class="disableSubmit ? 'text-danger' : 'text-success'">{{ checkError }}</small>
+                <small class="text-danger">{{ validationErrors.username }}</small>
               </div>
 
               <div class="mb-4">
@@ -99,14 +131,16 @@ const goBack = () => {
                 <label for="email" class="form-label">
                   <i class="fa-solid fa-envelope me-2"></i>이메일
                 </label>
-                <input type="email" class="form-control" placeholder="Email" id="email" v-model="member.email" />
+                <input type="email" class="form-control" placeholder="Email" id="email" @input="validateEmail" v-model="member.email" />
+                <small class="text-danger">{{ validationErrors.email }}</small>
               </div>
 
               <div class="mb-4">
                 <label for="password" class="form-label">
                   <i class="fa-solid fa-lock me-2"></i>비밀번호
                 </label>
-                <input type="password" class="form-control" placeholder="비밀번호" id="password" v-model="member.password" />
+                <input type="password" class="form-control" placeholder="비밀번호" id="password" @input="validatePassword" v-model="member.password" />
+                <small class="text-danger">{{ validationErrors.password }}</small>
               </div>
 
               <div class="mb-4">
@@ -116,7 +150,6 @@ const goBack = () => {
                 <input type="password" class="form-control" placeholder="비밀번호 확인" id="password2" v-model="member.password2" />
               </div>
 
-              <!-- 버튼 그룹 -->
               <div class="d-flex justify-content-between mt-4">
                 <button type="button" class="btn btn-secondary btn-lg" @click="goBack">
                   <i class="fa-solid fa-arrow-left me-2"></i>뒤로가기

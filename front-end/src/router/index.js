@@ -7,6 +7,7 @@ import MyLearningPage from '../pages/myLearning/MyLearningPage.vue';
 import NoticePage from '../pages/notice/NoticePage.vue';
 import authRoutes from './auth';
 import NoticeDetailPage from '@/pages/notice/NoticeDetailPage.vue';
+import tradeRoutes from './trade';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,7 +28,7 @@ const router = createRouter({
       component: QuizPage,
     },
     {
-      path: '/trade/TradePage',
+      path: '/trade',
       name: 'trade',
       component: TradePage,
     },
@@ -49,6 +50,7 @@ const router = createRouter({
 
 
     ...authRoutes,
+    ...tradeRoutes,
 
   ],
 
