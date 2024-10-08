@@ -12,6 +12,7 @@
             </div>
             <div class="title">{{ cardData.setName }}</div>
             <p class="summary">{{ cardData.description }}</p>
+            <p class="completed-at" v-show="cardData.completedAt">완료일: {{ cardData.completedAt }}</p>
         </div>
     </div>
 </template>
@@ -128,6 +129,11 @@ export default {
     overflow: hidden; /* 넘치는 내용 숨기기 */
     text-overflow: ellipsis; /* 넘치는 내용에 ... 표시 */
     width: 100%; /* 너비를 100%로 설정 */
+}
+.completed-at{
+    font-size: 12px;
+    text-align: right;
+    margin-right: 3px;
 }
 
 /* 미디어 쿼리 추가 */
