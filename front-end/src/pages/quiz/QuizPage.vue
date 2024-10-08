@@ -48,6 +48,7 @@
 
 <script>
 import { useRouter, useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import QuizImage from '@/components/quiz/QuizImage.vue';
 import QuizNavigationBar from '@/components/quiz/QuizNavigationBar.vue';
 import QuizCard from '@/components/quiz/QuizCard.vue';
@@ -72,7 +73,8 @@ export default {
   },
   setup() {
     const quizStore = useQuizStore();
-    const userStore = useAuthStore(); // 사용자 스토어 사용
+    const authStore = useAuthStore();
+    const { isLogin } = storeToRefs(authStore);
     const isModalVisible = ref(false);
     const selectedCard = ref({});
     const selectedCategory = ref(null);
@@ -162,7 +164,8 @@ export default {
     };
 
     const handleQuizCardClick = (quiz) => {
-      if (userStore.isLoggedIn) {
+      console.log('로그인 상태:', isLogin.value);
+      if (isLogin.value) {
         openQuizSet(quiz);
       } else {
         showLoginModal.value = true;
@@ -201,7 +204,8 @@ export default {
       quizSubmitRef,
       showLoginModal,
       handleQuizCardClick,
-      handleLogin
+      handleLogin,
+      isLogin // isLogin을 반환에 추가
     };
   }
 }
