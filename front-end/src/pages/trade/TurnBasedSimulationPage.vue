@@ -17,7 +17,7 @@ import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vu
 import ScenarioList from '@/components/trade/ScenarioList.vue';
 import ScenarioOrder from '@/components/trade/ScenarioOrder.vue';
 import { ref, onMounted } from 'vue';
-import { getAllScenarioConversions } from '@/api/scenarioApi.js';
+// import { getAllScenarioConversions } from '@/api/scenarioApi.js';
 
 export default {
   name: 'TurnBasedSimulationPage',

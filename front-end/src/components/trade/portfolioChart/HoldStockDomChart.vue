@@ -6,6 +6,7 @@
 
 <script>
 import * as echarts from 'echarts';
+import TradeService from '@/services/tradeService'; // TradeService를 import
 
 export default {
   name: 'HoldStockDomChart',
@@ -26,8 +27,7 @@ export default {
     },
     fetchData() {
       // API 호출
-      fetch('/api/trade/userId/1')
-        .then((response) => response.json())
+      TradeService.viewStockHeld()
         .then((data) => {
           const stockData = data.stock;
 
