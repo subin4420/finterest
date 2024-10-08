@@ -128,6 +128,17 @@
         WHERE activity_name = '퀴즈'
     </select>
 
+    <!-- 퀴즈 포인트 저장 -->
+    <insert id="insertPoint" parameterType="map">
+        INSERT INTO Points (user_id, source, points_change, created_at)
+        VALUES (#{userId},
+                (SELECT rule_id FROM Point_Rules WHERE activity_name = '퀴즈'),
+                #{pointsChange},
+                NOW())
+    </insert>
+
+
+
     <!-- 5. 사용자별 퀴즈 결과 조회 -->
     <select id="selectQuizResultsByUser" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizResultVO">
         SELECT

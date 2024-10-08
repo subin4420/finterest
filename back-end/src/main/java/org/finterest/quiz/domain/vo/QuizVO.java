@@ -19,4 +19,7 @@ public class QuizVO {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // null 또는 빈 리스트일 경우 직렬화하지 않음
     private String correctChoice;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // null 또는 빈 리스트일 경우 직렬화하지 않음
+    private int categoryId;
 }

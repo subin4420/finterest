@@ -105,12 +105,12 @@ public class UserServiceImpl implements UserService {
         // 사용자 정보 조회
         UserVO userVO = userMapper.findByUsername(username);
         if (userVO == null) {
-            throw new UsernameNotFoundException("User not found.");
+            throw new UsernameNotFoundException("해당 사용자가 존재하지 않습니다.");
         }
 
         // 기존 비밀번호 확인 (optional)
         if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), userVO.getPassword())) {
-            throw new IllegalArgumentException("Old password is incorrect.");
+            throw new IllegalArgumentException("이전 비밀번호를 잘못 입력하셨습니다.");
         }
 
         // 새로운 비밀번호 암호화 및 DTO 업데이트

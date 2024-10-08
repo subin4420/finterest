@@ -54,4 +54,12 @@ public class AdminArchiveDAO {
     public void deleteArchive(int materialId){
         sqlSessionTemplate.getMapper(AdminArchiveMapper.class).deleteArchive(materialId);
     }
+
+    public void deleteProgress(int materialId){
+        sqlSessionTemplate.getMapper(AdminArchiveMapper.class).deleteProgress(materialId);
+    }
+
+    public void deleteFavorites(int materialId){
+        sqlSessionTemplate.getMapper(AdminArchiveMapper.class).deleteFavorites(materialId);
+    }
 }

@@ -33,10 +33,18 @@
         WHERE user_id = #{userId}
     </select>
 
+    <!-- money 조회 -->
+    <select id="selectTotalMoney" parameterType="int" resultType="int">
+        SELECT money AS totalMoney
+        FROM Users
+        WHERE user_id = #{userId}
+    </select>
+
     <select id="getUserById" parameterType="int" resultType="UserPointVO">
         SELECT user_id AS userId, total_points AS totalPoints
         FROM Users
         WHERE user_id = #{userId}
     </select>
+
 
 </mapper>

@@ -19,5 +19,7 @@ public interface PointMapper {
                                   @Param("endDate") Date endDate);
     int selectTotalPoints(@Param("userId") int userId);
 
+    int selectTotalMoney(@Param("userId") int userId);
+
     UserPointVO getUserById(@Param("userId") int userId);
 }

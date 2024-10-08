@@ -82,11 +82,19 @@
         WHERE material_id = #{materialId}
     </update>
 
-    <!-- 학습 자료 삭제 -->
-    <delete id="deleteArchive" parameterType="int">
-        DELETE FROM Learning_Materials
-        WHERE material_id = #{materialId}
+    <!-- 학습 자료 관련 데이터 삭제 -->
+    <delete id="deleteProgress" parameterType="int">
+        DELETE FROM Learning_Progress WHERE material_id = #{materialId};
     </delete>
+
+    <delete id="deleteFavorites" parameterType="int">
+        DELETE FROM Favorites WHERE material_id = #{materialId};
+    </delete>
+
+    <delete id="deleteArchive" parameterType="int">
+        DELETE FROM Learning_Materials WHERE material_id = #{materialId};
+    </delete>
+
 
     <select id="getProgressForMaterialAndUser" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
         SELECT

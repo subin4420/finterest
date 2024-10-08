@@ -67,4 +67,24 @@ public class PointController {
 
         return response;
     }
+
+    // 사용자 누적 가상자금 조회 API
+    @GetMapping("/total_money")
+    public Map<String, Object> getTotalMoney(
+            @RequestHeader("Authorization") String token) {
+
+        int userId = tokenUtil.getUserIdFromToken(token);
+
+        // 사용자 정보 조회
+        UserPointVO user = pointService.getUserById(userId);
+        Map<String, Object> response = new HashMap<>();
+        if (user != null) {
+            response.put("userId", userId);
+            response.put("totalMoney", pointService.getTotalMoney(userId));
+        } else {
+            response.put("message", "User not found");
+        }
+
+        return response;
+    }
 }
