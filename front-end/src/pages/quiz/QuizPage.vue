@@ -20,7 +20,7 @@
           v-for="quizSet in filteredQuizSets" 
           :key="quizSet.setId" 
           :cardData="quizSet" 
-          @click.native="openQuizSet(quizSet)" 
+          @click.native="handleQuizCardClick(quizSet)" 
         />
       </div>
     </div>
@@ -36,18 +36,28 @@
         @updateQuizProgress="updateQuizProgress"
       />
     </div>
+
+    <!-- LoginRequiredModal 추가 -->
+    <LoginRequiredModal 
+      v-if="showLoginModal" 
+      @close="showLoginModal = false"
+      @login="handleLogin"
+    />
   </div>
 </template>
 
 <script>
+import { useRouter, useRoute } from 'vue-router';
 import QuizImage from '@/components/quiz/QuizImage.vue';
 import QuizNavigationBar from '@/components/quiz/QuizNavigationBar.vue';
 import QuizCard from '@/components/quiz/QuizCard.vue';
 import QuizModal from '@/components/quiz/QuizModal.vue';
 import QuizSubmit from '@/components/quiz/QuizSubmit.vue';
-import QuizTopBar from '@/components/quiz/QuizTopBar.vue'; // 새로 추가
+import QuizTopBar from '@/components/quiz/QuizTopBar.vue';
+import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
 import { onMounted, ref, computed } from "vue";
 import { useQuizStore } from "@/stores/quizStore";
+import { useAuthStore } from "@/stores/auth";
 
 export default {
   name: 'QuizPage',
@@ -57,10 +67,12 @@ export default {
     QuizModal,
     QuizNavigationBar,
     QuizSubmit,
-    QuizTopBar // 새로 추가한 컴포넌트
+    QuizTopBar,
+    LoginRequiredModal // LoginRequiredModal 컴포넌트 추가
   },
   setup() {
     const quizStore = useQuizStore();
+    const userStore = useAuthStore(); // 사용자 스토어 사용
     const isModalVisible = ref(false);
     const selectedCard = ref({});
     const selectedCategory = ref(null);
@@ -75,6 +87,10 @@ export default {
     const allQuestionsAnswered = ref(false);
 
     const quizSubmitRef = ref(null);
+    const showLoginModal = ref(false);
+
+    const router = useRouter(); // Vue Router 인스턴스를 가져옵니다.
+    const route = useRoute();
 
     onMounted(async () => {
       await quizStore.fetchQuizSets();
@@ -145,6 +161,23 @@ export default {
       }
     };
 
+    const handleQuizCardClick = (quiz) => {
+      if (userStore.isLoggedIn) {
+        openQuizSet(quiz);
+      } else {
+        showLoginModal.value = true;
+      }
+    };
+
+    const handleLogin = () => {
+      showLoginModal.value = false;
+      const currentPath = route.fullPath;
+      router.push({ 
+        path: '/auth/login', 
+        query: { redirect: currentPath } 
+      });
+    };
+
     return { 
       filteredQuizSets, 
       isModalVisible, 
@@ -165,7 +198,10 @@ export default {
       bookmarkQuestion,
       showHint,
       handleQuizSubmitted,
-      quizSubmitRef
+      quizSubmitRef,
+      showLoginModal,
+      handleQuizCardClick,
+      handleLogin
     };
   }
 }

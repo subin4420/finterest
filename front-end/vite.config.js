@@ -28,6 +28,6 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'C:/KB_Fullstack/09_Spring+Vue/scoula/backend/src/main/webapp/resources',
+    outDir: '/Users/park/Desktop/takejob/finterest/back-end/src/main/webapp/resources',
   },
 });

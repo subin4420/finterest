@@ -4,7 +4,7 @@ import { ref } from 'vue';
 const currentSlide = ref(0);
 const slides = ref([
   {
-    image: '/src/assets/images/tradepage.png',
+    image: '/src/assets/images/imgslide/tradepage.png',
     title: '모의투자, 연습도 실전처럼',
   },
 ]);

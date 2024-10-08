@@ -1,17 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
+import { IMAGE_PATHS } from '@/constants/imagePaths';
 
-const currentSlide = ref(0);
 const slides = ref([
-{
-    image: '/src/assets/images/quizpage.png',
+  {
+    image: IMAGE_PATHS.QUIZ,
     title: '문제를 한 번 풀어봐요.',
     subtitle: '퀴즈페이지',
     description: '배웠던 내용으로 퀴즈를 풀어봐요.',
-    page: '/quiz/QuizPage' // 퀴즈 페이지 경로
+    page: '/quiz/QuizPage'
   }
-  // 필요한 만큼 슬라이드를 추가할 수 있습니다
-  // 추가 슬라이드를 여기에 넣으세요
 ]);
 </script>
 

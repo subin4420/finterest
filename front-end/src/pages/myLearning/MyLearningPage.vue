@@ -386,4 +386,48 @@ h3{
   align-items: center;
   color: white; /* 글자색을 흰색으로 */
 }
+
+/* 탭 버튼과 카드 사이의 간격 조정 */
+.tabs {
+  margin-bottom: 30px; /* 탭 버튼과 카드 사이의 간격 증가 */
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  margin-right: 20px;
+  cursor: pointer;
+  padding: 10px 0;
+  color: #333;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tabs button.active {
+  font-weight: bold;
+  color: #00C4D1;
+  border-bottom: 2px solid #00C4D1;
+}
+
+/* 컨텐츠 영역 패딩 조정 */
+.content {
+  width: 71%;
+  margin-top: 30px;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+}
+
+/* 카드 리스트에 상단 여백 추가 */
+.card-list {
+  margin-top: 20px; /* 카드 리스트 상단 여백 추가 */
+}
+
+/* 개별 카드에 여백 추가 */
+.card {
+  margin-bottom: 20px; /* 카드 간 여백 추가 */
+}
+
+/* 기타 스타일은 그대로 유지 */
 </style>
