@@ -6,7 +6,9 @@
         <div class="card-info">
             <div class="category-score-wrapper">
                 <div class="category-title">[{{ cardData.categoryName }}]</div>
-                <div class="score" v-if="cardData.userScore">{{ cardData.userScore }}점</div>
+                <div class="score" v-if="cardData.userScore !== null && cardData.userScore !== undefined">
+                    {{ cardData.userScore }}점
+                </div>
             </div>
             <div class="title">{{ cardData.setName }}</div>
             <p class="summary">{{ cardData.description }}</p>

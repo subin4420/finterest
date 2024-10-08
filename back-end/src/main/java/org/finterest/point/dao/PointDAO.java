@@ -29,6 +29,10 @@ public class PointDAO {
         return sqlSessionTemplate.getMapper(PointMapper.class).selectTotalPoints(userId);
     }
 
+    public int selectTotalMoney(@Param("userId") int userId){
+        return sqlSessionTemplate.getMapper(PointMapper.class).selectTotalMoney(userId);
+    }
+
     public UserPointVO getUserById(@Param("userId") int userId){
         return sqlSessionTemplate.getMapper(PointMapper.class).getUserById(userId);
     }

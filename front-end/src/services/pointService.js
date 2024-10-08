@@ -46,3 +46,20 @@ export const getTotalPoints = async () => {
     throw error;
   }
 };
+
+// 3. 사용자 누적 가상자금 조회
+export const getTotalMoney = async () => {
+  try {
+    const token = getToken();
+    const response = await api.get('/api/total_money', { // params 제거
+      headers: {
+        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+      },
+    });
+    console.log('Response data from getTotalPoints:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching total points:', error);
+    throw error;
+  }
+};

@@ -62,6 +62,10 @@ public class QuizSetsDAO {
         return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectPointsForQuiz();
     }
 
+    public void insertPoint(int userId, int point) {
+        sqlSessionTemplate.getMapper(QuizSetsMapper.class).insertPoint(userId, point);
+    }
+
     public List<QuizResultVO> getQuizResult(int userId) {
         return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectQuizResultsByUser(userId);
     }

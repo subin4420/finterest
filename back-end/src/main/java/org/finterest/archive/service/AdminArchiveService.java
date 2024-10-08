@@ -5,6 +5,7 @@ import org.finterest.archive.domain.ArchiveDetailVO;
 import org.finterest.archive.domain.ArchiveVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -59,7 +60,10 @@ public class AdminArchiveService {
         adminArchiveDAO.updateArchive(materialId, categoryName, title, materialImg, link, description, content);
     }
 
-    public void deleteArchive(int materialId){
-        adminArchiveDAO.deleteArchive(materialId);
+    @Transactional  // 트랜잭션 관리 추가
+    public void deleteArchive(int materialId) {
+        adminArchiveDAO.deleteProgress(materialId);      // Learning_Progress 삭제
+        adminArchiveDAO.deleteFavorites(materialId);    // Favorites 삭제
+        adminArchiveDAO.deleteArchive(materialId);     // Learning_Materials 삭제
     }
 }
