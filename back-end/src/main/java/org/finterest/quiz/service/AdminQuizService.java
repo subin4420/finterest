@@ -1,6 +1,7 @@
 package org.finterest.quiz.service;
 
 import org.finterest.quiz.dao.AdminQuizDAO;
+import org.finterest.quiz.domain.vo.QuizSetsVO;
 import org.finterest.quiz.domain.vo.QuizVO;
 import org.finterest.quiz.mapper.AdminQuizMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,59 @@ public class AdminQuizService {
     public void setAdminQuizDAO(AdminQuizDAO adminQuizDAO) {
         this.adminQuizDAO = adminQuizDAO;
     }
+
+    // 1. 퀴즈 세트 생성
+    @Transactional
+    public void createQuizSet(QuizSetsVO quizSetsVO, List<QuizVO> quizList) {
+        try {
+
+            // 1-2. 퀴즈 세트 생성 (categoryId는 VO에 없으므로 직접 전달)
+            //quizSetsVO.setSetId(0);  // 세트 ID를 0으로 설정하고 자동 생성되도록
+            adminQuizDAO.insertQuizSet(quizSetsVO);
+
+            // 1-3. 생성된 퀴즈 세트 ID를 가져온 후, 각 퀴즈 문제를 삽입하고 연결
+            int setId = quizSetsVO.getSetId();  // 생성된 세트 ID
+
+            for (QuizVO quizVO : quizList) {
+                //adminQuizDAO.insertQuiz(quizVO);  // 퀴즈 문제 삽입
+                int quizId = quizVO.getQuizId();  // 생성된 퀴즈 문제 ID
+                System.out.println(">>>>>>세트 ID: " + setId);
+                System.out.println(">>>>>>퀴즈 ID: "+ quizId);
+                // 1-4. 퀴즈 세트와 퀴즈 문제 연결
+                adminQuizDAO.insertQuizSetQuestions(setId, quizId);
+            }
+        } catch (Exception e) {
+            // 오류 발생 시 처리
+            throw new RuntimeException("퀴즈 세트 생성 중 오류가 발생했습니다.", e);
+        }
+    }
+
+
+    // 2. 퀴즈 세트 조회
+    public List<QuizSetsVO> getAllQuizSets(Integer categoryId){
+        return adminQuizDAO.selectQuizSets(categoryId);
+    }
+
+    // 3. 퀴즈 세트 수정
+    @Transactional
+    public void updateQuizSet(QuizSetsVO quizSetsVO, List<QuizVO> quizList) {
+        try {
+            // 3-1. 퀴즈 세트 수정
+            adminQuizDAO.updateQuizSet(quizSetsVO);
+
+            // 3-2. 기존의 퀴즈 세트와 퀴즈 문제 간 연결 삭제 (필요 시)
+            adminQuizDAO.deleteQuizSetQuestionsBySetId(quizSetsVO.getSetId());
+
+            // 3-3. 새로운 퀴즈 세트와 문제 연결
+            for (QuizVO quizVO : quizList) {
+                int quizId = quizVO.getQuizId();
+                adminQuizDAO.insertQuizSetQuestions(quizSetsVO.getSetId(), quizId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("퀴즈 세트 수정 중 오류가 발생했습니다.", e);
+        }
+    }
+
 
     // 4 퀴즈 세트 삭제
     @Transactional
