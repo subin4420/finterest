@@ -88,6 +88,9 @@ public class QuizSetsService {
         // 퀴즈 결과를 데이터베이스에 저장하고 resultId 반환
         int resultId = quizSetsDAO.insertQuizResult(userId, setId, totalScore, maxScore);
 
+        // 포인트 이력에 추가
+        quizSetsDAO.insertPoint(userId, totalScore* quizSetsDAO.selectPointsForQuiz());
+
         // 각 사용자의 답변을 resultId와 함께 저장
         for (QuizSubmissionDTO.AnswerDTO answer : submission.getAnswers()) {
             quizSetsDAO.insertUserAnswer(resultId, answer.getQuizId(), userId,

@@ -43,6 +43,9 @@ public interface QuizSetsMapper {
     // 퀴즈 포인트 조회
     int selectPointsForQuiz();
 
+    // 퀴즈 포인트 저장
+    void insertPoint(@Param("userId") int userId, @Param("pointsChange") int pointsChange);
+
     /// 5. 사용자별 퀴즈 결과 조회
     List<QuizResultVO> selectQuizResultsByUser(@Param("userId") int userId);
 

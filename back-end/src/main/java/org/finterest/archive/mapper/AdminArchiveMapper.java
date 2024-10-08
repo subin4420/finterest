@@ -40,4 +40,6 @@ public interface AdminArchiveMapper {
                        @Param("content") String content);
 
     void deleteArchive(@Param("materialId") int materialId);
+    void deleteProgress(@Param("materialId") int materialId);
+    void deleteFavorites(@Param("materialId") int materialId);
 }
