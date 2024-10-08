@@ -5,7 +5,9 @@ import authApi from '@/api/authApi';
 
 const router = useRouter();
 const avatar = ref(null);
+const avatarError = ref('');
 const checkError = ref('');
+const passwordError = ref('');  // 이 줄을 추가합니다.
 
 const member = reactive({
   username: 'hong',
@@ -21,18 +23,30 @@ const disableSubmit = ref(true);
 // 유효성 검사 상태
 const validationErrors = reactive({
   username: '',
+  fullName: '',  // 추가
   email: '',
   password: ''
 });
 
-// 아이디 유효성 검사 (영어와 숫자만 가능)
+// 아이디 유효성 검사 (영어와 숫자만 가능, 길이 제한)
 const validateUsername = () => {
-  const usernameRegex = /^[a-zA-Z0-9]+$/;
+  const usernameRegex = /^[a-zA-Z0-9]{4,20}$/;
   if (!usernameRegex.test(member.username)) {
-    validationErrors.username = '아이디는 영어와 숫자의 조합만 가능합니다.';
+    validationErrors.username = '아이디는 4~20자의 영문자와 숫자 조합이어야 합니다.';
     return false;
   }
   validationErrors.username = '';
+  return true;
+};
+
+// 전체 이름 유효성 검사 (한글과 영어만 가능, 길이 제한)
+const validateFullName = () => {
+  const fullNameRegex = /^[가-힣a-zA-Z\s]{2,50}$/;
+  if (!fullNameRegex.test(member.fullName)) {
+    validationErrors.fullName = '이름은 2~50자의 한글 또는 영문자여야 합니다.';
+    return false;
+  }
+  validationErrors.fullName = '';
   return true;
 };
 
@@ -48,14 +62,56 @@ const validateEmail = () => {
 };
 
 // 비밀번호 유효성 검사
+const passwordConditions = reactive({
+  length: false,
+  uppercase: false,
+  lowercase: false,
+  number: false,
+  special: false
+});
+
+const updatePasswordConditions = (password) => {
+  passwordConditions.length = password.length >= 8;
+  passwordConditions.uppercase = /[A-Z]/.test(password);
+  passwordConditions.lowercase = /[a-z]/.test(password);
+  passwordConditions.number = /[0-9]/.test(password);
+  passwordConditions.special = /[!@#$%^&*]/.test(password);
+};
+
 const validatePassword = () => {
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{8,}$/;
-  if (!passwordRegex.test(member.password)) {
-    validationErrors.password = '비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자, 특수 문자를 포함해야 합니다.';
+  updatePasswordConditions(member.password);
+  
+  if (member.password.length < 8) {
+    passwordError.value = '비밀번호는 최소 8자 이상이어야 합니다.';
     return false;
   }
-  validationErrors.password = '';
+
+  let conditionsMet = Object.values(passwordConditions).filter(Boolean).length;
+
+  if (conditionsMet < 3) {
+    passwordError.value = '비밀번호는 대문자, 소문자, 숫자, 특수문자(!@#$%^&*) 중 3가지 이상을 포함해야 합니다.';
+    return false;
+  }
+
+  passwordError.value = '';
   return true;
+};
+
+// 아바타 이미지 유효성 검사
+const validateAvatar = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    if (file.type !== 'image/png') {
+      avatarError.value = 'PNG 파일만 업로드 가능합니다.';
+      avatar.value.value = ''; // 파일 선택 초기화
+    } else {
+      avatarError.value = '';
+      member.avatar = file;
+    }
+  } else {
+    avatarError.value = '';
+    member.avatar = null;
+  }
 };
 
 const checkUsername = async () => {
@@ -67,12 +123,16 @@ const checkUsername = async () => {
 
 const join = async () => {
   // 입력 값 유효성 검사
-  if (!validateUsername() || !validateEmail() || !validatePassword()) {
+  if (!validateUsername() || !validateFullName() || !validateEmail() || !validatePassword()) {
     return alert('입력값을 확인하세요.');
   }
 
   if (member.password !== member.password2) {
     return alert('비밀번호가 일치하지 않습니다.');
+  }
+
+  if (avatarError.value) {
+    return alert('올바른 아바타 이미지를 선택하세요.');
   }
 
   if (avatar.value.files.length > 0) {
@@ -117,14 +177,16 @@ const goBack = () => {
                 <label for="fullName" class="form-label">
                   <i class="fa-solid fa-user me-2"></i>이름
                 </label>
-                <input type="text" class="form-control" placeholder="전체 이름" id="fullName" v-model="member.fullName" />
+                <input type="text" class="form-control" placeholder="전체 이름" id="fullName" v-model="member.fullName" @input="validateFullName" />
+                <small class="text-danger">{{ validationErrors.fullName }}</small>
               </div>
 
               <div class="mb-4">
                 <label for="avatar" class="form-label">
                   <i class="fa-solid fa-user-astronaut me-2"></i>아바타 이미지
                 </label>
-                <input type="file" class="form-control" ref="avatar" id="avatar" accept="image/png, image/jpeg" />
+                <input type="file" class="form-control" ref="avatar" id="avatar" accept="image/png" @input="validateAvatar" />
+                <small class="text-danger">{{ avatarError }}</small>
               </div>
 
               <div class="mb-4">
@@ -139,8 +201,37 @@ const goBack = () => {
                 <label for="password" class="form-label">
                   <i class="fa-solid fa-lock me-2"></i>비밀번호
                 </label>
-                <input type="password" class="form-control" placeholder="비밀번호" id="password" @input="validatePassword" v-model="member.password" />
-                <small class="text-danger">{{ validationErrors.password }}</small>
+                <input type="password" class="form-control" placeholder="비밀번호" id="password" v-model="member.password" @input="validatePassword" />
+                <small class="text-danger">{{ passwordError }}</small>
+              </div>
+
+              <div class="mb-4">
+                <div class="password-conditions card">
+                  <div class="card-body">
+                    <h6 class="card-title mb-2">비밀번호 조건:</h6>
+                    <ul class="list-unstyled mb-2">
+                      <li :class="passwordConditions.length ? 'text-success' : 'text-muted'">
+                        <i :class="passwordConditions.length ? 'fas fa-check-circle' : 'far fa-circle'"></i> 8자 이상
+                      </li>
+                      <li :class="passwordConditions.uppercase ? 'text-success' : 'text-muted'">
+                        <i :class="passwordConditions.uppercase ? 'fas fa-check-circle' : 'far fa-circle'"></i> 대문자 ��함
+                      </li>
+                      <li :class="passwordConditions.lowercase ? 'text-success' : 'text-muted'">
+                        <i :class="passwordConditions.lowercase ? 'fas fa-check-circle' : 'far fa-circle'"></i> 소문자 포함
+                      </li>
+                      <li :class="passwordConditions.number ? 'text-success' : 'text-muted'">
+                        <i :class="passwordConditions.number ? 'fas fa-check-circle' : 'far fa-circle'"></i> 숫자 포함
+                      </li>
+                      <li :class="passwordConditions.special ? 'text-success' : 'text-muted'">
+                        <i :class="passwordConditions.special ? 'fas fa-check-circle' : 'far fa-circle'"></i> 특수문자(!@#$%^&*) 포함
+                      </li>
+                    </ul>
+                    <div :class="Object.values(passwordConditions).filter(Boolean).length >= 3 ? 'text-success' : 'text-muted'">
+                      <i :class="Object.values(passwordConditions).filter(Boolean).length >= 3 ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                      3개 이상의 조건 충족 ({{ Object.values(passwordConditions).filter(Boolean).length }}/3)
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div class="mb-4">
@@ -210,5 +301,27 @@ const goBack = () => {
 .btn-secondary:hover, .btn-secondary:focus {
   background-color: #5a6268;
   border-color: #545b62;
+}
+
+.password-conditions.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.password-conditions .card-body {
+  padding: 1rem;
+}
+
+.password-conditions ul {
+  margin-bottom: 0.5rem;
+}
+
+.password-conditions li {
+  margin-bottom: 0.25rem;
+}
+
+.password-conditions i {
+  margin-right: 5px;
 }
 </style>

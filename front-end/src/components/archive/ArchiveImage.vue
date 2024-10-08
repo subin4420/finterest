@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 const currentSlide = ref(0);
 const slides = ref([
   {
-    image: '/src/assets/images/learnpage.png',
+    image: '/src/assets/images/imgslide/learnpage.png',
     title: '경제 상식을 배워봐요',
     subtitle: '학습페이지',
     description: '카테고리별로 학습 할 수 있어요.'
