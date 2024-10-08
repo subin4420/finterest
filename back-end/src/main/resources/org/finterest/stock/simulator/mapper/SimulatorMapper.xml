@@ -63,4 +63,24 @@
         VALUES (#{stockCode}, #{stockName}, #{price}, #{quantity}, #{tradeType}, #{totalPrice}, #{totalStockHoldings}, #{userId}, NOW(), NOW());
     </insert>
 
+    <select id="getUserTradeHistory" parameterType="int" resultType="org.finterest.invest.stock.simulator.domain.SimulatorVO">
+        SELECT
+            trade_id AS tradeId,
+            stock_code AS stockCode,
+            stock_name AS stockName,
+            price,
+            quantity,
+            trade_type AS tradeType,
+            total_price AS totalPrice,
+            total_stock_holdings AS totalStockHoldings,
+            user_id AS userId,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM
+            Trade
+        WHERE
+            user_id = #{userId}
+        ORDER BY
+            created_at DESC
+    </select>
 </mapper>
