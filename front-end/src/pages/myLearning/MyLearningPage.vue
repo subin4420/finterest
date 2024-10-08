@@ -330,7 +330,7 @@ h3{
   color: #333;
   border-bottom: 2px solid transparent;
   transition: all 0.3s ease;
-  margin-bottom: 2rem; /* 제목 아래쪽에 간격 추가 */
+  margin-bottom: 0rem; /* 제목 아래쪽에 간격 추가 */
 }
 
 .tabs button.active {
