@@ -1,6 +1,7 @@
 package org.finterest.invest.stock.overall.listener;
 
 import org.finterest.invest.stock.overall.service.OverallService;
+import org.finterest.invest.stock.simulator.service.ChartService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     @Autowired
     private OverallService overallService;
 
+    @Autowired
+    private ChartService chartService;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         logger.info("Spring 컨텍스트 초기화됨: 데이터 로딩 시작");
@@ -26,6 +30,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     private void loadData() {
         // 데이터 로딩 로직
         overallService.loadData();
+//        chartService.loadData();
         logger.info("KOSPI Stock Index 및 List 데이터 로딩 완료");
     }
 }

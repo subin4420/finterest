@@ -19,7 +19,7 @@ public interface SimulatorMapper {
 
     void tradeStock(SimulatorVO vo);
 
-    String updateOauthToken(String token);
+    int updateOauthToken(String token);
 
     String getOauthToken();
 

@@ -6,6 +6,7 @@ import okhttp3.*;
 import org.finterest.invest.stock.simulator.mapper.SimulatorMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChartService {
 
+    @Value("${api.appKey}")
+    private String appKey;
+
+    @Value("${api.appSecret}")
+    private String appSecret;
+
     private final SimulatorMapper mapper;
 
-    public List<List<String>> sendChartData(String stockCode) throws IOException {
+    public List<List<String>> sendChartData(String stockCode) {
         List<List<String>> chartData = new ArrayList<>();
 
         String token = getOauthToken();
@@ -48,8 +55,8 @@ public class ChartService {
                 .get()
                 .addHeader("content-type", "application/json")
                 .addHeader("authorization", "Bearer " + token)
-                .addHeader("appkey", "PSRXymebdmx9Kvgesb6qEHaj3zo5j6FHIftE")
-                .addHeader("appsecret", "1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=")
+                .addHeader("appkey", appKey)
+                .addHeader("appsecret", appSecret)
                 .addHeader("tr_id", "FHKST03010200")
                 .build();
 
@@ -85,12 +92,17 @@ public class ChartService {
         return chartData;
     }
 
-    @Scheduled(fixedRate = 43200000)
-    String updateOauthToken() throws IOException {
+    @Scheduled(fixedRate = 6 * 60 * 60 * 1000)
+    public String updateOauthToken() {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
+        String accessToken = null;
+        String result = "";
+
+        try{
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\r\n    \"grant_type\": \"client_credentials\",\r\n    \"appkey\": \"PSRXymebdmx9Kvgesb6qEHaj3zo5j6FHIftE\",\r\n    \"appsecret\": \"1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=\"\r\n}");
+        String requestBodyJson = String.format("{\r\n    \"grant_type\": \"client_credentials\",\r\n    \"appkey\": \"%s\",\r\n    \"appsecret\": \"%s\"\r\n}", appKey, appSecret);
+        RequestBody body = RequestBody.create(mediaType, requestBodyJson);
         Request request = new Request.Builder()
                 .url("https://openapivts.koreainvestment.com:29443/oauth2/tokenP")
                 .method("POST", body)
@@ -103,11 +115,28 @@ public class ChartService {
         JSONObject jsonObject = new JSONObject(responseData);
 
         // access_token 추출
-        String accessToken = jsonObject.getString("access_token");
-        return mapper.updateOauthToken(accessToken);
+        accessToken = jsonObject.getString("access_token");
+            int updatedRows = mapper.updateOauthToken(accessToken);
+            if (updatedRows > 0) {
+                System.out.println("OAuth 토큰 업데이트 성공");
+            } else {
+                System.out.println("OAuth 토큰 업데이트 실패");
+            }
+
+        result = "Token successfully updated";
+        } catch (IOException e) {
+            System.out.println("I/O 예외 발생: " + e.getMessage());
+            e.printStackTrace();
+            result = "Token update failed";
+        }
+        return result;
     }
 
-    String getOauthToken() {
+    public void loadData() {
+        updateOauthToken();
+    }
+
+    public String getOauthToken() {
         return mapper.getOauthToken();
     }
 }

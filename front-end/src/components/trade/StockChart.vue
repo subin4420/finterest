@@ -385,7 +385,7 @@ const handleBidData = (e) => {
       savedStartPrice = null;
       highPrice = curPrice;
       lowPrice = curPrice;
-    }, 10000); // 1분 딜레이
+    }, 60000); // 1분 딜레이
   } else {
     endCurPrice = curPrice;
     // 딜레이 중에도 curPrice가 계속 갱신됨
@@ -411,6 +411,7 @@ onBeforeUnmount(() => {
     console.log("컴포넌트 언마운트 시 WebSocket 닫기");
     w.close();
     w = null;
+    deleyTime = true;
   }
 });
 watch(stockCode, (newStockCode, oldStockCode) => {

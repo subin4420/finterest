@@ -26,6 +26,29 @@
         FROM Scenario_Conversion
     </select>
 
+    <select id="selectStockName"
+            parameterType="int"
+            resultType="String">
+        SELECT stock_name FROM scenario_conversion
+        WHERE id = #{randomId}
+    </select>
 
-
+    <select id="selectStockCode"
+            parameterType="int"
+            resultType="String">
+        SELECT srtnCd FROM scenario_conversion
+        WHERE id = #{randomId}
+    </select>
+    <select id="selectMarketSector"
+            parameterType="int"
+            resultType="String">
+        SELECT market_sector FROM scenario_conversion
+        WHERE id = #{randomId}
+    </select>
+    <select id="selectScenario"
+            parameterType="int"
+            resultType="org.finterest.invest.scenario.domain.ScenarioVO">
+        SELECT * FROM scenario
+        WHERE scenario_id = #{randomId}
+    </select>
 </mapper>
