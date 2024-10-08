@@ -120,7 +120,11 @@ onMounted(() => {
           </div>
           <hr class="게시판-구분선" />
           <div class="게시판-첨부파일">
-            <div v-for="file in article.attaches" :key="file.no" class="첨부파일">
+            <div
+              v-for="file in article.attaches"
+              :key="file.no"
+              class="첨부파일"
+            >
               <span @click="download(file.no)">
                 <i class="fa-solid fa-paperclip"></i>
                 {{ file.filename }}
@@ -147,7 +151,12 @@ onMounted(() => {
             <div v-if="comments && comments.length > 0" class="댓글-목록">
               <div v-for="comment in comments" :key="comment.no" class="댓글">
                 <p class="댓글-내용">{{ comment.content }}</p>
-                <small class="댓글-메타">작성자: {{ comment.writer }} | {{ moment(comment.regDate).format('YYYY-MM-DD HH:mm') }}</small>
+                <small class="댓글-메타"
+                  >작성자: {{ comment.writer }} |
+                  {{
+                    moment(comment.regDate).format('YYYY-MM-DD HH:mm')
+                  }}</small
+                >
               </div>
             </div>
             <div v-else class="댓글-없음">
@@ -155,13 +164,19 @@ onMounted(() => {
             </div>
 
             <div class="댓글-폼">
-              <input v-model="newCommentWriter" placeholder="이름 (선택사항)" class="댓글-입력 댓글-작성자" />
+              <input
+                v-model="newCommentWriter"
+                placeholder="이름 (선택사항)"
+                class="댓글-입력 댓글-작성자"
+              />
               <textarea
                 v-model="newCommentContent"
                 placeholder="댓글을 입력하세요"
                 class="댓글-입력 댓글-내용-입력"
               ></textarea>
-              <button @click="addComment" class="버튼 버튼-댓글">댓글 작성</button>
+              <button @click="addComment" class="버튼 버튼-댓글">
+                댓글 작성
+              </button>
             </div>
           </div>
         </div>
@@ -175,11 +190,11 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
 }
 
 .거래-헤더 {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -191,7 +206,7 @@ onMounted(() => {
 
 .콘텐츠-래퍼 {
   display: flex;
-  margin-top: 60px;
+  margin-top: 20px;
   flex: 1;
 }
 

@@ -35,6 +35,8 @@
         <mapper resource="org/finterest/board/mapper/BoardMapper.xml"/>
         <mapper resource="org/finterest/conversion/mapper/ConversionMapper.xml"/>
         <mapper resource="org/finterest/comment/mapper/CommentMapper.xml"/>
+        <mapper resource="org/finterest/stock/overall/mapper/OverallMapper.xml"/>
+        <mapper resource="org/finterest/stock/simulator/mapper/SimulatorMapper.xml"/>
 
     </mappers>
 </configuration>

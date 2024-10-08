@@ -15,13 +15,14 @@ const article = reactive({
   writer: auth.username,
   title: '',
   files: null,
+  content: '', // content 필드 추가
 });
 const disableSubmit = computed(() => !article.title);
 
 const submit = async () => {
   if (!confirm('게시글을 등록하시겠습니까?')) return;
 
-  if (files.value.files.length > 0) {
+  if (files.value && files.value.files.length > 0) {
     article.files = files.value.files;
   }
 
@@ -44,17 +45,7 @@ const submit = async () => {
         <h1 class="페이지-제목">새 게시글 작성</h1>
         <div class="게시판-생성-컨테이너">
           <form @submit.prevent="submit" class="게시판-생성-폼">
-            <div class="폼-그룹">
-              <label for="title" class="폼-라벨">제목</label>
-              <input
-                type="text"
-                class="폼-컨트롤"
-                placeholder="제목을 입력해주세요"
-                id="title"
-                v-model="article.title"
-              />
-            </div>
-            <div class="폼-그룹">
+            <div class="폼-그룹" style="display: none">
               <label for="files" class="폼-라벨">첨부파일</label>
               <input
                 type="file"
@@ -63,6 +54,16 @@ const submit = async () => {
                 id="files"
                 ref="files"
                 multiple
+              />
+            </div>
+            <div class="폼-그룹">
+              <label for="title" class="폼-라벨">제목</label>
+              <input
+                type="text"
+                class="폼-컨트롤"
+                placeholder="제목을 입력해주세요"
+                id="title"
+                v-model="article.title"
               />
             </div>
             <div class="폼-그룹">
@@ -104,29 +105,30 @@ const submit = async () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
 }
 
 .거래-헤더 {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 60px;
   z-index: 1000;
-  background-color: #3498db;
+  background-color: #2e78e0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .콘텐츠-래퍼 {
   display: flex;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .콘텐츠 {
   flex: 1;
   margin-left: 250px;
   padding: 40px;
+  color: ffffff;
 }
 
 .페이지-제목 {

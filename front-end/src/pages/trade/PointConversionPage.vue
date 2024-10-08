@@ -5,19 +5,19 @@
       <SideTradeNavigationBar />
       <div class="content">
         <h1 class="page-title">환전 페이지</h1>
-        <div v-if="authStore.isLogin" class="user-balance">
-          <h2>현재 잔액</h2>
+        <!-- 현재 잔액과 환전율을 가로로 나열 -->
+        <div v-if="authStore.isLogin" class="user-info">
           <div class="balance-container">
             <div class="balance-item">
               <i class="fas fa-coins"></i>
-              <span class="balance-label">포인트</span>
+              <span class="balance-label">보유 포인트</span>
               <span class="balance-value">{{
                 formatCurrency(conversionStore.userBalance.totalPoints)
               }}</span>
             </div>
             <div class="balance-item">
               <i class="fas fa-dollar-sign"></i>
-              <span class="balance-label">모의투자금</span>
+              <span class="balance-label">보유 모의투자금</span>
               <span class="balance-value"
                 >{{
                   formatCurrency(conversionStore.userBalance.money)
@@ -25,15 +25,10 @@
                 원</span
               >
             </div>
-          </div>
-        </div>
-
-        <div class="conversion-rate-info">
-          <h2>현재 환전 비율</h2>
-          <div class="rate-container">
-            <div class="rate-item">
+            <div class="balance-item">
               <i class="fas fa-exchange-alt"></i>
-              <span class="rate-value"
+              <span class="balance-label">현재 환전율</span>
+              <span class="balance-value"
                 >1 포인트 = {{ formatCurrency(getConversionRate()) }} 원</span
               >
             </div>
@@ -44,48 +39,64 @@
           <div class="conversion-section">
             <div v-if="authStore.isLogin" class="conversion-container">
               <div class="conversion-card">
-                <h2>P → ₩</h2>
+                <h2 class="conversion-title">
+                  <i
+                    :class="
+                      conversionMode === 'pointsToMoney'
+                        ? 'fas fa-coins'
+                        : 'fas fa-won-sign'
+                    "
+                  ></i>
+                  <i class="fas fa-arrow-right"></i>
+                  <i
+                    :class="
+                      conversionMode === 'pointsToMoney'
+                        ? 'fas fa-won-sign'
+                        : 'fas fa-coins'
+                    "
+                  ></i>
+                </h2>
                 <input
-                  v-model="pointAmount"
-                  placeholder="환전할 포인트 입력"
+                  v-model="conversionAmount"
+                  :placeholder="
+                    conversionMode === 'pointsToMoney'
+                      ? '환전할 포인트 입력'
+                      : '환전할 모의 자금 입력 (최소 1,000원)'
+                  "
                   type="text"
-                  @input="validateInput('point')"
-                  :max="conversionStore.userBalance.totalPoints"
+                  @input="validateInput(conversionMode)"
+                  :max="
+                    conversionMode === 'pointsToMoney'
+                      ? conversionStore.userBalance.totalPoints
+                      : conversionStore.userBalance.money
+                  "
                 />
                 <div class="arrow-container">
                   <i class="fas fa-arrow-down"></i>
                 </div>
                 <p class="conversion-result">
-                  환전 금액:
-                  {{ formatCurrency(calculateMoney(pointAmount)) }} 원
+                  {{
+                    conversionMode === 'pointsToMoney'
+                      ? '환전 금액:'
+                      : '환전 포인트:'
+                  }}
+                  {{ formatCurrency(calculateConversion()) }}
+                  {{ conversionMode === 'pointsToMoney' ? '원' : '포인트' }}
                 </p>
-                <button @click="executeConversion('pointsToMoney')">
-                  전환하기
+                <button @click="executeConversion">전환하기</button>
+                <p v-if="conversionInputError" class="error-message">
+                  {{ conversionInputError }}
+                </p>
+                <button
+                  @click="toggleConversionMode"
+                  class="toggle-mode-button"
+                >
+                  {{
+                    conversionMode === 'pointsToMoney'
+                      ? '모의투자금 → 포인트로 전환'
+                      : '포인트 → 모의투자금으로 전환'
+                  }}
                 </button>
-              </div>
-
-              <div class="conversion-card">
-                <h2>₩ → P</h2>
-                <input
-                  v-model="moneyAmount"
-                  placeholder="환전할 모의 자금 입력 (최소 1,000원)"
-                  type="text"
-                  @input="validateInput('money')"
-                  :max="conversionStore.userBalance.money"
-                />
-                <div class="arrow-container">
-                  <i class="fas fa-arrow-down"></i>
-                </div>
-                <p class="conversion-result">
-                  환전 포인트:
-                  {{ formatCurrency(calculatePoints(moneyAmount)) }} 포인트
-                </p>
-                <button @click="executeConversion('moneyToPoints')">
-                  전환하기
-                </button>
-                <p v-if="moneyInputError" class="error-message">
-                  {{ moneyInputError }}
-                </p>
               </div>
             </div>
 
@@ -159,10 +170,10 @@ export default {
     const authStore = useAuthStore();
     const conversionStore = useConversionStore();
 
-    const pointAmount = ref('');
-    const moneyAmount = ref('');
+    const conversionMode = ref('pointsToMoney');
+    const conversionAmount = ref('');
     const conversionMessage = ref('');
-    const moneyInputError = ref('');
+    const conversionInputError = ref('');
 
     onMounted(async () => {
       if (authStore.isLogin) {
@@ -205,26 +216,70 @@ export default {
     };
 
     const formatMoneyAmount = () => {
-      moneyAmount.value = moneyAmount.value.replace(
+      conversionAmount.value = conversionAmount.value.replace(
         /\B(?=(\d{3})+(?!\d))/g,
         ''
       );
-      moneyAmount.value = parseFloat(moneyAmount.value.replace(/,/g, ''));
+      conversionAmount.value = parseFloat(
+        conversionAmount.value.replace(/,/g, '')
+      );
     };
 
-    const executeConversion = async (type) => {
+    const toggleConversionMode = () => {
+      conversionMode.value =
+        conversionMode.value === 'pointsToMoney'
+          ? 'moneyToPoints'
+          : 'pointsToMoney';
+      conversionAmount.value = '';
+      conversionInputError.value = '';
+    };
+
+    const calculateConversion = () => {
+      if (conversionMode.value === 'pointsToMoney') {
+        return calculateMoney(conversionAmount.value);
+      } else {
+        return calculatePoints(conversionAmount.value);
+      }
+    };
+
+    const validateInput = (mode) => {
+      conversionAmount.value = conversionAmount.value.replace(/[^0-9]/g, '');
+      const maxValue =
+        mode === 'pointsToMoney'
+          ? conversionStore.userBalance.totalPoints
+          : conversionStore.userBalance.money;
+      const inputValue = parseInt(conversionAmount.value);
+
+      if (inputValue > maxValue) {
+        conversionAmount.value = maxValue.toString();
+        conversionInputError.value = '';
+      } else if (
+        mode === 'moneyToPoints' &&
+        inputValue < 1000 &&
+        inputValue !== 0
+      ) {
+        conversionInputError.value = '최소 1,000원부터 환전 가능합니다.';
+      } else {
+        conversionInputError.value = '';
+      }
+    };
+
+    const executeConversion = async () => {
       if (!authStore.isLogin) {
         conversionMessage.value = '환전을 위해서는 로그인이 필요합니다.';
         return;
       }
 
-      if (type === 'pointsToMoney' && parseInt(pointAmount.value) <= 0) {
+      if (
+        conversionMode.value === 'pointsToMoney' &&
+        parseInt(conversionAmount.value) <= 0
+      ) {
         conversionMessage.value = '유효한 포인트 금액을 입력해주세요.';
         return;
       }
 
-      if (type === 'moneyToPoints') {
-        const inputMoney = parseInt(moneyAmount.value);
+      if (conversionMode.value === 'moneyToPoints') {
+        const inputMoney = parseInt(conversionAmount.value);
         if (inputMoney < 1000) {
           conversionMessage.value = '최소 1,000원부터 환전 가능합니다.';
           return;
@@ -232,17 +287,17 @@ export default {
       }
 
       try {
-        console.log(`환전 시작: ${type}`);
+        console.log(`환전 시작: ${conversionMode.value}`);
         console.log(`환전 전 잔액:`, conversionStore.userBalance);
 
         let result;
-        if (type === 'pointsToMoney') {
+        if (conversionMode.value === 'pointsToMoney') {
           result = await conversionStore.executePointsToMoney(
-            pointAmount.value
+            conversionAmount.value
           );
         } else {
           result = await conversionStore.executeMoneyToPoints(
-            moneyAmount.value
+            conversionAmount.value
           );
         }
 
@@ -250,8 +305,7 @@ export default {
         console.log('환전 후 잔액:', conversionStore.userBalance);
 
         conversionMessage.value = '환전이 성공적으로 완료되었습니다.';
-        pointAmount.value = 0;
-        moneyAmount.value = 0;
+        conversionAmount.value = 0;
       } catch (error) {
         console.error('환전 중 오류 발생:', error);
         conversionMessage.value =
@@ -288,36 +342,15 @@ export default {
       showAllTransactions.value = !showAllTransactions.value;
     };
 
-    const validateInput = (type) => {
-      if (type === 'point') {
-        pointAmount.value = pointAmount.value.replace(/[^0-9]/g, '');
-        const maxPoints = conversionStore.userBalance.totalPoints;
-        if (parseInt(pointAmount.value) > maxPoints) {
-          pointAmount.value = maxPoints.toString();
-        }
-      } else {
-        moneyAmount.value = moneyAmount.value.replace(/[^0-9]/g, '');
-        const maxMoney = conversionStore.userBalance.money;
-        const inputMoney = parseInt(moneyAmount.value);
-
-        if (inputMoney > maxMoney) {
-          moneyAmount.value = maxMoney.toString();
-          moneyInputError.value = '';
-        } else if (inputMoney < 1000 && inputMoney !== 0) {
-          moneyInputError.value = '최소 1,000원부터 환전 가능합니다.';
-        } else {
-          moneyInputError.value = '';
-        }
-      }
-    };
-
     return {
       authStore,
       conversionStore,
-      pointAmount,
-      moneyAmount,
+      conversionMode,
+      conversionAmount,
       conversionMessage,
-      executeConversion,
+      conversionInputError,
+      toggleConversionMode,
+      calculateConversion,
       calculateMoney,
       calculatePoints,
       formatCurrency,
@@ -328,7 +361,7 @@ export default {
       showAllTransactions,
       transactionsPerPage,
       validateInput,
-      moneyInputError,
+      executeConversion,
     };
   },
 };
@@ -345,7 +378,7 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  height: 60px; /* 헤더 높이 */
+  height: 60px;
   z-index: 1000;
   background-color: #2e78e0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -353,12 +386,12 @@ export default {
 
 .content-wrapper {
   display: flex;
-  margin-top: 60px; /* 헤더 높이만큼 아래로 */
+  margin-top: 20px; /* 헤더 높이만큼만 여백 주기 */
 }
 
 .content {
   flex: 1;
-  margin-left: 250px; /* SideTradeNavigationBar의 너비와 같게 설정 */
+  margin-left: 250px;
   padding: 20px;
 }
 
@@ -372,31 +405,21 @@ export default {
   border-bottom: 2px solid #b3b3b3;
 }
 
-.user-balance,
-.conversion-rate-info {
+.user-info {
   background-color: #f0f0f0;
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
-  text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.user-balance h2,
-.conversion-rate-info h2 {
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.balance-container,
-.rate-container {
+.balance-container {
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
 
-.balance-item,
-.rate-item {
+.balance-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -407,27 +430,23 @@ export default {
   transition: transform 0.3s ease;
 }
 
-.balance-item:hover,
-.rate-item:hover {
+.balance-item:hover {
   transform: translateY(-5px);
 }
 
-.balance-item i,
-.rate-item i {
+.balance-item i {
   font-size: 2em;
   margin-bottom: 10px;
   color: #7b57ff;
 }
 
-.balance-label,
-.rate-value {
+.balance-label {
   font-size: 0.9em;
   color: #666;
   margin-bottom: 5px;
 }
 
-.balance-value,
-.rate-description {
+.balance-value {
   font-size: 1.2em;
   font-weight: bold;
   color: #333;
@@ -565,45 +584,6 @@ button:hover {
   background-color: #f0f0f0;
 }
 
-.conversion-rate-info {
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 20px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.conversion-rate-info h2 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.rate-container {
-  display: flex;
-  justify-content: center;
-}
-
-.rate-item {
-  display: flex;
-  align-items: center;
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 10px 15px;
-}
-
-.rate-item i {
-  font-size: 1.5em;
-  margin-right: 10px;
-  color: #7b57ff;
-}
-
-.rate-value {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #333;
-}
-
 .show-more {
   text-align: center;
   margin-top: 15px;
@@ -631,7 +611,41 @@ button:hover {
 
 @media (max-width: 768px) {
   .content {
-    margin-left: 60px; /* 작은 화면에서의 SideTradeNavigationBar 너비 */
+    margin-left: 60px;
   }
+}
+
+.conversion-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.conversion-title i {
+  font-size: 1.5em;
+  margin: 0 10px;
+}
+
+.conversion-title .fa-coins {
+  color: #ffd700;
+}
+
+.conversion-title .fa-won-sign {
+  color: #4caf50;
+}
+
+.conversion-title .fa-arrow-right {
+  color: #7b57ff;
+}
+
+.toggle-mode-button {
+  margin-top: 15px;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.toggle-mode-button:hover {
+  background-color: #e0e0e0;
 }
 </style>

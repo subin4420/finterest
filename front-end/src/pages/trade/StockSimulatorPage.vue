@@ -3,7 +3,10 @@
     <div class="거래-헤더"></div>
     <div class="콘텐츠-래퍼">
       <SideTradeNavigationBar />
+
       <div class="콘텐츠">
+        <h1 class="page-title">모의투자 페이지</h1>
+
         <div class="주식-시뮬레이터-레이아웃">
           <div class="검색-차트-주문-컨테이너">
             <StockSearch :kospiStockList="kospiStockList" class="주식-검색" />
@@ -67,7 +70,7 @@ watch(
 .페이지-컨테이너 {
   display: flex;
   flex-direction: column;
-  background-color: #F5F5F5;
+  background-color: #ffffff;
 }
 
 .거래-헤더 {
@@ -83,15 +86,15 @@ watch(
 
 .콘텐츠-래퍼 {
   display: flex;
-  margin-top: 60px;
-  background-color: #F5F5F5;
+  margin-top: 20px;
+  background-color: #ffffff;
 }
 
 .콘텐츠 {
   flex: 1;
   margin-left: 250px;
   padding: 20px;
-  background-color: #F5F5F5;
+  background-color: #ffffff;
 }
 
 .주식-시뮬레이터-레이아웃 {
@@ -124,5 +127,15 @@ watch(
 .주문-주식 {
   flex: 1;
   min-width: 300px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #b3b3b3;
 }
 </style>

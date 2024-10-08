@@ -2,6 +2,8 @@ package org.finterest.invest.stock.simulator.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+
+import org.apache.ibatis.annotations.Param;
 import org.finterest.invest.stock.simulator.domain.SimulatorVO;
 import org.finterest.invest.stock.simulator.mapper.SimulatorMapper;
 import org.springframework.stereotype.Service;
@@ -64,8 +66,8 @@ public class SimulatorService {
     }
 
     public Long selectTotalQuantity(String stockCode, Integer userId) {
-        Long result = mapper.selectTotalQuantity(stockCode,userId);
-        if (result == null){
+        Long result = mapper.selectTotalQuantity(stockCode, userId);
+        if (result == null) {
             return 0L;
         }
         return result;
@@ -85,7 +87,12 @@ public class SimulatorService {
 
         Map<String, Object> response = new HashMap<>();
         response.put("money", money);
-        response.put("stock",result);
+        response.put("stock", result);
         return response;
+    }
+
+    public List<SimulatorVO> getUserTradeHistory(Integer userId) {
+        // userId를 매개변수로 받아서 Mapper를 통해 거래 기록을 가져온다.
+        return mapper.getUserTradeHistory(userId);
     }
 }

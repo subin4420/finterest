@@ -5,7 +5,7 @@
       <SideTradeNavigationBar />
       <div class="content">
         <h1 class="page-title">뉴스 페이지</h1>
-        
+
         <div class="search-container">
           <input
             type="text"
@@ -27,13 +27,24 @@
           </div>
           <div v-else class="articles-container">
             <div v-for="article in articles" :key="article.url" class="article">
-              <div class="article-image" :style="{ backgroundImage: `url(${article.urlToImage || 'default-image-url.jpg'})` }"></div>
+              <div
+                class="article-image"
+                :style="{
+                  backgroundImage: `url(${
+                    article.urlToImage || 'default-image-url.jpg'
+                  })`,
+                }"
+              ></div>
               <div class="article-content">
                 <h3>{{ article.title }}</h3>
                 <p class="article-description">{{ article.description }}</p>
                 <div class="article-footer">
-                  <span class="author">{{ article.author || '작성자 없음' }}</span>
-                  <a :href="article.url" target="_blank" class="read-more">자세히 보기</a>
+                  <span class="author">{{
+                    article.author || '작성자 없음'
+                  }}</span>
+                  <a :href="article.url" target="_blank" class="read-more"
+                    >자세히 보기</a
+                  >
                 </div>
               </div>
             </div>
@@ -109,7 +120,7 @@ export default {
 
 .content-wrapper {
   display: flex;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .content {
@@ -147,7 +158,7 @@ input {
 button {
   padding: 12px 25px;
   border: none;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border-radius: 0 25px 25px 0;
   cursor: pointer;
@@ -193,8 +204,12 @@ h2 {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .no-results {
@@ -258,7 +273,7 @@ h2 {
 }
 
 .read-more {
-  color: #4CAF50;
+  color: #4caf50;
   text-decoration: none;
   font-size: 14px;
   font-weight: bold;

@@ -64,7 +64,7 @@ export default {
 
 .content-wrapper {
   display: flex;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .content {

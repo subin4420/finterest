@@ -22,4 +22,7 @@ public interface SimulatorMapper {
     String updateOauthToken(String token);
 
     String getOauthToken();
+
+    // @Param을 추가하여 메서드 정의
+    List<SimulatorVO> getUserTradeHistory(@Param("userId") Integer userId);
 }

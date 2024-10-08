@@ -14,7 +14,7 @@
 
 <script>
 import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vue';
-import HoldStockDomChart from '@/components/trade/portfoliochart/HoldStockDomChart.vue';
+import HoldStockDomChart from '@/components/trade/portfolioChart/HoldStockDomChart.vue';
 
 export default {
   name: 'PortfolioPage',
@@ -44,7 +44,7 @@ export default {
 
 .content-wrapper {
   display: flex;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .content {

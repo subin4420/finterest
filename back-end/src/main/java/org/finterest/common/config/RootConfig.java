@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.finterest.invest.stock.overall.listener.AppStartupListener;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
@@ -52,7 +53,7 @@ import javax.sql.DataSource;
         "org.finterest.invest.board.service",
         "org.finterest.invest.conversion.service",
         "org.finterest.invest.comment.service",
-        "org.finterest.invest.scenario.service"
+        "org.finterest.invest.scenario.service", //서버시작시에 데이터를 미리 로드하기 위해 추가
 
 })
 @Slf4j
@@ -62,6 +63,12 @@ public class RootConfig {
     @Value("${jdbc.url}") String url;
     @Value("${jdbc.username}") String username;
     @Value("${jdbc.password}") String password;
+
+    @Bean
+    public AppStartupListener appStartupListener() {
+        return new AppStartupListener();
+    }
+
 
     @Bean
     public DataSource dataSource() {
