@@ -7,12 +7,15 @@ import DefaultLayout from './components/layouts/DefaultLayout.vue';
 const backgroundColor = ref('transparent'); // 기본 배경색을 투명으로 설정
 const route = useRoute();
 
+// trade 경로를 체크하는 함수
+const isTradePath = (path) => /^\/trade($|\/)/.test(path);
+
 // 라우터의 경로에 따라 배경색을 변경하는 로직
 watch(() => route.path, (newPath) => {
   if (newPath === '/'
   || newPath === '/archive/ArchivePage'  
   || newPath === '/quiz/QuizPage' 
-  || newPath === '/trade'
+  || isTradePath(newPath)
   ) {
     backgroundColor.value = 'transparent';
   } else {
@@ -20,7 +23,7 @@ watch(() => route.path, (newPath) => {
   }
 }, { immediate: true });
 
-// 헤더를 숨길 라우트 이름 배열
+// 헤더를 숨길 라우트 이름 ₩
 const hideHeaderRoutes = ['login', 'findpassword', 'join'];
 
 // 헤더 표시 여부를 결정하는 computed 속성

@@ -109,7 +109,7 @@ export default {
     });
 
     function handleCardClick(archive) {
-      if (!authStore.isAuthenticated) {
+      if (!authStore.isLogin) {  // isAuthenticated 대신 isLogin 사용
         showLoginModal.value = true;
       } else {
         selectedCard.value = archive;
