@@ -4,43 +4,64 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.finterest.invest.board.domain.BoardAttachmentVO;
 import org.finterest.invest.board.domain.BoardVO;
 import org.finterest.invest.comment.dto.CommentDTO;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class BoardDTO {
+    private Long no;
+    private String title;
+    private String content;
+    private String writer;
+    private Date regDate;
+    private Date updateDate;
+    private List<CommentDTO> comments; 
 
-    private Long boardId;                  // 게시판 글 ID
+    // 첨부 파일
+    private List<BoardAttachmentVO> attaches;
 
-    @NotNull
-    private String title;                  // 글 제목
+    List<MultipartFile> files = new ArrayList<>(); // 실제 업로드된 파일(Multipart) 목록
 
-    @NotNull
-    private String content;                // 글 내용
 
-    private Long userId;                   // 회원 ID
-
-    // createdAt과 updatedAt 필드 제거
-    // private LocalDateTime createdAt;
-    // private LocalDateTime updatedAt;
-
-    private List<CommentDTO> comments;     // 댓글 목록
-
-    // VO에서 DTO로 변환
+    // VO  DTO 변환
     public static BoardDTO of(BoardVO vo) {
-        return BoardDTO.builder()
-                .boardId(vo.getBoardId())
+        return vo == null ? null : BoardDTO.builder()
+                .no(vo.getNo())
                 .title(vo.getTitle())
                 .content(vo.getContent())
-                .userId(vo.getUserId())
-                // .createdAt(vo.getCreatedAt())  // 필드 제거
-                // .updatedAt(vo.getUpdatedAt())  // 필드 제거
+                .writer(vo.getWriter())
+                .attaches(vo.getAttaches())
+                .regDate(vo.getRegDate())
+                .updateDate(vo.getUpdateDate())
+                .comments(vo.getComments() != null ? 
+                    vo.getComments().stream().map(CommentDTO::of).collect(Collectors.toList()) : 
+                    null)
+                .build();
+    }
+
+    // DTO  VO 변환
+    public BoardVO toVo() {
+        return BoardVO.builder()
+                .no(no)
+                .title(title)
+                .content(content)
+                .writer(writer)
+                .attaches(attaches)
+                .regDate(regDate)
+                .updateDate(updateDate)
+                .comments(comments != null ? 
+                    comments.stream().map(CommentDTO::toVo).collect(Collectors.toList()) : 
+                    null)
                 .build();
     }
 }

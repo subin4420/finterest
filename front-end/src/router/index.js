@@ -45,15 +45,12 @@ const router = createRouter({
     {
       path: '/notices/:id',
       name: 'NoticeDetail',
-      component: NoticeDetailPage
+      component: NoticeDetailPage,
     },
-
 
     ...authRoutes,
     ...tradeRoutes,
-
   ],
-
 });
 
 export default router;

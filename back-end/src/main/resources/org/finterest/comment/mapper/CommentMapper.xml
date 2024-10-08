@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.invest.comment.mapper.CommentMapper">
+
+    <insert id="insertComment">
+        INSERT INTO tbl_board_comment (content, writer, bno, reg_date, update_date)
+        VALUES (#{content}, #{writer}, #{bno}, NOW(), NOW())
+    </insert>
+
+    <select id="selectCommentsByBno" resultType="org.finterest.invest.comment.domain.CommentVO">
+        SELECT * FROM tbl_board_comment
+        WHERE bno = #{bno}
+        ORDER BY reg_date ASC
+    </select>
+
+    <select id="getCommentsByBno" resultType="org.finterest.invest.comment.domain.CommentVO">
+        SELECT * FROM tbl_board_comment WHERE bno = #{bno} ORDER BY reg_date DESC
+    </select>
+
+    <update id="updateComment">
+        UPDATE tbl_board_comment
+        SET content = #{content}, update_date = NOW()
+        WHERE no = #{no}
+    </update>
+
+    <delete id="deleteComment">
+        DELETE FROM tbl_board_comment
+        WHERE no = #{no}
+    </delete>
+
+</mapper>

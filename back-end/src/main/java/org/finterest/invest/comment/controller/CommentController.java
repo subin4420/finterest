@@ -1,5 +1,6 @@
 package org.finterest.invest.comment.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.finterest.invest.comment.dto.CommentDTO;
 import org.finterest.invest.comment.service.CommentService;
 import org.springframework.http.ResponseEntity;
@@ -9,38 +10,33 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/comments")
+@RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
-    public CommentController(CommentService commentService) {
-        this.commentService = commentService;
-    }
-
-    // 댓글 생성
     @PostMapping("/create")
     public ResponseEntity<String> createComment(@RequestBody CommentDTO commentDTO) {
         commentService.createComment(commentDTO);
         return ResponseEntity.ok("댓글이 성공적으로 생성되었습니다.");
     }
-    // 특정 게시물의 댓글 조회
-    @GetMapping("/board/{boardId}")
-    public ResponseEntity<List<CommentDTO>> getCommentsByBoardId(@PathVariable Long boardId) {
-        List<CommentDTO> comments = commentService.getCommentsByBoardId(boardId);
+
+    @GetMapping("/board/{bno}")
+    public ResponseEntity<List<CommentDTO>> getCommentsByBno(@PathVariable Long bno) {
+        List<CommentDTO> comments = commentService.getCommentsByBno(bno);
         return ResponseEntity.ok(comments);
     }
 
-    // 댓글 수정
-    @PutMapping("/update")
-    public ResponseEntity<String> updateComment(@RequestBody CommentDTO commentDTO) {
+    @PutMapping("/{no}")
+    public ResponseEntity<String> updateComment(@PathVariable Long no, @RequestBody CommentDTO commentDTO) {
+        commentDTO.setNo(no);
         commentService.updateComment(commentDTO);
         return ResponseEntity.ok("댓글이 성공적으로 수정되었습니다.");
     }
 
-    // 댓글 삭제
-    @DeleteMapping("/delete/{commentId}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long commentId) {
-        commentService.deleteComment(commentId);
+    @DeleteMapping("/{no}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long no) {
+        commentService.deleteComment(no);
         return ResponseEntity.ok("댓글이 성공적으로 삭제되었습니다.");
     }
 }

@@ -11,10 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CommentVO {
 
-    private Long commentId;      // 댓글 ID
+    private Long no;      // 댓글 ID
     private String content;      // 댓글 내용
-    private Long userId;         // 회원 ID
-    private Long boardId;        // 게시물 ID
-//    private LocalDateTime createdAt;   // 작성 시간
-//    private LocalDateTime updatedAt;   // 수정 시간
+    private String writer;      // 회원 ID
+    private Long bno;        // 게시물 ID
+
 }

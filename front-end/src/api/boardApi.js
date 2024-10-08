@@ -1,87 +1,118 @@
-import api from '@/api'; // 인터셉터 사용(index.js)
+import axios from 'axios';
 
-const BASE_URL = '/api/board';
+const api = axios.create({
+  baseURL: '/api', // 프록시 설정에 맞춰 baseURL 설정
+});
 
 export default {
-  // 게시글 전체 목록
-  async getList() {
-    const { data } = await api.get(`${BASE_URL}/list`);
-    console.log('BOARD GET LIST : ', data);
-    return data;
+  async getList(params) {
+    try {
+      const { data } = await api.get('/board', { params });
+      console.log('BOARD GET LIST: ', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching board list:', error);
+      throw error;
+    }
   },
 
-  // 게시글 생성
-  async create(article) {
-    const payload = {
-      title: article.title,
-      writer: article.writer,
-      content: article.content,
-    };
-    const { data } = await api.post(`${BASE_URL}/create`, payload);
-    console.log('BOARD POST: ', data);
-    return data;
+  async create(boardData, files) {
+    const formData = new FormData();
+    formData.append('writer', boardData.writer); // writer 필드 추가
+    formData.append('title', boardData.title);
+    formData.append('content', boardData.content);
+
+    if (files && Array.isArray(files)) {
+      files.forEach((file) => {
+        formData.append('files', file);
+      });
+    }
+
+    return api.post('/board', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
-  // 게시글 상세 보기
-  async getBoard(boardId) {
-    const { data } = await api.get(`${BASE_URL}/${boardId}`);
-    console.log('BOARD GET', data);
-    return data;
+  get: async (no) => {
+    try {
+      const response = await api.get(`/board/${no}`);
+      console.log('게시글 상세 응답:', response.data); // 로그 추가
+      return response.data;
+    } catch (error) {
+      console.error('게시글 가져오기 오류:', error);
+      throw error;
+    }
   },
 
-  // 게시글 삭제
-  async delete(boardId) {
-    const { data } = await api.delete(`${BASE_URL}/delete/${boardId}`);
-    console.log('BOARD DELETE', data);
+  async delete(no) {
+    const { data } = await api.delete(`/board/${no}`);
+    console.log('BOARD DELETE: ', data);
     return data;
   },
 
   // 게시글 수정
   async update(article) {
-    const payload = {
-      boardId: article.boardId,
-      title: article.title,
-      writer: article.writer,
-      content: article.content,
-    };
-    const { data } = await api.put(`${BASE_URL}/update`, payload);
+    const formData = new FormData();
+    formData.append('no', article.no);
+    formData.append('title', article.title);
+    formData.append('writer', article.writer);
+    formData.append('content', article.content);
+    if (article.files) {
+      // 첨부파일이 있는 경우
+      for (let i = 0; i < article.files.length; i++) {
+        formData.append('files', article.files[i]);
+      }
+    }
+    const { data } = await api.put(`/board/${article.no}`, formData);
     console.log('BOARD PUT: ', data);
     return data;
   },
 
-  // 사용자 목록 가져오기
-  async getUsers() {
-    const { data } = await api.get('/api/users'); // 사용자 목록 가져오기
-    console.log('USERS GET', data);
+  // 첨부파일 삭제
+  async deleteAttachment(no) {
+    const { data } = await api.delete(`/board/deleteAttachment/${no}`);
+    console.log('ATTACHMENT DELETE: ', data);
     return data;
   },
 
-  // 댓글 목록 가져오기
-  async getComments(boardId) {
-    const { data } = await api.get(`/api/comments/board/${boardId}`);
-    console.log('COMMENTS GET', data);
-    return data;
+  async getWithComments(no) {
+    const response = await api.get(`/board/${no}/with-comments`);
+    return response.data;
   },
 
-  // 댓글 생성
-  async createComment(comment) {
-    const payload = {
-      content: comment.content,
-      userId: comment.userId,
-      boardId: comment.boardId,
-    };
-    const { data } = await api.post(`/api/comments/create`, payload);
-    console.log('COMMENT POST', data);
-    return data;
+  async addComment(boardNo, commentData) {
+    const response = await axios.post(
+      `/api/board/${boardNo}/comments`,
+      commentData
+    );
+    return response.data;
   },
 
-  // 댓글 삭제
-  async deleteComment(commentId) {
+  async getComments(bno) {
     try {
-      const response = await api.delete(`/api/comments/delete/${commentId}`);
-      console.log(response.data);
+      const response = await api.get(`/comments/board/${bno}`);
+      console.log(`게시글 ${bno}의 댓글:`, response.data);
+      return response.data;
     } catch (error) {
-      console.error('댓글 삭제 실패:', error);
+      console.error('댓글 조회 중 오류:', error);
+      if (error.response) {
+        console.error('응답 데이터:', error.response.data);
+        console.error('응답 상태:', error.response.status);
+        console.error('응답 헤더:', error.response.headers);
+      }
+      throw error;
+    }
+  },
+
+  async addComment(bno, commentData) {
+    try {
+      const response = await api.post(`/comments/create`, commentData);
+      return response.data;
+    } catch (error) {
+      console.error('댓글 추가 중 오류:', error);
+      throw error;
     }
   },
 };

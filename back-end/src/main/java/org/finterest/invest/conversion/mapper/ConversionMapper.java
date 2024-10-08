@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.finterest.invest.conversion.domain.ConversionTransactionVO;
 import org.finterest.invest.conversion.dto.ConversionRateDTO;
+import org.finterest.invest.conversion.dto.UserBalanceDTO;
 
 import java.util.List;
 
@@ -23,4 +24,9 @@ public interface ConversionMapper {
     void insertConversionTransaction(ConversionTransactionVO transactionVO); // 환전내역 저장
 
     List<ConversionTransactionVO> getConversionTransactionsByUserId(@Param("userId") int userId); // 사용자 ID로 거래내역 조회
+
+    void insertConversionTransaction(int userId, String conversionType, int pointChange, double moneyChange);
+
+    // 사용자 잔액 조회 메서드 추가
+    UserBalanceDTO getUserBalance(@Param("userId") int userId);
 }

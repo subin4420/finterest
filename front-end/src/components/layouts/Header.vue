@@ -20,7 +20,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-sm navbar-dark" :style="{ backgroundColor: props.backgroundColor }">
+  <nav class="navbar navbar-expand-sm navbar-dark">
     <div class="container-fluid">
       <router-link class="navbar-brand" to="/">
         <img :src="logoImage" alt="Logo" class="logo-image">

@@ -1,3 +1,5 @@
+import { isAuthenticated } from '@/util/guards';
+
 export default [
   {
     path: '/trade/stocksimulator',
@@ -21,13 +23,25 @@ export default [
   },
   {
     path: '/trade/community',
-    name: 'community',
-    component: () => import('../pages/trade/CommunityPage.vue'), // 커뮤니티 페이지
+    name: 'board/list',
+    component: () => import('../pages/trade/BoardListPage.vue'), // 커뮤니티 페이지
   },
   {
-    path: '/trade/community/create', // 게시글 작성 페이지 경로 추가
-    name: 'communityCreate', // 라우트 이름
+    path: '/trade/community/:no',
+    name: 'board/detail',
+    component: () => import('../pages/trade/BoardDetailPage.vue'), // 게시글 상세보기 페이지 경로 추가
+  },
+  {
+    path: '/trade/community/create',
+    name: 'board/create',
     component: () => import('../pages/trade/BoardCreatePage.vue'), // BoardCreatePage 컴포넌트 연결
+    beforeEnter: isAuthenticated,
+  },
+  {
+    path: '/trade/community/update/:no',
+    name: 'board/update',
+    component: () => import('../pages/trade/BoardUpdatePage.vue'), // 게시글 상세보기 컴포넌트 연결
+    beforeEnter: isAuthenticated,
   },
   {
     path: '/board/:id', // 게시글 상세보기 페이지 경로 추가

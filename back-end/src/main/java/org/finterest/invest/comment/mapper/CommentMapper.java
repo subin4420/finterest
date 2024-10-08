@@ -13,10 +13,14 @@ public interface CommentMapper {
     void insertComment(CommentVO commentVO);
 
     // 특정 게시물의 모든 댓글 조회
-    List<CommentVO> selectCommentsByBoardId(@Param("boardId") Long boardId);
+    List<CommentVO> selectCommentsByBno(@Param("bno") Long bno);
+
     // 댓글 수정
     void updateComment(CommentVO commentVO);
 
     // 댓글 삭제
-    void deleteComment(@Param("commentId") Long commentId);
+    void deleteComment(@Param("no") Long no);
+
+    // 댓글 조회
+    List<CommentVO> getCommentsByBno(@Param("bno") Long bno);
 }

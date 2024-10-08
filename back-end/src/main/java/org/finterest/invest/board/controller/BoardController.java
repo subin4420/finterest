@@ -1,75 +1,87 @@
 package org.finterest.invest.board.controller;
 
-import lombok.extern.log4j.Log4j;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.finterest.common.pagination.Page;
+import org.finterest.common.pagination.PageRequest;
+import org.finterest.common.util.UploadFiles;
+import org.finterest.invest.board.domain.BoardAttachmentVO;
 import org.finterest.invest.board.dto.BoardDTO;
 import org.finterest.invest.board.service.BoardService;
+import org.finterest.invest.comment.dto.CommentDTO;
+import org.finterest.invest.comment.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 
-@Log4j
 @RestController
 @RequestMapping("/api/board")
+@RequiredArgsConstructor
+@Slf4j
 public class BoardController {
+    private final BoardService service;
+    private final CommentService commentService;
 
-    private final BoardService boardService;
-
-    // 생성자 주입
-    public BoardController(BoardService boardService) {
-        this.boardService = boardService;
+    @GetMapping("")
+    public ResponseEntity<Page> getList(PageRequest pageRequest) {
+        return ResponseEntity.ok(service.getPage(pageRequest));
     }
 
-    // 게시물 생성
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> createBoard(@RequestBody BoardDTO boardDTO) {
-        boardService.createBoard(boardDTO);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "게시물이 성공적으로 생성되었습니다.");
-        return ResponseEntity.ok(response);
+    @GetMapping("/{no}") // 15
+    public ResponseEntity<BoardDTO> get(@PathVariable Long no) {
+        return ResponseEntity.ok(service.get(no));
     }
 
-
-    @GetMapping("/list")
-    public ResponseEntity<List<BoardDTO>> getAllBoards() {
-        List<BoardDTO> boardList = boardService.getAllBoards();
-        log.info("Returned Boards Count: " + boardList.size());
-        log.info("Boards: " + boardList);  // 리스트의 내용을 출력
-        return ResponseEntity.ok(boardList);
+    @PostMapping("")
+    public ResponseEntity<BoardDTO> create(BoardDTO board) {
+        return ResponseEntity.ok(service.create(board));
     }
 
+    @PutMapping("/{no}")
+    public ResponseEntity<BoardDTO> update(@PathVariable Long no, BoardDTO board) {
+        board.setNo(no);
+        return ResponseEntity.ok(service.update(board));
+    }
 
-    // 게시물 조회 (ID로, 댓글 포함)
-    @GetMapping("/{boardId}")
-    public ResponseEntity<BoardDTO> getBoardWithComments(@PathVariable Long boardId) {
+    @DeleteMapping("/{no}") // 11
+    public ResponseEntity<BoardDTO> delete(@PathVariable Long no) {
+        return ResponseEntity.ok(service.delete(no));
+    }
+
+    @GetMapping("/download/{no}") // 7
+    public void download(@PathVariable Long no, HttpServletResponse response) throws Exception {
+        BoardAttachmentVO attachment = service.getAttachment(no);
+        File file = new File(attachment.getPath());
+        UploadFiles.download(response, file, attachment.getFilename());
+    }
+
+    @DeleteMapping("/deleteAttachment/{no}")
+    public ResponseEntity<Boolean> deleteAttachment(@PathVariable Long no) throws Exception {
+        return ResponseEntity.ok(service.deleteAttachment(no));
+    }
+
+    @GetMapping("/{no}/with-comments")
+    public ResponseEntity<BoardDTO> getWithComments(@PathVariable Long no) {
+        return ResponseEntity.ok(service.getWithComments(no));
+    }
+
+    @PostMapping("/{no}/comments")
+    public ResponseEntity<?> addComment(@PathVariable Long no, @RequestBody CommentDTO commentDTO) {
         try {
-            BoardDTO boardWithComments = boardService.getBoardWithComments(boardId);
-            if (boardWithComments != null) {
-                return ResponseEntity.ok(boardWithComments);
-            } else {
-                return ResponseEntity.notFound().build();
+            commentDTO.setBno(no);
+            // writer가 제공되지 않았다면 "익명"으로 설정
+            if (commentDTO.getWriter() == null || commentDTO.getWriter().trim().isEmpty()) {
+                commentDTO.setWriter("익명");
             }
+            commentService.createComment(commentDTO);
+            return ResponseEntity.ok("댓글이 성공적으로 추가되었습니다.");
         } catch (Exception e) {
-            // 로그에 오류 메시지 출력
-            System.err.println("Error fetching board: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("댓글 추가 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("댓글 추가 중 오류 발생: " + e.getMessage());
         }
-    }
-
-    // 게시물 수정
-    @PutMapping("/update")
-    public ResponseEntity<String> updateBoard(@RequestBody BoardDTO boardDTO) {
-        boardService.updateBoard(boardDTO);
-        return ResponseEntity.ok("게시물이 성공적으로 수정되었습니다.");
-    }
-
-    // 게시물 삭제
-    @DeleteMapping("/delete/{boardId}")
-    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId) {
-        boardService.deleteBoard(boardId);
-        return ResponseEntity.ok("게시물이 성공적으로 삭제되었습니다.");
     }
 }

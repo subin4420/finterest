@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.invest.board.mapper.BoardMapper">
+
+    <resultMap id="attachmentMap" type="BoardAttachmentVO">
+        <id column="ano" property="no"/>
+        <result column="bno" property="bno"/>
+        <result column="filename" property="filename"/>
+        <result column="path" property="path"/>
+        <result column="contentType" property="contentType"/>
+        <result column="size" property="size"/>
+        <result column="a_reg_date" property="regDate"/>
+    </resultMap>
+
+    <resultMap id="boardMap" type="BoardVO">
+        <id column="no" property="no"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="writer" property="writer"/>
+        <result column="reg_date" property="regDate"/>
+        <result column="update_date" property="updateDate"/>
+        <collection property="attaches" resultMap="attachmentMap"/>
+    </resultMap>
+
+    <update id="update">
+        update tbl_board
+        set title       = #{title},
+            content     = #{content},
+            writer      = #{writer},
+            update_date = now()
+        where no = #{no}
+
+    </update>
+    <delete id="delete">
+        delete
+        from tbl_board
+        where no = #{no}
+    </delete>
+
+    <select id="getList" resultType="BoardVO">
+<![CDATA[
+        select *
+        from tbl_board
+        order by no desc
+        ]]>
+</select>
+
+    <!--    <select id="get" resultType="BoardVO">-->
+    <!--        select *-->
+    <!--        from tbl_board-->
+    <!--        where no = #{no}-->
+    <!--    </select>-->
+
+    <select id="get" resultMap="boardMap">
+        select b.*,
+               a.no       as ano,
+               a.bno,
+               a.filename,
+               a.path,
+               a.content_type,
+               a.size,
+               a.reg_date as a_reg_date
+        from tbl_board b
+                 left outer join tbl_board_attachment a
+                                 on b.no = a.bno
+        where b.no = #{no}
+        order by filename
+    </select>
+
+
+    <insert id="create">
+
+        insert into tbl_board (title, content, writer)
+        values (#{title}, #{content}, #{writer})
+
+        <selectKey resultType="Long" keyProperty="no" keyColumn="no" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <insert id="createAttachment">
+        insert into tbl_board_attachment(filename, path, content_type, size, bno)
+        values (#{filename}, #{path}, #{contentType}, #{size}, #{bno})
+    </insert>
+
+    <select id="getAttachmentList" resultType="BoardAttachmentVO">
+        select *
+        from tbl_board_attachment
+        where bno = #{bno}
+        order by filename
+    </select>
+    <select id="getAttachment" resultType="BoardAttachmentVO">
+        select *
+        from tbl_board_attachment
+        where no = #{no}
+    </select>
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        select count(*)
+        from tbl_board
+
+
+    </select>
+    <select id="getPage" resultType="org.finterest.invest.board.domain.BoardVO">
+        select *
+        from tbl_board
+        order by no desc
+            limit #{offset}, #{amount}
+
+    </select>
+    <delete id="deleteAttachment">
+        delete
+        from tbl_board_attachment
+        where no = #{no}
+    </delete>
+
+    <resultMap id="boardWithCommentsMap" type="BoardVO" extends="boardMap">
+        <collection property="comments" ofType="org.finterest.invest.comment.domain.CommentVO">
+            <id column="comment_no" property="no"/>
+            <result column="comment_content" property="content"/>
+            <result column="comment_writer" property="writer"/>
+            <result column="comment_reg_date" property="regDate"/>
+            <result column="comment_update_date" property="updateDate"/>
+        </collection>
+    </resultMap>
+
+    <select id="getWithComments" resultMap="boardWithCommentsMap">
+        SELECT b.*, 
+               a.no AS ano, a.bno, a.filename, a.path, a.content_type, a.size, a.reg_date AS a_reg_date,
+               c.no AS comment_no, c.content AS comment_content, c.writer AS comment_writer, 
+               c.reg_date AS comment_reg_date, c.update_date AS comment_update_date
+        FROM tbl_board b
+        LEFT OUTER JOIN tbl_board_attachment a ON b.no = a.bno
+        LEFT OUTER JOIN tbl_board_comment c ON b.no = c.bno
+        WHERE b.no = #{no}
+        ORDER BY a.filename, c.reg_date
+    </select>
+
+</mapper>

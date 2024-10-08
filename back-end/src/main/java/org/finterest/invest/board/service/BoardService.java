@@ -1,51 +1,28 @@
 package org.finterest.invest.board.service;
 
-import lombok.extern.log4j.Log4j;
-import org.finterest.invest.board.domain.BoardVO;
+import org.finterest.common.pagination.Page;
+import org.finterest.common.pagination.PageRequest;
+import org.finterest.invest.board.domain.BoardAttachmentVO;
 import org.finterest.invest.board.dto.BoardDTO;
-import org.finterest.invest.board.mapper.BoardMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Log4j
-@Service
-public class BoardService {
+public interface BoardService {
+    public List<BoardDTO> getList();
 
-    @Autowired
-    private BoardMapper boardMapper;
+    public BoardDTO get(Long no);
 
-    // 게시물 생성
-    @Transactional
-    public void createBoard(BoardDTO boardDTO) {
-        log.info("create");
-        boardMapper.insertBoard(boardDTO);
-    }
+    public BoardDTO create(BoardDTO board);
 
-    // 게시물 조회 (ID로, 댓글 포함)
-    public BoardDTO getBoardWithComments(Long boardId) {
-        return boardMapper.selectBoardWithComments(boardId);
-    }
+    public BoardDTO update(BoardDTO board);
 
-    public List<BoardDTO> getAllBoards() {
-        List<BoardVO> boardVOList = boardMapper.selectAllBoards();  // Mapper 호출
-        return boardVOList.stream()
-                .map(BoardDTO::of)  // VO를 DTO로 변환
-                .collect(Collectors.toList());
-    }
+    public BoardDTO delete(Long no);
 
-    // 게시물 업데이트
-    @Transactional
-    public void updateBoard(BoardDTO boardDTO) {
-        boardMapper.updateBoard(boardDTO);
-    }
+    public BoardAttachmentVO getAttachment(Long no);
 
-    // 게시물 삭제
-    @Transactional
-    public void deleteBoard(Long boardId) {
-        boardMapper.deleteBoard(boardId);
-    }
+    public boolean deleteAttachment(Long no);
+
+    Page<BoardDTO> getPage(PageRequest pageRequest);
+
+    BoardDTO getWithComments(Long no);
 }

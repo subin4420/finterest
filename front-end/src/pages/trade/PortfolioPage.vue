@@ -1,37 +1,65 @@
 <template>
-  <div class="community-page">
-    <TradeImage />
-    <TradeNavigationBar />
-    <h1>포트폴리오 페이지</h1>
-    <p>여기는 포트폴리오 페이지입니다.</p>
-    <HoldStockDomChart />
-    <!-- HoldStockDomChart 컴포넌트 추가 -->
+  <div class="page-container">
+    <div class="trade-header"></div>
+    <div class="content-wrapper">
+      <SideTradeNavigationBar />
+      <div class="content">
+        <h1 class="page-title">포트폴리오 페이지</h1>
+        <p>여기는 포트폴리오 페이지입니다.</p>
+        <HoldStockDomChart />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import TradeImage from '@/components/trade/TradeImage.vue';
-import TradeNavigationBar from '@/components/trade/TradeNavigationBar.vue';
-import HoldStockDomChart from '@/components/trade/portfoliochart/HoldStockDomChart.vue'; // HoldStockDomChart 컴포넌트 임포트
+import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vue';
+import HoldStockDomChart from '@/components/trade/portfoliochart/HoldStockDomChart.vue';
 
 export default {
   name: 'PortfolioPage',
   components: {
-    TradeImage,
-    TradeNavigationBar,
-    HoldStockDomChart, // HoldStockDomChart 컴포넌트 등록
+    SideTradeNavigationBar,
+    HoldStockDomChart,
   },
 };
 </script>
 
-<style>
-.content-grid {
+<style scoped>
+.page-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
+  flex-direction: column;
 }
-.community-page {
+
+.trade-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 1000;
+  background-color: #2e78e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content-wrapper {
+  display: flex;
+  margin-top: 60px;
+}
+
+.content {
+  flex: 1;
+  margin-left: 250px;
   padding: 20px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #b3b3b3;
 }
 </style>

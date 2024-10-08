@@ -10,8 +10,9 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
-    "axios": "^1.7.5",
+    "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
+    "echart": "^0.1.3",
     "echarts": "^5.5.1",
     "moment": "^2.30.1",
     "pinia": "^2.2.2",

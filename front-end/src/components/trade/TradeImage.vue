@@ -40,6 +40,7 @@ const formatTitle = (title) => {
   height: 60vh;
   overflow: hidden;
   margin-top: -60px;
+  background-color: #F5F5F5;
 }
 
 .slider {
