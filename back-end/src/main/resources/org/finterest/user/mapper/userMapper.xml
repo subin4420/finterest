@@ -45,6 +45,11 @@
         </set>
         WHERE username = #{username}
     </update>
+    <update id="updateLastLoginByUsername">
+        UPDATE Users
+        SET last_login = #{lastLogin}
+        WHERE username = #{username}
+    </update>
 
     <!-- 사용자 삭제 -->
     <delete id="delete">
