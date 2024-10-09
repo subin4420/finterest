@@ -202,7 +202,7 @@ export default {
         showResultModal.value = true;
         emit('quizSubmitted', result);
       } catch (error) {
-        console.error('퀴즈 출 실패:', error);
+        console.error('퀴즈 제출 실패:', error);
       }
     };
 

@@ -48,6 +48,7 @@ public class AdminArchiveService {
     }
 
     // 학습 자료 업데이트 메서드
+    @Transactional
     public void updateArchive(int materialId, String categoryName, String title, String materialImg, String link, String description, String content) {
         // 카테고리 이름으로 category_id 조회
         Integer categoryId = adminArchiveDAO.selectCategoryIdByName(categoryName);
@@ -55,6 +56,8 @@ public class AdminArchiveService {
         if (categoryId == null) {
             throw new IllegalArgumentException("존재하지 않는 카테고리입니다: " + categoryName);
         }
+        adminArchiveDAO.deleteProgress(materialId);      // Learning_Progress 삭제
+        adminArchiveDAO.deleteFavorites(materialId);    // Favorites 삭제
 
         // 학습 자료 업데이트
         adminArchiveDAO.updateArchive(materialId, categoryName, title, materialImg, link, description, content);

@@ -106,6 +106,7 @@ public class ArchiveService {
 
     // 학습 진행 상태(completed) 업데이트 (반환값을 int로 설정)
     public int updateProgressStatus(int userId, int materialId, String status) {
+        archiveDAO.insertPoint(userId);
         return archiveDAO.updateProgressStatus(userId, materialId, status);
     }
 
