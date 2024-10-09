@@ -46,7 +46,7 @@
         WHERE user_id = #{userId}
     </select>
 
-    <!-- 포인트 이력 추가 -->
+    <!-- 출석 포인트 이력 추가 -->
     <insert id="insertPointHistory" parameterType="int">
         INSERT INTO Points (user_id, source, points_change, created_at)
         VALUES (#{userId},

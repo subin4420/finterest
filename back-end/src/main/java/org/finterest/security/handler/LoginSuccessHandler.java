@@ -34,18 +34,23 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         //authentication은 인증 객체이 인증 객체에 사용자 정보가 담겨있음
         //그걸 꺼내는게 getPrincipal() 이걸 담기 위해 우리는 CustomUser 클래스를 만들었었음
         // 인증 결과 Principal
+        // 인증된 사용자 정보 가져오기
         CustomUser user = (CustomUser) authentication.getPrincipal();
+        int userId = user.getUserVO().getUserId();
 
-        // 로그인 성공 시 출석 포인트 추가
-        int userId = user.getUserVO().getUserId();  // CustomUser에서 userId 가져오기
-        pointService.insertPointForAttendance(userId);  // 출석 포인트 추가
+        // 마지막 로그인 시간이 오늘 이전일 때만 출석 포인트 추가
+        if (user.getUserVO().getLastLogin() == null || user.getUserVO().getLastLogin().isBefore(LocalDate.now())) {
+            pointService.insertPointForAttendance(userId);  // 출석 포인트 추가
+        }
+        
+        // 마지막 로그인 시간 업데이트
+        userService.updateLastLoginByUsername(user.getUsername());
 
 
         //받아온 유저정보로
         // 인증 성공 결과를 JSON으로 직접 응답
         AuthResultDTO result = makeAuthResult(user);
-        //출석체크 로직을 넣고
-        userService.updateLastLoginByUsername(user.getUsername());
+
 
         JsonResponse.send(response, result);
     }
