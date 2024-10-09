@@ -4,6 +4,7 @@ import org.finterest.user.dto.*;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface UserService {
@@ -24,5 +25,7 @@ public interface UserService {
     //void changePassword(ChangePasswordDTO changePassword);
     //회원 정보 수정
     UserDTO update(UserUpdateDTO user);
+
+    void updateLastLoginByUsername(String username);
     //void updateUser(UserUpdateDTO userUpdateDTO) throws IOException;
 }

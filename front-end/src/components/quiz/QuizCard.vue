@@ -10,9 +10,13 @@
                     {{ cardData.userScore }}점
                 </div>
             </div>
-            <div class="title">{{ cardData.setName }}</div>
+            <div class="title-wrapper">
+                <div class="title">{{ cardData.setName }}</div>
+                <div :class="['completion-status', { 'completed': cardData.completedAt, 'incomplete': !cardData.completedAt }]">
+                    {{ cardData.completedAt ? `완료: ${formatDate(cardData.completedAt)}` : '미완료' }}
+                </div>
+            </div>
             <p class="summary">{{ cardData.description }}</p>
-            <p class="completed-at" v-show="cardData.completedAt">완료일: {{ cardData.completedAt }}</p>
         </div>
     </div>
 </template>
@@ -28,131 +32,147 @@ export default {
         }
     },
     created() {
-        console.log('Card Data:', this.cardData);  // 전달된 데이터 확인
+        console.log('Card Data:', this.cardData);
     },
     data() {
         return {
-            defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg' // 대체 이미지 URL
+            defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg'
         };
+    },
+    methods: {
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+        }
     }
 }
 </script>
 
 <style scoped>
 .content-card {
-    width: 300px; /* 기본 너비 */
-    height: auto; /* 높이를 자동으로 조정 */
+    width: 100%;
+    height: 200px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    background-color: #ffffff; /* 배경색을 흰색으로 변경 */
-    padding: 15px; /* 패딩을 약간 늘림 */
-    border-radius: 8px; /* 모서리를 둥글게 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
-    transition: transform 0.2s; /* 호버 시 부드러운 효과 */
-
-    width: 100%; /* 부모 요소의 크기를 기준으로 자동 조정 */
-    height: 200px; /* 카드 높이를 150px로 설정 */
-    padding: 10px; /* 카드 내부에 패딩 추가 */
-    box-sizing: border-box; /* 패딩이 포함된 전체 크기 설정 */
+    background-color: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    box-sizing: border-box;
 }
 
 .content-card:hover {
-    transform: scale(1.05); /* 호버 시 카드 확대 효과 */
+    transform: scale(1.05);
 }
 
 .image-wrapper {
     width: 100%;
-    height: 120px; /* 고정된 높이 */
-    background-color: #f0f0f0; /* 배경색을 연한 회색으로 변경 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px; /* 모서리를 둥글게 */
-    overflow: hidden; /* 이미지가 영역을 넘지 않도록 설정 */
+    height: 110px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
 }
 
 .image-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s; /* 이미지에 부드러운 효과 추가 */
+    transition: transform 0.3s;
 }
 
 .image-wrapper img:hover {
-    transform: scale(1.1); /* 이미지 호버 시 확대 효과 */
+    transform: scale(1.1);
 }
 
 .card-info {
-    padding-top: 10px;
-    text-align: left;
-    width: 100%;
-    flex-grow: 1; /* 공간을 차지하도록 설정 */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .category-score-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
-.score{
+.category-title {
+    font-size: 12px;
+    color: #888;
+}
+
+.score {
     color: #00C4D1;
     font-size: 12px;
     padding: 2px 6px;
     border-radius: 4px;
+    background-color: rgba(0, 196, 209, 0.1);
 }
 
-.category-title {
-    font-size: 14px;
-    color: #888;
+.title-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
 }
 
 .title {
     font-weight: bold;
-    font-size: 16px; /* 기본 글자 크기 */
-    margin-top: 5px;
-    white-space: nowrap; /* 한 줄로 표시 */
-    overflow: hidden; /* 넘치는 내용 숨기기 */
-    text-overflow: ellipsis; /* 넘치는 내용에 ... 표시 */
-    width: 100%; /* 너비를 100%로 설정 */
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+    margin-right: 8px;
+}
+
+.completed-at {
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
 }
 
 .summary {
-    margin-top: 5px;
-    font-size: 12px; /* 기본 글자 크기 */
-    color: #666;
-    white-space: nowrap; /* 한 줄로 표시 */
-    overflow: hidden; /* 넘치는 내용 숨기기 */
-    text-overflow: ellipsis; /* 넘치는 내용에 ... 표시 */
-    width: 100%; /* 너비를 100%로 설정 */
-}
-.completed-at{
     font-size: 12px;
-    text-align: right;
-    margin-right: 3px;
+    color: #666;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin: 0;
 }
 
-/* 미디어 쿼리 추가 */
+.completion-status {
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.completed {
+    color: #888; /* 완료 상태일 때 초록색 */
+}
+
+.incomplete {
+    color: #888; /* 미완료 상태일 때 주황색 */
+}
+
 @media (max-width: 768px) {
     .content-card {
-        width: 90%; /* 작은 화면에서 카드 너비를 90%로 설정 */
-        margin: 0 auto; /* 중앙 정렬 */
+        height: 180px;
     }
 
     .image-wrapper {
-        height: 100px; /* 작은 화면에서 이미지 높이 조정 */
+        height: 90px;
     }
 
     .title {
-        font-size: 14px; /* 작은 화면에서 글자 크기 줄임 */
+        font-size: 14px;
     }
 
     .summary {
-        font-size: 10px; /* 작은 화면에서 글자 크기 줄임 */
+        font-size: 11px;
     }
 }
 </style>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Set Management with Quiz Reusability</title>
+    <style>
+        .quiz-set-list, .quiz-list, .available-quiz-list {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        button { margin: 5px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>퀴즈 세트 관리 및 퀴즈 재활용</h1>
+
+    <!-- 퀴즈 세트 목록 -->
+    <div class="quiz-set-section">
+        <h2>퀴즈 세트 목록</h2>
+        <ul id="quiz-set-list" class="quiz-set-list">
+            <!-- 동적으로 추가될 퀴즈 세트 목록 -->
+        </ul>
+        <button id="add-quiz-set-btn">퀴즈 세트 추가</button>
+    </div>
+
+    <!-- 퀴즈 세트 정보 수정/삭제 -->
+    <div id="quiz-set-details" class="hidden">
+        <h2>퀴즈 세트 정보 수정</h2>
+        <form id="quiz-set-form">
+            <label for="set-name">퀴즈 세트 이름:</label>
+            <input type="text" id="set-name" /><br /><br />
+            <button type="submit">퀴즈 세트 수정</button>
+            <button id="delete-quiz-set-btn">퀴즈 세트 삭제</button>
+        </form>
+    </div>
+
+    <!-- 퀴즈 세트에 포함된 퀴즈 목록 -->
+    <div id="quiz-list-section" class="hidden">
+        <h2>퀴즈 세트에 포함된 퀴즈들</h2>
+        <ul id="quiz-list" class="quiz-list">
+            <!-- 퀴즈 목록이 동적으로 추가됩니다 -->
+        </ul>
+        <button id="add-quiz-btn">퀴즈 추가</button>
+    </div>
+
+    <!-- 사용 가능한 (세트에 속하지 않은) 퀴즈 목록 -->
+    <div id="available-quiz-section" class="hidden">
+        <h2>세트에 추가할 수 있는 퀴즈들</h2>
+        <ul id="available-quiz-list" class="available-quiz-list">
+            <!-- 사용 가능한 퀴즈 목록이 동적으로 추가됩니다 -->
+        </ul>
+        <button id="save-selected-quizzes-btn">선택된 퀴즈 추가</button>
+    </div>
+
+    <script>
+        // 예시 데이터
+        let quizSets = [
+            { setId: 1, setName: '기본 세트' },
+            { setId: 2, setName: '고급 세트' }
+        ];
+
+        let quizzes = [
+            { quizId: 1, question: '질문 1' },
+            { quizId: 2, question: '질문 2' },
+            { quizId: 3, question: '질문 3' },
+            { quizId: 4, question: '질문 4' }
+        ];
+
+        // 세트에 포함된 퀴즈 정보
+        let quizSetQuestions = [
+            { setId: 1, quizId: 1 },
+            { setId: 1, quizId: 2 },
+            { setId: 2, quizId: 3 }
+        ];
+
+        let currentSetId = null;
+
+        // 퀴즈 세트 목록 렌더링
+        function renderQuizSets() {
+            const quizSetList = document.getElementById('quiz-set-list');
+            quizSetList.innerHTML = '';
+            quizSets.forEach(set => {
+                const li = document.createElement('li');
+                li.textContent = set.setName;
+                li.onclick = () => showQuizSetDetails(set.setId);
+                quizSetList.appendChild(li);
+            });
+        }
+
+        // 퀴즈 세트 정보 표시 및 수정
+        function showQuizSetDetails(setId) {
+            currentSetId = setId;
+            const set = quizSets.find(qs => qs.setId === setId);
+            document.getElementById('set-name').value = set.setName;
+            document.getElementById('quiz-set-details').classList.remove('hidden');
+            renderQuizzesForSet(setId);
+        }
+
+        // 퀴즈 목록 렌더링 (해당 퀴즈 세트)
+        function renderQuizzesForSet(setId) {
+            const quizList = document.getElementById('quiz-list');
+            quizList.innerHTML = '';
+            const setQuizzes = quizSetQuestions.filter(q => q.setId === setId);
+            setQuizzes.forEach(sq => {
+                const quiz = quizzes.find(q => q.quizId === sq.quizId);
+                const li = document.createElement('li');
+                li.textContent = quiz.question;
+                quizList.appendChild(li);
+            });
+            document.getElementById('quiz-list-section').classList.remove('hidden');
+        }
+
+        // 퀴즈 세트 삭제
+        document.getElementById('delete-quiz-set-btn').addEventListener('click', () => {
+            quizSets = quizSets.filter(set => set.setId !== currentSetId);
+            quizSetQuestions = quizSetQuestions.filter(q => q.setId !== currentSetId); // 연결만 삭제
+            renderQuizSets();
+            document.getElementById('quiz-set-details').classList.add('hidden');
+            document.getElementById('quiz-list-section').classList.add('hidden');
+        });
+
+        // 퀴즈 세트에 퀴즈 추가 버튼 클릭
+        document.getElementById('add-quiz-btn').addEventListener('click', () => {
+            const availableQuizList = document.getElementById('available-quiz-list');
+            availableQuizList.innerHTML = '';
+
+            // 세트에 포함되지 않은 퀴즈들만 필터링
+            const availableQuizzes = quizzes.filter(q => !quizSetQuestions.some(sq => sq.quizId === q.quizId));
+            availableQuizzes.forEach(quiz => {
+                const li = document.createElement('li');
+                li.innerHTML = `<input type="checkbox" value="${quiz.quizId}" /> ${quiz.question}`;
+                availableQuizList.appendChild(li);
+            });
+            document.getElementById('available-quiz-section').classList.remove('hidden');
+        });
+
+        // 선택된 퀴즈 세트에 추가
+        document.getElementById('save-selected-quizzes-btn').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('#available-quiz-list input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => {
+                quizSetQuestions.push({ setId: currentSetId, quizId: parseInt(cb.value) });
+            });
+            renderQuizzesForSet(currentSetId);
+            document.getElementById('available-quiz-section').classList.add('hidden');
+        });
+
+        // 초기화
+        renderQuizSets();
+    </script>
+
+</body>
+</html>

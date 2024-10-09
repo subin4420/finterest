@@ -74,14 +74,17 @@ const validateAvatar = (event) => {
   if (file) {
     if (file.type !== 'image/png') {
       avatarError.value = 'PNG 파일만 업로드 가능합니다.';
+      avatarFileName.value = '';
       event.target.value = ''; // 파일 선택 초기화
     } else {
       avatarError.value = '';
       member.avatar = file;
+      avatarFileName.value = file.name; // 파일 이름 저장
     }
   } else {
     avatarError.value = '';
     member.avatar = null;
+    avatarFileName.value = '';
   }
 };
 
@@ -115,121 +118,166 @@ const onSubmit = async () => {
 watch(() => auth.avatarUpdated, () => {
   avatarTimestamp.value = Date.now();
 });
+
+const avatarFileName = ref('');
+
+const triggerFileInput = () => {
+  avatar.value.click();
+};
+
+const goToHome = () => {
+  router.push({ name: 'home' });
+};
 </script>
 
 <template>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card shadow">
-          <div class="card-header text-white">
-            <h2 class="mb-0"><i class="fa-solid fa-user-gear me-2"></i>회원 정보</h2>
-          </div>
-          <div class="card-body">
-            <form @submit.prevent="onSubmit">
-              <div class="text-center mb-4">
-                <img :src="avatarPath" class="avatar avatar-lg rounded-circle" alt="User Avatar" />
-                <h4 class="mt-2">{{ member.username }}</h4>
-              </div>
-
-              <div class="mb-4">
-                <label for="avatar" class="form-label">
-                  <i class="fa-solid fa-user-astronaut me-2"></i>아바타 이미지 (PNG 파일만 가능):
-                </label>
-                <input 
-                  type="file" 
-                  class="form-control" 
-                  ref="avatar" 
-                  id="avatar" 
-                  accept="image/png" 
-                  @change="validateAvatar" 
-                />
-                <small class="text-danger">{{ avatarError }}</small>
-              </div>
-
-              <div class="mb-4">
-                <label for="fullName" class="form-label">
-                  <i class="fa-solid fa-user me-2"></i>이름
-                </label>
-                <input type="text" class="form-control" placeholder="이름" id="fullName" v-model="member.fullName" @input="validateFullName" />
-                <small class="text-danger">{{ fullNameError }}</small>
-              </div>
-
-              <div class="mb-4">
-                <label for="email" class="form-label">
-                  <i class="fa-solid fa-envelope me-2"></i>이메일
-                </label>
-                <input type="email" class="form-control" placeholder="Email" id="email" v-model="member.email" @input="validateEmail" />
-                <small class="text-danger">{{ emailError }}</small>
-              </div>
-
-              <div class="mb-4">
-                <label for="password" class="form-label">
-                  <i class="fa-solid fa-lock me-2"></i>비밀번호
-                </label>
-                <input type="password" class="form-control" placeholder="비밀번호" id="password" v-model="member.password" @input="validatePassword" />
-                <small class="text-danger">{{ passwordError }}</small>
-              </div>
-
-              <div v-if="error" class="alert alert-danger" role="alert">
-                {{ error }}
-              </div>
-
-              <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary" :disabled="disableSubmit">
-                  <i class="fa-solid fa-user-plus me-2"></i>정보 수정
-                </button>
-                <router-link class="btn btn-outline-primary" to="/auth/changepassword">
-                  <i class="fa-solid fa-lock me-2"></i>비밀번호 변경
-                </router-link>
-              </div>
-            </form>
-          </div>
+  <div class="profile-page container d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="w-100" style="max-width: 500px;">
+      <h1 class="mb-3 fw-bold logo text-center" @click="goToHome">finterest</h1>
+      <p class="mb-4 text-center text-muted">회원 정보를 수정하세요.</p>
+      <form @submit.prevent="onSubmit">
+        <div class="text-center mb-4">
+          <img :src="avatarPath" class="avatar avatar-lg rounded-circle" alt="User Avatar" />
+          <h4 class="mt-2">{{ member.username }}</h4>
         </div>
-      </div>
+
+        <!-- 아바타 이미지 업로드 -->
+        <div class="mb-4">
+          <label for="avatar" class="form-label">프로필 이미지</label>
+          <div class="input-group">
+            <input type="text" class="form-control form-control-lg" :value="avatarFileName" placeholder="PNG 파일을 선택하세요" readonly />
+            <button class="btn btn-outline-secondary" type="button" @click="triggerFileInput">파일 선택</button>
+          </div>
+          <input type="file" id="avatar" class="form-control form-control-lg" ref="avatar" accept="image/png" @change="validateAvatar" style="display: none;" />
+          <small class="text-danger">{{ avatarError }}</small>
+        </div>
+
+        <!-- 이름 입력 필드 -->
+        <div class="mb-4">
+          <label for="fullName" class="form-label">이름</label>
+          <input type="text" id="fullName" class="form-control form-control-lg" placeholder="이름을 입력하세요" v-model="member.fullName" @input="validateFullName" required />
+          <small class="text-danger">{{ fullNameError }}</small>
+        </div>
+
+        <!-- 이메일 입력 필드 -->
+        <div class="mb-4">
+          <label for="email" class="form-label">이메일</label>
+          <input type="email" id="email" class="form-control form-control-lg" placeholder="이메일을 입력하세요" v-model="member.email" @input="validateEmail" required />
+          <small class="text-danger">{{ emailError }}</small>
+        </div>
+
+        <!-- 비밀번호 입력 필드 -->
+        <div class="mb-4">
+          <label for="password" class="form-label">비밀번호</label>
+          <input type="password" id="password" class="form-control form-control-lg" placeholder="비밀번호를 입력하세요" v-model="member.password" @input="validatePassword" required />
+          <small class="text-danger">{{ passwordError }}</small>
+        </div>
+
+        <div v-if="error" class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+
+        <!-- 정보 수정 버튼 -->
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" :disabled="disableSubmit">
+          정보 수정
+        </button>
+
+        <!-- 비밀번호 변경 페이지로 이동 -->
+        <div class="text-center">
+          <router-link :to="{ name: 'changepassword' }" class="text-primary no-underline">비밀번호를 변경하시겠습니까?</router-link>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <style scoped>
+.profile-page {
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #00C4D1;
+}
+
+.logo {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.logo:hover {
+  color: #0098a8;
+}
+
 .avatar {
   width: 100px;
   height: 100px;
   object-fit: cover;
 }
 
-.card {
-  border: none;
-  border-radius: 15px;
-  overflow: hidden;
-}
-
-.card-header {
-  background-color: #29CED9;
-}
-
-.form-control:focus {
-  border-color: #00C4D1;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+.form-control {
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1.2rem;
 }
 
 .btn-primary {
   background-color: #00C4D1;
-  border-color: #00C4D1;
+  border: none;
+  transition: background-color 0.3s ease;
 }
 
-.btn-primary:hover, .btn-primary:focus {
-  background-color: #00C4D1;
-  border-color: #00C4D1;
+.btn-primary:hover {
+  background-color: #0098a8;
 }
 
-.btn-outline-primary {
-  color: #00C4D1;
-  border-color: #00C4D1;
+.btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
 }
 
-.btn-outline-primary:hover {
-  background-color: #00C4D1;
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
   color: white;
+}
+
+.text-primary {
+  color: #00C4D1;
+  font-weight: bold;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.no-underline:hover {
+  text-decoration: underline;
+}
+
+.text-danger {
+  color: red;
+  font-size: 0.9rem;
+}
+
+.form-label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.input-group .btn {
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+}
+
+.input-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 </style>

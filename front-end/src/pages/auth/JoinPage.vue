@@ -97,28 +97,47 @@ const validatePassword = () => {
   return true;
 };
 
-// 아바타 이미지 유효성 검사
+// 아바타 파일 이름을 저장할 ref 추가
+const avatarFileName = ref('');
+
+// 파일 입력 트리거 함수
+const triggerFileInput = () => {
+  avatar.value.click();
+};
+
+// 아바타 유효성 검사 함수 수정
 const validateAvatar = (event) => {
   const file = event.target.files[0];
   if (file) {
     if (file.type !== 'image/png') {
       avatarError.value = 'PNG 파일만 업로드 가능합니다.';
+      avatarFileName.value = '';
       avatar.value.value = ''; // 파일 선택 초기화
     } else {
       avatarError.value = '';
       member.avatar = file;
+      avatarFileName.value = file.name; // 파일 이름 저장
     }
   } else {
     avatarError.value = '';
     member.avatar = null;
+    avatarFileName.value = '';
   }
 };
+
+const checkUsernameResult = ref('');
 
 const checkUsername = async () => {
   if (!validateUsername()) return;
 
-  disableSubmit.value = await authApi.checkUsername(member.username);
-  checkError.value = disableSubmit.value ? '이미 사용중인 ID입니다.' : '사용가능한 ID입니다.';
+  try {
+    const isDuplicate = await authApi.checkUsername(member.username);
+    disableSubmit.value = isDuplicate;
+    checkUsernameResult.value = isDuplicate ? '이미 사용중인 ID입니다.' : '사용가능한 ID입니다.';
+  } catch (error) {
+    console.error('ID 중복 확인 중 오류 발생:', error);
+    checkUsernameResult.value = 'ID 중복 확인 중 오류가 발생했습니다.';
+  }
 };
 
 const join = async () => {
@@ -150,137 +169,143 @@ const join = async () => {
 const goBack = () => {
   router.go(-1); // 이전 페이지로 이동
 };
+
+const goToHome = () => {
+  router.push({ name: 'home' });
+};
 </script>
 
 <template>
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card shadow-lg">
-          <div class="card-header bg-primary text-white text-center py-3">
-            <h2 class="mb-0">회원 가입</h2>
+  <div class="join-page container d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="w-100" style="max-width: 500px;">
+      <h1 class="mb-3 fw-bold logo text-center" @click="goToHome">finterest</h1>
+      <p class="mb-4 text-center text-muted">새로운 계정을 만들어 finterest를 시작하세요.</p>
+      <form @submit.prevent="join">
+        <!-- 아이디 입력 필드 -->
+        <div class="mb-4">
+          <label for="username" class="form-label">아이디</label>
+          <div class="input-group">
+            <input type="text" id="username" class="form-control form-control-lg" placeholder="아이디를 입력하세요" v-model="member.username" @input="validateUsername" required />
+            <button type="button" class="btn btn-outline-primary" @click="checkUsername">중복 확인</button>
           </div>
-          <div class="card-body p-5">
-            <form @submit.prevent="join">
-              <div class="mb-4">
-                <label for="username" class="form-label">
-                  <i class="fa-solid fa-user me-2"></i>사용자 ID
-                </label>
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="사용자 ID" id="username" @input="validateUsername" v-model="member.username" />
-                  <button type="button" class="btn btn-outline-primary" @click="checkUsername">ID 중복 확인</button>
-                </div>
-                <small class="text-danger">{{ validationErrors.username }}</small>
-              </div>
+          <small class="text-danger">{{ validationErrors.username }}</small>
+          <small :class="checkUsernameResult.includes('사용가능') ? 'text-success' : 'text-danger'">{{ checkUsernameResult }}</small>
+        </div>
 
-              <div class="mb-4">
-                <label for="fullName" class="form-label">
-                  <i class="fa-solid fa-user me-2"></i>이름
-                </label>
-                <input type="text" class="form-control" placeholder="전체 이름" id="fullName" v-model="member.fullName" @input="validateFullName" />
-                <small class="text-danger">{{ validationErrors.fullName }}</small>
-              </div>
+        <!-- 이름 입력 필드 -->
+        <div class="mb-4">
+          <label for="fullName" class="form-label">이름</label>
+          <input type="text" id="fullName" class="form-control form-control-lg" placeholder="이름을 입력하세요" v-model="member.fullName" @input="validateFullName" required />
+          <small class="text-danger">{{ validationErrors.fullName }}</small>
+        </div>
 
-              <div class="mb-4">
-                <label for="avatar" class="form-label">
-                  <i class="fa-solid fa-user-astronaut me-2"></i>아바타 이미지
-                </label>
-                <input type="file" class="form-control" ref="avatar" id="avatar" accept="image/png" @input="validateAvatar" />
-                <small class="text-danger">{{ avatarError }}</small>
-              </div>
+        <!-- 이메일 입력 필드 -->
+        <div class="mb-4">
+          <label for="email" class="form-label">이메일</label>
+          <input type="email" id="email" class="form-control form-control-lg" placeholder="이메일을 입력하세요" v-model="member.email" @input="validateEmail" required />
+          <small class="text-danger">{{ validationErrors.email }}</small>
+        </div>
 
-              <div class="mb-4">
-                <label for="email" class="form-label">
-                  <i class="fa-solid fa-envelope me-2"></i>이메일
-                </label>
-                <input type="email" class="form-control" placeholder="Email" id="email" @input="validateEmail" v-model="member.email" />
-                <small class="text-danger">{{ validationErrors.email }}</small>
-              </div>
+        <!-- 비밀번호 입력 필드 -->
+        <div class="mb-4">
+          <label for="password" class="form-label">비밀번호</label>
+          <input type="password" id="password" class="form-control form-control-lg" placeholder="비밀번호를 입력하세요" v-model="member.password" @input="validatePassword" required />
+          <small class="text-danger">{{ passwordError }}</small>
+        </div>
 
-              <div class="mb-4">
-                <label for="password" class="form-label">
-                  <i class="fa-solid fa-lock me-2"></i>비밀번호
-                </label>
-                <input type="password" class="form-control" placeholder="비밀번호" id="password" v-model="member.password" @input="validatePassword" />
-                <small class="text-danger">{{ passwordError }}</small>
-              </div>
+        <!-- 비밀번호 확인 입력 필드 -->
+        <div class="mb-4">
+          <label for="password2" class="form-label">비밀번호 확인</label>
+          <input type="password" id="password2" class="form-control form-control-lg" placeholder="비밀번호를 다시 입력하세요" v-model="member.password2" required />
+        </div>
 
-              <div class="mb-4">
-                <div class="password-conditions card">
-                  <div class="card-body">
-                    <h6 class="card-title mb-2">비밀번호 조건:</h6>
-                    <ul class="list-unstyled mb-2">
-                      <li :class="passwordConditions.length ? 'text-success' : 'text-muted'">
-                        <i :class="passwordConditions.length ? 'fas fa-check-circle' : 'far fa-circle'"></i> 8자 이상
-                      </li>
-                      <li :class="passwordConditions.uppercase ? 'text-success' : 'text-muted'">
-                        <i :class="passwordConditions.uppercase ? 'fas fa-check-circle' : 'far fa-circle'"></i> 대문자 ��함
-                      </li>
-                      <li :class="passwordConditions.lowercase ? 'text-success' : 'text-muted'">
-                        <i :class="passwordConditions.lowercase ? 'fas fa-check-circle' : 'far fa-circle'"></i> 소문자 포함
-                      </li>
-                      <li :class="passwordConditions.number ? 'text-success' : 'text-muted'">
-                        <i :class="passwordConditions.number ? 'fas fa-check-circle' : 'far fa-circle'"></i> 숫자 포함
-                      </li>
-                      <li :class="passwordConditions.special ? 'text-success' : 'text-muted'">
-                        <i :class="passwordConditions.special ? 'fas fa-check-circle' : 'far fa-circle'"></i> 특수문자(!@#$%^&*) 포함
-                      </li>
-                    </ul>
-                    <div :class="Object.values(passwordConditions).filter(Boolean).length >= 3 ? 'text-success' : 'text-muted'">
-                      <i :class="Object.values(passwordConditions).filter(Boolean).length >= 3 ? 'fas fa-check-circle' : 'far fa-circle'"></i>
-                      3개 이상의 조건 충족 ({{ Object.values(passwordConditions).filter(Boolean).length }}/3)
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <!-- 아바타 이미지 업로드 -->
+        <div class="mb-4">
+          <label for="avatar" class="form-label">프로필 이미지</label>
+          <div class="input-group">
+            <input type="text" class="form-control form-control-lg" :value="avatarFileName" placeholder="PNG 파일을 선택하세요" readonly />
+            <button class="btn btn-outline-secondary" type="button" @click="triggerFileInput">파일 선택</button>
+          </div>
+          <input type="file" id="avatar" class="form-control form-control-lg" ref="avatar" accept="image/png" @input="validateAvatar" style="display: none;" />
+          <small class="text-danger">{{ avatarError }}</small>
+        </div>
 
-              <div class="mb-4">
-                <label for="password2" class="form-label">
-                  <i class="fa-solid fa-lock me-2"></i>비밀번호 확인
-                </label>
-                <input type="password" class="form-control" placeholder="비밀번호 확인" id="password2" v-model="member.password2" />
+        <!-- 비밀번호 조건 표시 -->
+        <div class="mb-4">
+          <div class="password-conditions card">
+            <div class="card-body">
+              <h6 class="card-title mb-2">비밀번호 조건:</h6>
+              <ul class="list-unstyled mb-2">
+                <li :class="passwordConditions.length ? 'text-success' : 'text-muted'">
+                  <i :class="passwordConditions.length ? 'fas fa-check-circle' : 'far fa-circle'"></i> 8자 이상
+                </li>
+                <li :class="passwordConditions.uppercase ? 'text-success' : 'text-muted'">
+                  <i :class="passwordConditions.uppercase ? 'fas fa-check-circle' : 'far fa-circle'"></i> 대문자 포함
+                </li>
+                <li :class="passwordConditions.lowercase ? 'text-success' : 'text-muted'">
+                  <i :class="passwordConditions.lowercase ? 'fas fa-check-circle' : 'far fa-circle'"></i> 소문자 포함
+                </li>
+                <li :class="passwordConditions.number ? 'text-success' : 'text-muted'">
+                  <i :class="passwordConditions.number ? 'fas fa-check-circle' : 'far fa-circle'"></i> 숫자 포함
+                </li>
+                <li :class="passwordConditions.special ? 'text-success' : 'text-muted'">
+                  <i :class="passwordConditions.special ? 'fas fa-check-circle' : 'far fa-circle'"></i> 특수문자(!@#$%^&*) 포함
+                </li>
+              </ul>
+              <div :class="Object.values(passwordConditions).filter(Boolean).length >= 3 ? 'text-success' : 'text-muted'">
+                <i :class="Object.values(passwordConditions).filter(Boolean).length >= 3 ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                3개 이상의 조건 충족 ({{ Object.values(passwordConditions).filter(Boolean).length }}/3)
               </div>
-
-              <div class="d-flex justify-content-between mt-4">
-                <button type="button" class="btn btn-secondary btn-lg" @click="goBack">
-                  <i class="fa-solid fa-arrow-left me-2"></i>뒤로가기
-                </button>
-                <button type="submit" class="btn btn-primary btn-lg" :disabled="disableSubmit">
-                  <i class="fa-solid fa-user-plus me-2"></i>가입하기
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
-      </div>
+
+        <!-- 가입하기 버튼 -->
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" :disabled="disableSubmit">가입하기</button>
+
+        <!-- 로그인 페이지로 이동 -->
+        <div class="text-center">
+          <router-link :to="{ name: 'login' }" class="text-primary no-underline">이미 계정이 있으신가요? 로그인</router-link>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <style scoped>
-.card {
-  border: none;
-  border-radius: 1rem;
-  overflow: hidden;
+.join-page {
+  padding: 20px;
+  background-color: #ffffff;
 }
 
-.card-header {
-  background-color: #00C4D1;
+h1 {
+  font-size: 2.5rem;
+  color: #00C4D1;
 }
 
-.form-control:focus {
-  border-color: #00C4D1;
-  box-shadow: 0 0 0 0.2rem rgba(0, 196, 209, 0.25);
+.logo {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.logo:hover {
+  color: #0098a8;
+}
+
+.form-control {
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1.2rem;
 }
 
 .btn-primary {
   background-color: #00C4D1;
-  border-color: #00C4D1;
+  border: none;
+  transition: background-color 0.3s ease;
 }
 
-.btn-primary:hover, .btn-primary:focus {
-  background-color: #00a8b3;
-  border-color: #00a8b3;
+.btn-primary:hover {
+  background-color: #0098a8;
 }
 
 .btn-outline-primary {
@@ -293,14 +318,22 @@ const goBack = () => {
   color: white;
 }
 
-.btn-secondary {
-  background-color: #6c757d;
-  border-color: #6c757d;
+.text-primary {
+  color: #00C4D1;
+  font-weight: bold;
 }
 
-.btn-secondary:hover, .btn-secondary:focus {
-  background-color: #5a6268;
-  border-color: #545b62;
+.no-underline {
+  text-decoration: none;
+}
+
+.no-underline:hover {
+  text-decoration: underline;
+}
+
+.text-danger {
+  color: red;
+  font-size: 0.9rem;
 }
 
 .password-conditions.card {
@@ -323,5 +356,25 @@ const goBack = () => {
 
 .password-conditions i {
   margin-right: 5px;
+}
+
+.form-label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.input-group .btn {
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+}
+
+.input-group .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 </style>

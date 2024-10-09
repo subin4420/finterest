@@ -7,6 +7,7 @@ import org.finterest.security.account.dto.AuthResultDTO;
 import org.finterest.security.account.dto.UserInfoDTO;
 import org.finterest.security.util.JsonResponse;
 import org.finterest.security.util.JwtProcessor;
+import org.finterest.user.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+
 //로그인 성공 시 호출되는 핸들러
 //JWT 토큰을 생성하고 인증 결과를 클라이언트에게 응답
 @Component
@@ -24,6 +27,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProcessor jwtProcessor;
     private final PointService pointService;  // PointService 주입
 
+    private final UserService userService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
@@ -40,6 +44,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         //받아온 유저정보로
         // 인증 성공 결과를 JSON으로 직접 응답
         AuthResultDTO result = makeAuthResult(user);
+        //출석체크 로직을 넣고
+        userService.updateLastLoginByUsername(user.getUsername());
 
         JsonResponse.send(response, result);
     }

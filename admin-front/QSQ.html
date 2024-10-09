@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz and Quiz Set Management</title>
+  <style>
+    .quiz-set, .quiz, .quiz-details { margin-bottom: 20px; }
+    .quiz-list, .quiz-set-list { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+    button { margin: 5px; }
+  </style>
+</head>
+<body>
+  <h1>퀴즈 세트 및 퀴즈 관리</h1>
+
+  <!-- 퀴즈 세트 목록 -->
+  <div class="quiz-set">
+    <h2>퀴즈 세트 목록</h2>
+    <ul id="quiz-set-list" class="quiz-set-list">
+      <!-- 퀴즈 세트 목록이 여기에 동적으로 추가됩니다 -->
+    </ul>
+    <button id="add-quiz-set-btn">퀴즈 세트 추가</button>
+  </div>
+
+  <!-- 퀴즈 세트 정보 및 수정 -->
+  <div class="quiz-set-details" id="quiz-set-details" style="display:none;">
+    <h2>퀴즈 세트 정보</h2>
+    <form id="quiz-set-form">
+      <label for="set-name">퀴즈 세트 이름:</label>
+      <input type="text" id="set-name"><br><br>
+      
+      <label for="set-img">퀴즈 세트 이미지:</label>
+      <input type="text" id="set-img"><br><br>
+
+      <label for="set-category">카테고리 ID:</label>
+      <input type="number" id="set-category"><br><br>
+
+      <button type="submit">퀴즈 세트 수정</button>
+      <button id="delete-quiz-set-btn">퀴즈 세트 삭제</button>
+    </form>
+  </div>
+
+  <!-- 해당 퀴즈 세트에 포함된 퀴즈 목록 -->
+  <div class="quiz-list" id="quiz-list" style="display:none;">
+    <h2>퀴즈 목록</h2>
+    <ul id="quiz-list-items">
+      <!-- 퀴즈 목록이 여기에 동적으로 추가됩니다 -->
+    </ul>
+    <button id="add-quiz-btn">퀴즈 추가</button>
+  </div>
+
+  <!-- 퀴즈 정보 및 수정 -->
+  <div class="quiz-details" id="quiz-details" style="display:none;">
+    <h2>퀴즈 정보</h2>
+    <form id="quiz-form">
+      <label for="quiz-question">퀴즈 질문:</label>
+      <input type="text" id="quiz-question"><br><br>
+      
+      <label for="quiz-choice1">선택지 1:</label>
+      <input type="text" id="quiz-choice1"><br><br>
+
+      <label for="quiz-choice2">선택지 2:</label>
+      <input type="text" id="quiz-choice2"><br><br>
+
+      <label for="quiz-choice3">선택지 3:</label>
+      <input type="text" id="quiz-choice3"><br><br>
+
+      <label for="quiz-choice4">선택지 4:</label>
+      <input type="text" id="quiz-choice4"><br><br>
+
+      <label for="correct-choice">정답 선택지 번호:</label>
+      <input type="number" id="correct-choice"><br><br>
+
+      <button type="submit">퀴즈 수정</button>
+      <button id="delete-quiz-btn">퀴즈 삭제</button>
+    </form>
+  </div>
+
+  <script>
+    // 샘플 데이터 (실제로는 API에서 데이터를 불러와야 함)
+    let quizSets = [
+      { setId: 1, setName: '기본 세트', setImg: 'default.png', categoryId: 1 },
+      { setId: 2, setName: '고급 세트', setImg: 'advanced.png', categoryId: 2 }
+    ];
+    let quizzes = [
+      { quizId: 1, setId: 1, question: '질문 1', choice1: '1번', choice2: '2번', choice3: '3번', choice4: '4번', correctChoice: 1 },
+      { quizId: 2, setId: 1, question: '질문 2', choice1: '1번', choice2: '2번', choice3: '3번', choice4: '4번', correctChoice: 2 }
+    ];
+    let currentSetId = null;
+    let currentQuizId = null;
+
+    // 퀴즈 세트 목록을 렌더링
+    function renderQuizSets() {
+      const quizSetList = document.getElementById('quiz-set-list');
+      quizSetList.innerHTML = '';
+      quizSets.forEach(set => {
+        const li = document.createElement('li');
+        li.textContent = `${set.setName} (ID: ${set.setId})`;
+        li.onclick = () => showQuizSetDetails(set.setId);
+        quizSetList.appendChild(li);
+      });
+    }
+
+    // 퀴즈 세트 상세 정보 보여주기
+    function showQuizSetDetails(setId) {
+      currentSetId = setId;
+      const set = quizSets.find(qs => qs.setId === setId);
+      document.getElementById('set-name').value = set.setName;
+      document.getElementById('set-img').value = set.setImg;
+      document.getElementById('set-category').value = set.categoryId;
+      document.getElementById('quiz-set-details').style.display = 'block';
+      renderQuizzes(setId);
+    }
+
+    // 퀴즈 목록 렌더링
+    function renderQuizzes(setId) {
+      const quizList = document.getElementById('quiz-list-items');
+      quizList.innerHTML = '';
+      const setQuizzes = quizzes.filter(q => q.setId === setId);
+      setQuizzes.forEach(quiz => {
+        const li = document.createElement('li');
+        li.textContent = `${quiz.question} (ID: ${quiz.quizId})`;
+        li.onclick = () => showQuizDetails(quiz.quizId);
+        quizList.appendChild(li);
+      });
+      document.getElementById('quiz-list').style.display = 'block';
+    }
+
+    // 퀴즈 상세 정보 보여주기
+    function showQuizDetails(quizId) {
+      currentQuizId = quizId;
+      const quiz = quizzes.find(q => q.quizId === quizId);
+      document.getElementById('quiz-question').value = quiz.question;
+      document.getElementById('quiz-choice1').value = quiz.choice1;
+      document.getElementById('quiz-choice2').value = quiz.choice2;
+      document.getElementById('quiz-choice3').value = quiz.choice3;
+      document.getElementById('quiz-choice4').value = quiz.choice4;
+      document.getElementById('correct-choice').value = quiz.correctChoice;
+      document.getElementById('quiz-details').style.display = 'block';
+    }
+
+    // 초기 렌더링
+    renderQuizSets();
+
+    // 이벤트 리스너 추가 (퀴즈 세트 추가, 수정, 삭제 등)
+    document.getElementById('add-quiz-set-btn').addEventListener('click', () => {
+      const newSet = { setId: quizSets.length + 1, setName: '새로운 세트', setImg: '', categoryId: 1 };
+      quizSets.push(newSet);
+      renderQuizSets();
+    });
+
+    document.getElementById('quiz-set-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const setName = document.getElementById('set-name').value;
+      const setImg = document.getElementById('set-img').value;
+      const setCategory = document.getElementById('set-category').value;
+      const set = quizSets.find(qs => qs.setId === currentSetId);
+      set.setName = setName;
+      set.setImg = setImg;
+      set.categoryId = setCategory;
+      alert('퀴즈 세트 수정 완료');
+    });
+
+    document.getElementById('delete-quiz-set-btn').addEventListener('click', () => {
+      quizSets = quizSets.filter(qs => qs.setId !== currentSetId);
+      document.getElementById('quiz-set-details').style.display = 'none';
+      document.getElementById('quiz-list').style.display = 'none';
+      renderQuizSets();
+      alert('퀴즈 세트 삭제 완료');
+    });
+
+    // 퀴즈 추가, 수정, 삭제
+    document.getElementById('add-quiz-btn').addEventListener('click', () => {
+      const newQuiz = { quizId: quizzes.length + 1, setId: currentSetId, question: '새로운 질문', choice1: '', choice2: '', choice3: '', choice4: '', correctChoice: 1 };
+      quizzes.push(newQuiz);
+      renderQuizzes(currentSetId);
+    });
+
+    document.getElementById('quiz-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const question = document.getElementById('quiz-question').value;
+      const choice1 = document.getElementById('quiz-choice1').value;
+      const choice2 = document.getElementById('quiz-choice2').value;
+      const choice3 = document.getElementById('quiz-choice3').value;
+      const choice4 = document.getElementById('quiz-choice4').value;
+      const correctChoice = document.getElementById('correct-choice').value;
+      const quiz = quizzes.find(q => q.quizId === currentQuizId);
+      quiz.question = question;
+      quiz.choice1 = choice1;
+      quiz.choice2 = choice2;
+      quiz.choice3 = choice3;
+      quiz.choice4 = choice4;
+      quiz.correctChoice = correctChoice;
+      alert('퀴즈 수정 완료');
+    });
+
+    document.getElementById('delete-quiz-btn').addEventListener('click', () => {
+      quizzes = quizzes.filter(q => q.quizId !== currentQuizId);
+      document.getElementById('quiz-details').style.display = 'none';
+      renderQuizzes(currentSetId);
+      alert('퀴즈 삭제 완료');
+    });
+  </script>
+</body>
+</html>

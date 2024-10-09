@@ -23,6 +23,10 @@
             <div class="title">{{ cardData.title }}</div>
             <p class="summary">{{ cardData.content }}</p>
         </div>
+
+        <div class="favorite-icon" @click.stop="$emit('favorite-click', cardData)">
+            <!-- 즐겨찾기 아이콘 -->
+        </div>
     </div>
 </template>
 
@@ -88,7 +92,8 @@ export default {
                 this.cardData.favorite = false; // UI에 즉시 반영
             }
         }
-    }
+    },
+    emits: ['click', 'favorite-click']
 };
 </script>
 
@@ -246,5 +251,9 @@ export default {
     .summary {
         font-size: 10px; /* 작은 화면에서 글자 크기 줄임 */
     }
+}
+
+.favorite-icon {
+    /* 즐겨찾기 아이콘 스타일 */
 }
 </style>

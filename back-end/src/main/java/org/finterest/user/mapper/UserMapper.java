@@ -12,6 +12,9 @@ import org.finterest.user.dto.UserVerificationDTO;
 import org.finterest.user.dto.UserDTO;
 import org.springframework.security.core.userdetails.User;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -43,4 +46,6 @@ public interface UserMapper {
     int deleteAuth(AuthVO auth);
 
     void updateUser(UserVO updatedUser);
+
+    void updateLastLoginByUsername(@Param("username") String username, @Param("lastLogin") LocalDateTime lastLogin);
 }

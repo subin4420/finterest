@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퀴즈 관리</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin-right: 10px;
+        }
+
+        .quiz-list {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>퀴즈 관리</h1>
+
+    <!-- 퀴즈 추가/수정 폼 -->
+    <div class="form-group">
+        <label for="quizQuestion">퀴즈 질문</label>
+        <textarea id="quizQuestion" placeholder="퀴즈 질문 입력"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="choice1">선택지 1</label>
+        <input type="text" id="choice1" placeholder="선택지 1 입력">
+    </div>
+
+    <div class="form-group">
+        <label for="choice2">선택지 2</label>
+        <input type="text" id="choice2" placeholder="선택지 2 입력">
+    </div>
+
+    <div class="form-group">
+        <label for="choice3">선택지 3</label>
+        <input type="text" id="choice3" placeholder="선택지 3 입력">
+    </div>
+
+    <div class="form-group">
+        <label for="choice4">선택지 4</label>
+        <input type="text" id="choice4" placeholder="선택지 4 입력">
+    </div>
+
+    <div class="form-group">
+        <label for="correctChoice">정답 번호 (1 ~ 4)</label>
+        <input type="text" id="correctChoice" placeholder="정답 번호 입력">
+    </div>
+
+    <button onclick="addQuiz()">퀴즈 추가</button>
+    <button onclick="updateQuiz()">퀴즈 수정</button>
+    <button onclick="deleteQuiz()">퀴즈 삭제</button>
+
+    <!-- 퀴즈 목록 -->
+    <div class="quiz-list">
+        <h2>퀴즈 목록</h2>
+        <ul id="quizList">
+            <!-- 퀴즈 항목들이 추가될 부분 -->
+        </ul>
+    </div>
+
+    <script>
+        function addQuiz() {
+            const question = document.getElementById('quizQuestion').value;
+            // 추가 로직 (API 호출 등) 작성
+            alert('퀴즈가 추가되었습니다: ' + question);
+        }
+
+        function updateQuiz() {
+            const question = document.getElementById('quizQuestion').value;
+            // 수정 로직 작성
+            alert('퀴즈가 수정되었습니다: ' + question);
+        }
+
+        function deleteQuiz() {
+            const question = document.getElementById('quizQuestion').value;
+            // 삭제 로직 작성
+            alert('퀴즈가 삭제되었습니다: ' + question);
+        }
+    </script>
+</body>
+</html>
