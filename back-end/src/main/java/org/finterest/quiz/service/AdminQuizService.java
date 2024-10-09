@@ -55,16 +55,20 @@ public class AdminQuizService {
     @Transactional
     public void updateQuizSet(QuizSetsVO quizSetsVO, List<QuizVO> quizList) {
         try {
-            // 3-1. 퀴즈 세트 수정
+            int setId = quizSetsVO.getSetId();
+
+            // 기존 퀴즈 세트와 관련된 모든 정보 삭제
+            adminQuizDAO.deleteUserAnswersBySetId(setId); // 사용자 답변 삭제
+            adminQuizDAO.deleteQuizSetResultsBySetId(setId); // 퀴즈 세트 결과 삭제
+            adminQuizDAO.deleteQuizSetQuestionsBySetId(setId); // 퀴즈 세트와 퀴즈 문제 연결 삭제
+
+            // 퀴즈 세트 업데이트
             adminQuizDAO.updateQuizSet(quizSetsVO);
 
-            // 3-2. 기존의 퀴즈 세트와 퀴즈 문제 간 연결 삭제 (필요 시)
-            adminQuizDAO.deleteQuizSetQuestionsBySetId(quizSetsVO.getSetId());
-
-            // 3-3. 새로운 퀴즈 세트와 문제 연결
+            // 새로운 퀴즈 문제와 퀴즈 세트 연결
             for (QuizVO quizVO : quizList) {
                 int quizId = quizVO.getQuizId();
-                adminQuizDAO.insertQuizSetQuestions(quizSetsVO.getSetId(), quizId);
+                adminQuizDAO.insertQuizSetQuestions(setId, quizId);
             }
         } catch (Exception e) {
             throw new RuntimeException("퀴즈 세트 수정 중 오류가 발생했습니다.", e);

@@ -81,7 +81,8 @@
             q.choice3 AS choice3,
             q.choice4 AS choice4
         FROM Quizzes q
-        WHERE q.category_id = (SELECT category_id FROM Quiz_Sets WHERE set_id = #{set_id})
+                 JOIN Quiz_Set_Questions qs ON q.quiz_id = qs.quiz_id
+        WHERE qs.set_id = #{setId}
     </select>
 
     <!-- 3. 특정 퀴즈 문제 조회 -->

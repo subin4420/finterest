@@ -72,7 +72,6 @@
     <update id="updateArchive">
         UPDATE Learning_Materials
         SET
-            category_id = (SELECT category_id FROM Categories WHERE category_name = #{categoryName}),
             title = #{title},
             material_img = #{materialImg},
             link = #{link},
