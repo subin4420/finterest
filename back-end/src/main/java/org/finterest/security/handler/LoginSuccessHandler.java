@@ -1,6 +1,7 @@
 package org.finterest.security.handler;
 
 import lombok.RequiredArgsConstructor;
+import org.finterest.point.service.PointService;
 import org.finterest.security.account.domain.CustomUser;
 import org.finterest.security.account.dto.AuthResultDTO;
 import org.finterest.security.account.dto.UserInfoDTO;
@@ -21,6 +22,7 @@ import java.io.IOException;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProcessor jwtProcessor;
+    private final PointService pointService;  // PointService 주입
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -30,9 +32,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         // 인증 결과 Principal
         CustomUser user = (CustomUser) authentication.getPrincipal();
 
+        // 로그인 성공 시 출석 포인트 추가
+        int userId = user.getUserVO().getUserId();  // CustomUser에서 userId 가져오기
+        pointService.insertPointForAttendance(userId);  // 출석 포인트 추가
+
+
         //받아온 유저정보로
         // 인증 성공 결과를 JSON으로 직접 응답
         AuthResultDTO result = makeAuthResult(user);
+
         JsonResponse.send(response, result);
     }
 
@@ -40,6 +48,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String username = user.getUsername();
         // 토큰 생성
         String token = jwtProcessor.generateToken(username);
+
         // 토큰 + 사용자 기본 정보 (사용자명, ...)를 묶어서 AuthResultDTO 구성
         return new AuthResultDTO(token, UserInfoDTO.of(user.getUserVO()));
     }
