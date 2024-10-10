@@ -5,26 +5,37 @@
       <SideTradeNavigationBar />
       <div class="content">
         <h1 class="page-title">결산 페이지</h1>
-        <p>여기는 결산 페이지입니다.</p>
+
         <div>
-          <h2>거래 기록</h2>
-          <ul>
-            <li v-for="(record, index) in tradeHistory" :key="index">
-              {{ record.details }}
-              <div>
-                <strong>주식 코드:</strong> {{ record.stockCode }}<br />
-                <strong>거래 가격:</strong> {{ record.tradePrice }}<br />
-                <strong>거래 수량:</strong> {{ record.quantity }}<br />
-                <strong>거래 날짜:</strong>
-                {{
-                  isValidDate(record.tradeDate)
-                    ? new Date(record.tradeDate).toLocaleDateString()
-                    : '유효하지 않은 날짜'
-                }}<br />
-                <strong>거래 타입:</strong> {{ record.tradeType }}
-              </div>
-            </li>
-          </ul>
+          <h2>매매 기록</h2>
+          <table class="trade-history-table">
+            <thead>
+              <tr>
+                <th>주식 코드</th>
+                <th>주식 이름</th>
+                <th>거래 가격</th>
+                <th>거래 수량</th>
+                <th>거래 날짜</th>
+                <th>거래 타입</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(record, index) in tradeHistory" :key="index">
+                <td>{{ record.stockCode }}</td>
+                <td>{{ record.stockName }}</td>
+                <td>{{ record.totalPrice }}</td>
+                <td>{{ record.quantity }}</td>
+                <td>
+                  {{
+                    isValidDate(record.createdAt)
+                      ? new Date(record.createdAt).toLocaleDateString()
+                      : '유효하지 않은 날짜'
+                  }}
+                </td>
+                <td>{{ record.tradeType }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -107,5 +118,31 @@ export default {
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid #b3b3b3;
+}
+
+.trade-history-table {
+  width: 100%; /* 테이블 너비 100% */
+  border-collapse: collapse; /* 테두리 겹침 제거 */
+  margin-top: 20px; /* 상단 여백 추가 */
+}
+
+.trade-history-table th,
+.trade-history-table td {
+  border: 1px solid #ddd; /* 테두리 추가 */
+  padding: 10px; /* 패딩 추가 */
+  text-align: left; /* 텍스트 왼쪽 정렬 */
+}
+
+.trade-history-table th {
+  background-color: #f2f2f2; /* 헤더 배경색 */
+  font-weight: bold; /* 헤더 글씨 두껍게 */
+}
+
+.trade-history-table tr:nth-child(even) {
+  background-color: #f9f9f9; /* 짝수 행 배경색 */
+}
+
+.trade-history-table tr:hover {
+  background-color: #f1f1f1; /* 호버 시 배경색 */
 }
 </style>

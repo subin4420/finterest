@@ -76,6 +76,16 @@ class TradeService {
     });
     return response.data;
   }
+
+  // 사용자 자산 정보를 가져오는 메서드
+  async getUserFunds() {
+    try {
+      const response = await api.get('/trade/held'); // 자산 정보 API 호출
+      return response.data; // 자산 정보 반환
+    } catch (error) {
+      throw new Error('자산 정보를 가져오는 데 실패했습니다: ' + error.message);
+    }
+  }
 }
 
 export default new TradeService();

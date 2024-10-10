@@ -6,21 +6,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, defineProps, toRef } from "vue";
-import * as echarts from "echarts";
-import { useTradeStore } from "@/stores/tradeStore";
-import axios from "axios";
+import {
+  ref,
+  onMounted,
+  watch,
+  defineProps,
+  toRef,
+  onBeforeUnmount,
+} from 'vue';
+import * as echarts from 'echarts';
+import { useTradeStore } from '@/stores/tradeStore';
+import axios from 'axios';
 
 const chartDom = ref(null);
 let myChart = null; // 차트 인스턴스 저장
 let data0 = { categoryData: [], values: [], volumes: [] }; // 초기 차트 데이터
-let w = null;
+const tradeStore = useTradeStore();
+var w = null;
 
 const props = defineProps({
   selectStockCode: String,
 });
 
-const stockCode = toRef(props, "selectStockCode");
+const stockCode = toRef(props, 'selectStockCode');
 
 // 차트 데이터를 가공하는 함수
 const splitData = (rawData) => {
@@ -44,7 +52,7 @@ const calculateMA = (dayCount, data0) => {
   const result = [];
   for (let i = 0, len = data0.values.length; i < len; i++) {
     if (i < dayCount) {
-      result.push("-");
+      result.push('-');
       continue;
     }
     let sum = 0;
@@ -65,59 +73,59 @@ const renderChart = () => {
 
     myChart = echarts.init(chartDom.value);
 
-    const upColor = "#ed2926";
-    const upBorderColor = "#d01411";
-    const downColor = "#2679ed";
-    const downBorderColor = "#1160d0";
+    const upColor = '#ed2926';
+    const upBorderColor = '#d01411';
+    const downColor = '#2679ed';
+    const downBorderColor = '#1160d0';
 
     // 차트 초기 옵션 설정
     const option = {
       title: {
-        text: "모의 투자",
+        text: '모의 투자',
         left: 0,
       },
       tooltip: {
-        trigger: "axis",
+        trigger: 'axis',
         axisPointer: {
-          type: "cross",
+          type: 'cross',
         },
       },
       legend: {
-        data: ["Candlestick", "Volume", "MA5", "MA10", "MA20", "MA30"],
+        data: ['Candlestick', 'Volume', 'MA5', 'MA10', 'MA20', 'MA30'],
       },
       grid: [
         {
-          left: "10%",
-          right: "8%",
-          height: "60%", // 캔들스틱 차트 높이
-          top: "10%",
+          left: '10%',
+          right: '8%',
+          height: '60%', // 캔들스틱 차트 높이
+          top: '10%',
         },
         {
-          left: "10%", // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
-          right: "8%", // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
-          top: "75%", // 거래량 차트 위치
-          height: "10%", // 거래량 차트 높이
+          left: '10%', // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
+          right: '8%', // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
+          top: '75%', // 거래량 차트 위치
+          height: '10%', // 거래량 차트 높이
         },
       ],
       xAxis: [
         {
-          type: "category",
+          type: 'category',
           data: data0.categoryData,
           boundaryGap: true, // 동일하게 설정
           axisLine: { onZero: false },
           splitLine: { show: false },
-          min: "dataMin",
-          max: "dataMax",
+          min: 'dataMin',
+          max: 'dataMax',
           gridIndex: 0, // 캔들 차트 x축
           axisLabel: {
             formatter: (value) => {
               // 'HHMMSS' 형식의 데이터를 'HH:MM' 형식으로 변환
-              return value.slice(0, 2) + ":" + value.slice(2, 4);
+              return value.slice(0, 2) + ':' + value.slice(2, 4);
             },
           },
         },
         {
-          type: "category",
+          type: 'category',
           data: data0.categoryData,
           boundaryGap: true, // 동일하게 설정
           gridIndex: 1, // 거래량 차트 x축
@@ -151,26 +159,26 @@ const renderChart = () => {
       ],
       dataZoom: [
         {
-          type: "inside",
+          type: 'inside',
           xAxisIndex: [0, 1], // 두 개의 xAxis에 동일하게 적용
           start: 50,
           end: 100,
         },
         {
           show: true,
-          type: "slider",
+          type: 'slider',
           xAxisIndex: [0, 1], // 두 개의 xAxis에 동일하게 적용
-          top: "90%",
+          top: '90%',
           start: 50,
           end: 100,
         },
       ],
       series: [
         {
-          name: "Candlestick",
-          type: "candlestick",
+          name: 'Candlestick',
+          type: 'candlestick',
           data: data0.values,
-          barWidth: "30%", // 캔들스틱 차트의 너비 설정
+          barWidth: '30%', // 캔들스틱 차트의 너비 설정
           itemStyle: {
             color: upColor,
             color0: downColor,
@@ -179,12 +187,12 @@ const renderChart = () => {
           },
         },
         {
-          name: "Volume",
-          type: "bar",
+          name: 'Volume',
+          type: 'bar',
           xAxisIndex: 1, // 거래량 차트의 x축 인덱스
           yAxisIndex: 1, // 거래량 차트의 y축 인덱스
           data: data0.volumes,
-          barWidth: "30%", // 거래량 차트의 너비 설정 (캔들 차트와 동일하게 설정)
+          barWidth: '30%', // 거래량 차트의 너비 설정 (캔들 차트와 동일하게 설정)
           itemStyle: {
             color: function (params) {
               return data0.values[params.dataIndex][1] >
@@ -195,29 +203,29 @@ const renderChart = () => {
           },
         },
         {
-          name: "MA5",
-          type: "line",
+          name: 'MA5',
+          type: 'line',
           data: calculateMA(5, data0),
           smooth: true,
           lineStyle: { opacity: 0.5 },
         },
         {
-          name: "MA10",
-          type: "line",
+          name: 'MA10',
+          type: 'line',
           data: calculateMA(10, data0),
           smooth: true,
           lineStyle: { opacity: 0.5 },
         },
         {
-          name: "MA20",
-          type: "line",
+          name: 'MA20',
+          type: 'line',
           data: calculateMA(20, data0),
           smooth: true,
           lineStyle: { opacity: 0.5 },
         },
         {
-          name: "MA30",
-          type: "line",
+          name: 'MA30',
+          type: 'line',
           data: calculateMA(30, data0),
           smooth: true,
           lineStyle: { opacity: 0.5 },
@@ -243,12 +251,12 @@ const updateChartData = (newData) => {
         { data: data0.categoryData }, // 거래량 차트의 xAxis 업데이트
       ],
       series: [
-        { name: "Candlestick", data: data0.values },
-        { name: "Volume", data: data0.volumes },
-        { name: "MA5", data: calculateMA(5, data0) },
-        { name: "MA10", data: calculateMA(10, data0) },
-        { name: "MA20", data: calculateMA(20, data0) },
-        { name: "MA30", data: calculateMA(30, data0) },
+        { name: 'Candlestick', data: data0.values },
+        { name: 'Volume', data: data0.volumes },
+        { name: 'MA5', data: calculateMA(5, data0) },
+        { name: 'MA10', data: calculateMA(10, data0) },
+        { name: 'MA20', data: calculateMA(20, data0) },
+        { name: 'MA30', data: calculateMA(30, data0) },
       ],
     });
   }
@@ -258,7 +266,7 @@ const updateChartData = (newData) => {
 const loadChartData = async (selectStockcode) => {
   console.log(selectStockcode);
   try {
-    const pastData = await axios.get(`/api/chart/data/${selectStockcode}`); // 비동기 데이터 수신을 기다림
+    const pastData = await axios.get(`/api/chart/data/${selectStockcode}`); // 비동기 데터 수신을 기다림
     const formattedData = pastData.data.map((data) => [
       data[0], // 시간
       data[1], // 시가
@@ -273,24 +281,31 @@ const loadChartData = async (selectStockcode) => {
       updateChartData(newData);
     });
   } catch (error) {
-    console.error("Error loading chart data:", error);
+    console.error('Error loading chart data:', error);
   }
 };
 
 // WebSocket 연결 및 실시간 데이터 수신
 const connectWebSocketForBid = (stockcode) => {
-  const g_app_key = "PSRXymebdmx9Kvgesb6qEHaj3zo5j6FHIftE";
+  if (!stockcode) {
+    console.log(
+      'Stock code is null or undefined, skipping WebSocket connection.'
+    );
+    return;
+  }
+  const g_app_key = 'PSRXymebdmx9Kvgesb6qEHaj3zo5j6FHIftE';
   const g_appsecret =
-    "1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=";
+    '1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=';
   const g_personalseckey =
-    "1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=";
+    '1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=';
+  // var w;
 
   try {
-    const url = "ws://ops.koreainvestment.com:31000"; // WebSocket 서버 주소
+    const url = 'ws://ops.koreainvestment.com:31000'; // WebSocket 서버 주소
     w = new WebSocket(url);
 
     w.onopen = function () {
-      console.log("[Connection OK]");
+      console.log('[Connection OK]');
       const result = `{"header":{"authoriztion":"","appkey":"${g_app_key}","appsecret":"${g_appsecret}","personalseckey":"${g_personalseckey}","custtype":"P","tr_type":"1","content-type":"utf-8"},"body": {"input": {"tr_id":"H0STCNT0","tr_key":"${stockcode}"}}}`;
       w.send(result);
     };
@@ -300,11 +315,12 @@ const connectWebSocketForBid = (stockcode) => {
     };
 
     w.onerror = function (e) {
-      console.log("WebSocket Error: ", e);
+      console.log('WebSocket Error: ', e);
     };
 
     w.onclose = function () {
-      console.log("[Connection Closed]");
+      console.log('[Connection Closed]');
+      w = null;
     };
   } catch (e) {
     console.log(e);
@@ -320,19 +336,23 @@ let endVolume = 0; // 딜레이 주기 동안 누적 거래량
 let endCurPrice = null; // 딜레이가 끝날 때의 종가 (최종 curPrice 값 저장)
 
 const handleBidData = (e) => {
-  const recvdata = e.data;
-  const parts = recvdata.split("|");
-  const bodydata = parts[3];
-  const bodyParts = bodydata.split("^");
+  var recvdata = e.data;
+  var parts = recvdata.split('|');
+  var bodydata = parts[3];
+  var bodyParts = bodydata.split('^');
   const time = bodyParts[1]; // 체결 시간
   const curPrice = parseFloat(bodyParts[2]); // 현재가 (실시간 데이터)
   const curVolume = parseFloat(bodyParts[12]); // 거래량을 숫자로 변환
 
-  console.log("현재가:", curPrice);
+  console.log('현재가:', curPrice, 'StockCode: ', stockCode.value);
+
+  // 현재가를 tradeStore에 저장
+  tradeStore.setStockPrice(curPrice); // 현재가 업데이트
 
   if (!deleyTime) {
     deleyTime = true;
     savedStartPrice = curPrice; // 딜레이 시작 시의 현재가를 시가로 저장
+    console.log('시가: ', savedStartPrice);
     tradeStore.setStockPrice(savedStartPrice);
     endVolume = 0; // 누적 거래량 초기화
     highPrice = curPrice; // 시작 시 고가 초기화
@@ -350,15 +370,15 @@ const handleBidData = (e) => {
         endVolume, // 누적 거래량
       ];
 
-      console.log("누적 거래량: ", endVolume);
+      console.log('누적 거래량: ', endVolume);
       console.log(
-        "차트 업데이트 - 시가:",
+        '차트 ���데이트 - 시가:',
         savedStartPrice,
-        "종가:",
+        '종가:',
         endCurPrice,
-        "최고가: ",
+        '최고가: ',
         highPrice,
-        "최저가: ",
+        '최저가: ',
         lowPrice
       );
 
@@ -384,10 +404,31 @@ const handleBidData = (e) => {
 };
 
 onMounted(() => {
-  console.log("onMounted에서 받은 주식 코드:", stockCode.value);
+  console.log('onMounted에서 받은 주식 코드:', stockCode.value);
   renderChart(); // 초기 차트 렌더링
   loadChartData(stockCode.value); // 과거 데이터 로딩
   connectWebSocketForBid(stockCode.value); // 실시간 데이터 WebSocket 연결
+});
+onBeforeUnmount(() => {
+  if (w) {
+    console.log('컴포넌트 언마운트 시 WebSocket 닫기');
+    w.close();
+    w = null;
+    deleyTime = true;
+  }
+});
+watch(stockCode, (newStockCode, oldStockCode) => {
+  // WebSocket이 이미 열려 있으면 먼저 닫기
+  if (w) {
+    console.log('기존 WebSocket 연결 닫기');
+    w.close();
+    w = null;
+  }
+
+  if (newStockCode) {
+    console.log('새로운 주식 코드로 WebSocket 연결:', newStockCode);
+    connectWebSocketForBid(newStockCode);
+  }
 });
 </script>
 
