@@ -22,21 +22,21 @@ const getToken = () => {
 
 // API 요청 전에 인증 헤더를 추가하는 인터셉터
 api.interceptors.request.use(
-  (config) => {
-    try {
-      const token = getToken();
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
+    (config) => {
+      try {
+        const token = getToken();
+        if (token) {
+          config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        console.log('요청 헤더:', config.headers);
+      } catch (error) {
+        console.error('인증 토큰 설정 중 오류 발생:', error);
       }
-      console.log('요청 헤더:', config.headers);
-    } catch (error) {
-      console.error('인증 토큰 설정 중 오류 발생:', error);
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
 );
 
 export const getLatestConversionRate = async () => {
@@ -59,13 +59,13 @@ export const convertPointsToMoney = async (pointAmount) => {
   try {
     const token = getToken();
     const response = await api.post(
-      '/conversion/points-to-money',
-      { pointAmount },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+        '/conversion/points-to-money',
+        { pointAmount },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
     );
     return response.data;
   } catch (error) {
@@ -79,13 +79,13 @@ export const convertMoneyToPoints = async (moneyAmount) => {
   try {
     const token = getToken();
     const response = await api.post(
-      '/conversion/money-to-points',
-      { moneyAmount },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+        '/conversion/money-to-points',
+        { moneyAmount },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
     );
     return response.data;
   } catch (error) {

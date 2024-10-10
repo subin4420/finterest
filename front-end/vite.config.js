@@ -28,6 +28,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '/Users/park/Desktop/takejob/finterest/back-end/src/main/webapp/resources',
+    outDir: 'C:/Users/student/Desktop/1010/finterest/back-end/src/main/webapp/resources',
   },
 });
+// C:\Users\student\Desktop\1010\finterest\back-end\src\main\webapp\resources

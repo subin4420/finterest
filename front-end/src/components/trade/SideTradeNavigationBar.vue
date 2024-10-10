@@ -67,7 +67,7 @@ export default {
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  position: fixed; /* 절대 위치에서 고정 위치로 변경 */
+  position: absolute; /* 절대 위치에서 고정 위치로 변경 */
   top: 60px; /* 헤더 바로 아래에 위치 */
   left: 0; /* 왼쪽에 붙임 */
   z-index: 1000; /* 다른 요소들 위에 표시 */

@@ -1,114 +1,80 @@
 import axios from 'axios';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores/auth'; // auth 스토어 import
 
+// 백엔드 서버 주소를 환경 변수로 설정
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // 인증 관련 쿠키를 포함하여 요청 보냄
+  withCredentials: true, // 쿠키를 포함한 요청을 위해
 });
 
-// 토큰을 가져오는 함수
+// 토큰을 가져오는 헬퍼 함수
 const getToken = () => {
   const authStore = useAuthStore();
   const token = authStore.getToken();
   if (!token) {
-    // 토큰이 없으면 에러 발생
-    console.error('Authentication token is missing.');
-    throw new Error('Authentication token is missing. Please log in.');
+    throw new Error('인증 토큰이 없습니다. 로그인이 필요합니다.');
   }
   return token;
 };
 
-// 요청 인터셉터 설정
+// API 요청 전에 인증 헤더를 추가하는 인터셉터
 api.interceptors.request.use(
-  (config) => {
-    try {
-      const token = getToken(); // 토큰을 가져옴
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`; // Authorization 헤더 설정
+    (config) => {
+      try {
+        const token = getToken();
+        if (token) {
+          config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        console.log('요청 헤더:', config.headers);
+      } catch (error) {
+        console.error('인증 토큰 설정 중 오류 발생:', error);
       }
-    } catch (error) {
-      console.error('Error setting authentication token:', error.message); // 에러 메시지 출력
-      return Promise.reject(error); // 요청 실패로 처리
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
 );
 
-// TradeService 클래스 정의
 class TradeService {
-  // 거래 기록 조회
+  // 사용자 거래 기록을 가져오는 메서드
   async getUserTradeHistory() {
     try {
-      const response = await api.get(`/trade/history`);
-      return response.data;
+      const response = await api.get(`/trade/history`); // 경로 수정
+      return response.data; // 거래 기록 반환
     } catch (error) {
-      console.error(
-        'Error fetching trade history:',
-        error.response ? error.response.data : error.message
-      );
-      throw new Error(
-        'Failed to fetch trade history: ' +
-          (error.response?.data?.message || error.message)
-      );
+      throw new Error('거래 기록을 가져오는 데 실패했습니다: ' + error.message);
     }
   }
 
-  // 보유 주식 조회
-  async viewStockHeld() {
+  // 새로운 거래 기록을 추가하는 메서드
+  async addTradeRecord(record, tradeType) {
     try {
-      const response = await api.get(`/trade/held`);
-      return response.data;
+      const endpoint =
+          tradeType === 'buy' ? `/trade/stock/buy` : `/trade/stock/sell`; // 거래 유형에 따라 URL 변경
+      const response = await api.post(endpoint, record);
+      return response.data; // 추가된 거래 기록 반환
     } catch (error) {
-      console.error(
-        'Error fetching held stocks:',
-        error.response ? error.response.data : error.message
-      );
-      throw new Error(
-        'Failed to fetch held stocks: ' +
-          (error.response?.data?.message || error.message)
-      );
+      throw new Error('거래 기록을 추가하는 데 실패했습니다: ' + error.message);
     }
   }
 
-  // 주식 구매
-  async buyStock(record) {
-    try {
-      const response = await api.post(`/trade/stock/buy`, record);
-      console.log('Buy stock response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error(
-        'Error buying stock:',
-        error.response ? error.response.data : error.message
-      );
-      throw new Error(
-        'Failed to buy stock: ' +
-          (error.response?.data?.message || error.message)
-      );
-    }
+  async buyStock(stockData) {
+    const token = getToken();
+    const response = await api.post('/trade/stock/buy', stockData, {
+      headers: { Authorization: token },
+    });
+    return response.data;
   }
 
-  // 주식 판매
-  async sellStock(record) {
-    try {
-      const response = await api.post(`/trade/stock/sell`, record);
-      console.log('Sell stock response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error(
-        'Error selling stock:',
-        error.response ? error.response.data : error.message
-      );
-      throw new Error(
-        'Failed to sell stock: ' +
-          (error.response?.data?.message || error.message)
-      );
-    }
+  async sellStock(stockData) {
+    const token = getToken();
+    const response = await api.post('/trade/stock/sell', stockData, {
+      headers: { Authorization: token },
+    });
+    return response.data;
   }
 }
 
