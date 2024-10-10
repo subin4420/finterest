@@ -30,5 +30,7 @@
         <mapper resource="org/finterest/notice/mapper/noticeMapper.xml"/>
         <mapper resource="org/finterest/notice/mapper/adminNoticeMapper.xml"/>
         <mapper resource="org/finterest/quiz/mapper/adminQuizMapper.xml"/>
+        <mapper resource="org/finterest/adminChart/mapper/adminChartMapper.xml"/>
+
     </mappers>
 </configuration>
