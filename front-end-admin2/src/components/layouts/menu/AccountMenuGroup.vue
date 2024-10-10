@@ -15,8 +15,6 @@ const username = computed(() => auth.username);
 
 <template>
   <ul class="navbar-nav ms-auto">
-    <MenuItem :menu="myLearning" />
-    <MenuItem :menu="news" />
     
     <template v-if="islogin">
       <AccountMenuItem :username="username" />

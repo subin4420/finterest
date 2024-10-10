@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-  
     <h3>Notice</h3>
   </div>
 </template>
