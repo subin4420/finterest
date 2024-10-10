@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- 차트가 렌더링될 div에 ref 속성 추가 -->
     <div ref="chartDom" id="main" style="width: 800px; height: 600px"></div>
   </div>
 </template>
@@ -13,6 +12,7 @@ import {
   defineProps,
   toRef,
   onBeforeUnmount,
+  defineEmits,
 } from 'vue';
 import * as echarts from 'echarts';
 import { useTradeStore } from '@/stores/tradeStore';
@@ -28,7 +28,10 @@ const props = defineProps({
   selectStockCode: String,
 });
 
+const emit = defineEmits(['updatePrice']); // 이벤트 정의
+
 const stockCode = toRef(props, 'selectStockCode');
+const stockName = toRef(tradeStore, 'stockName'); // stockName 가져오기
 
 // 차트 데이터를 가공하는 함수
 const splitData = (rawData) => {
@@ -239,10 +242,12 @@ const renderChart = () => {
 
 // 실시간 데이터를 차트에 업데이트하는 함수
 const updateChartData = (newData) => {
-  // if (!newData) {return}
   data0.categoryData.push(newData[0]); // 시간
   data0.values.push([newData[1], newData[2], newData[3], newData[4]]); // 시가, 현재가, 저가, 고가
   data0.volumes.push(newData[5]); // 거래량 추가
+
+  // 현재가를 tradeStore에 저장 (newData[2] 사용)
+  tradeStore.setStockPrice(newData[2]); // newData[2]를 현재가로 사용
 
   if (myChart) {
     myChart.setOption({
@@ -344,10 +349,19 @@ const handleBidData = (e) => {
   const curPrice = parseFloat(bodyParts[2]); // 현재가 (실시간 데이터)
   const curVolume = parseFloat(bodyParts[12]); // 거래량을 숫자로 변환
 
-  console.log('현재가:', curPrice, 'StockCode: ', stockCode.value);
+  console.log('현재가:', curPrice, 'StockCode: ', stockCode.value); // 현재가와 주식 코드 출력
 
   // 현재가를 tradeStore에 저장
   tradeStore.setStockPrice(curPrice); // 현재가 업데이트
+
+  // 가격 유효성 검사 및 콘솔 출력
+  if (!isNaN(curPrice) && curPrice > 0) {
+    console.log('유효한 가격:', curPrice); // 유효한 가격 출력
+    emit('updatePrice', curPrice); // 현재가 이벤트 발생
+    console.log('emit 호출됨:', curPrice); // emit 호출 로그 추가
+  } else {
+    console.error('유효하지 않은 가격:', curPrice); // 유효하지 않은 가격 출력
+  }
 
   if (!deleyTime) {
     deleyTime = true;
@@ -372,7 +386,7 @@ const handleBidData = (e) => {
 
       console.log('누적 거래량: ', endVolume);
       console.log(
-        '차트 ���데이트 - 시가:',
+        '차트 데이트 - 시가:',
         savedStartPrice,
         '종가:',
         endCurPrice,
@@ -405,6 +419,7 @@ const handleBidData = (e) => {
 
 onMounted(() => {
   console.log('onMounted에서 받은 주식 코드:', stockCode.value);
+  console.log('선택된 주식 이름:', stockName.value); // stockName 출력
   renderChart(); // 초기 차트 렌더링
   loadChartData(stockCode.value); // 과거 데이터 로딩
   connectWebSocketForBid(stockCode.value); // 실시간 데이터 WebSocket 연결

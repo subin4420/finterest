@@ -80,17 +80,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useTradeStore } from '@/stores/tradeStore';
-import axios from 'axios';
 import TradeService from '@/services/tradeService'; // TradeService import
 
 const tradeStore = useTradeStore();
 const selectStockcode = computed(() => tradeStore.getSelectedStockCode);
 const price = computed(() => tradeStore.getStockPrice); // tradeStore에서 현재가 가져오기
+const stockName = computed(() => tradeStore.getStockName); // stockName 추가
 
 const isBuying = ref(true); // 구매/판매 토글 상태
 const amount = ref(1); // 구매 수량
 const availableFunds = ref(0); // 초기값을 0으로 설정
-const userId = 1; // 조회할 사용자 ID
 
 // API 요청 함수
 const viewStockHeld = async () => {
@@ -147,33 +146,44 @@ const handleOrder = async () => {
     console.log(
       `구매: ${price.value}원, ${amount.value}주, 총 금액: ${totalAmount.value}`
     );
+
+    const requestData = {
+      stockCode: selectStockcode.value,
+      stockName: stockName.value, // stockName 추가
+      price: Number(price.value), // 현재가를 숫자로 변환
+      quantity: amount.value,
+      totalPrice: totalAmount.value,
+    };
+    console.log('구매 요청 데이터:', requestData); // 요청 데이터 출력
+
     try {
-      const response = await axios.post('/api/trade/stock/buy', {
-        stockCode: selectStockcode.value,
-        price: price.value, // 현재가 사용
-        quantity: amount.value,
-        totalPrice: totalAmount.value,
-      });
+      const response = await TradeService.buyStock(requestData); // TradeService를 사용하여 요청
       console.log('서버 응답:', response.data);
     } catch (error) {
       console.error('구매 요청 중 오류 발생:', error);
+      console.error('응답 데이터:', error.response.data); // 응답 데이터 출력
     }
   } else {
-    console.log(`종목 코드: ${selectStockcode}`);
+    console.log(`종목 코드: ${selectStockcode.value}`);
     console.log(
       `판매: ${price.value}원, ${amount.value}주, 총 금액: ${totalAmount.value}`
     );
-    try {
-      const response = await axios.post('/api/trade/stock/sell', {
-        stockCode: selectStockcode.value,
-        price: price.value, // 현재가 사용
-        quantity: amount.value,
-        totalPrice: totalAmount.value,
-      });
 
+    const requestData = {
+      stockCode: selectStockcode.value,
+      stockName: stockName.value, // stockName 추가
+      price: Number(price.value), // 현재가를 숫자로 변환
+      quantity: amount.value,
+      totalPrice: totalAmount.value,
+    };
+    console.log('판매 요청 데이터:', requestData); // 요청 데이터 출력
+
+    try {
+      const response = await TradeService.sellStock(requestData); // TradeService를 사용하여 요청
       console.log('서버 응답:', response.data);
     } catch (error) {
-      console.error('구매 요청 중 오류 발생:', error);
+      console.error('판매 요청 중 오류 발생:', error);
+      console.error('응답 데이터:', error.response.data); // 응답 데이터 출력
     }
   }
 };

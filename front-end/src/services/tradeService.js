@@ -21,21 +21,21 @@ const getToken = () => {
 
 // API 요청 전에 인증 헤더를 추가하는 인터셉터
 api.interceptors.request.use(
-    (config) => {
-      try {
-        const token = getToken();
-        if (token) {
-          config.headers['Authorization'] = `Bearer ${token}`;
-        }
-        console.log('요청 헤더:', config.headers);
-      } catch (error) {
-        console.error('인증 토큰 설정 중 오류 발생:', error);
+  (config) => {
+    try {
+      const token = getToken();
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
       }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
+      console.log('요청 헤더:', config.headers);
+    } catch (error) {
+      console.error('인증 토큰 설정 중 오류 발생:', error);
     }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 class TradeService {
@@ -53,7 +53,7 @@ class TradeService {
   async addTradeRecord(record, tradeType) {
     try {
       const endpoint =
-          tradeType === 'buy' ? `/trade/stock/buy` : `/trade/stock/sell`; // 거래 유형에 따라 URL 변경
+        tradeType === 'buy' ? `/trade/stock/buy` : `/trade/stock/sell`; // 거래 유형에 따라 URL 변경
       const response = await api.post(endpoint, record);
       return response.data; // 추가된 거래 기록 반환
     } catch (error) {
@@ -62,17 +62,17 @@ class TradeService {
   }
 
   async buyStock(stockData) {
-    const token = getToken();
+    const token = getToken(); // 토큰 가져오기
     const response = await api.post('/trade/stock/buy', stockData, {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` }, // Authorization 헤더 추가
     });
     return response.data;
   }
 
   async sellStock(stockData) {
-    const token = getToken();
+    const token = getToken(); // 토큰 가져오기
     const response = await api.post('/trade/stock/sell', stockData, {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` }, // Authorization 헤더 추가
     });
     return response.data;
   }
