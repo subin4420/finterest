@@ -5,7 +5,7 @@
       <div class="turn-info">
         <!-- 현재 턴과 전체 턴을 표시 -->
         <span class="current-turn">{{
-          String(currentTurn).padStart(2, '0')
+          String(currentTurn).padStart(2, "0")
         }}</span>
         /<span class="total-turn">{{ totalTurn }}턴</span>
       </div>
@@ -104,10 +104,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, defineProps, watch } from 'vue';
-import axios from 'axios';
+import { ref, computed, onMounted, defineProps, watch } from "vue";
+import axios from "axios";
 
-const emit = defineEmits(['next-turn']);
+const emit = defineEmits(["next-turn"]);
 const turn = ref(0);
 const currentTurn = ref(1);
 const totalTurn = ref(50);
@@ -125,11 +125,11 @@ const props = defineProps({
 });
 
 const price = ref({
-  stck_bsop_date: '',
-  stck_oprc: '',
-  stck_clpr: '',
-  stck_lwpr: '',
-  stck_hgpr: '',
+  stck_bsop_date: "",
+  stck_oprc: "",
+  stck_clpr: "",
+  stck_lwpr: "",
+  stck_hgpr: "",
 });
 console.log(price.value.stck_oprc); // 시가를 출력
 
@@ -147,7 +147,7 @@ const assessedAssets = computed(() => {
 
 const currentData = async () => {
   try {
-    const response = await axios.get('/api/scenario/current');
+    const response = await axios.get("/api/scenario/current");
     const currentData = response.data;
     return {
       stck_bsop_date: currentData.stck_bsop_date,
@@ -157,13 +157,13 @@ const currentData = async () => {
       stck_hgpr: currentData.stck_hgpr,
     };
   } catch (error) {
-    console.error('Error fetching stock data:', error);
+    console.error("Error fetching stock data:", error);
     return {
-      stck_bsop_date: 'Unknown Date',
-      stck_oprc: 'Unknown Price',
-      stck_clpr: 'Unknown Price',
-      stck_lwpr: 'Unknown Price',
-      stck_hgpr: 'Unknown Price',
+      stck_bsop_date: "Unknown Date",
+      stck_oprc: "Unknown Price",
+      stck_clpr: "Unknown Price",
+      stck_lwpr: "Unknown Price",
+      stck_hgpr: "Unknown Price",
     };
   }
 };
@@ -209,31 +209,41 @@ const setMaxAmount = () => {
 const handleOrder = async () => {
   const total = totalAmount.value; // computed 속성은 .value로 접근
   if (isBuying.value) {
-    console.log('Buy');
+    console.log("Buy");
     if (availableFunds.value > total) {
       holdingAmount.value += total;
       availableFunds.value -= total;
       holdingStockAcount.value += amount.value;
+    } else {
+      // 실패 처리
+      console.error("보유 금액이 부족합니다. 거래를 진행할 수 없습니다.");
+      // 예외 발생을 원하는 경우
+      throw new Error("보유 금액이 부족합니다.");
     }
   } else {
-    console.log('sell');
-    if (holdingStockAcount.value > 0) {
+    console.log("sell");
+    if (holdingStockAcount.value >= amount.value) {
       holdingAmount.value -= total;
       availableFunds.value += total;
       holdingStockAcount.value -= amount.value;
+    } else {
+      // 실패 처리
+      console.error("매도하려는 수량이 현재 보유 수량보다 많습니다.");
+      // 예외 발생을 원하는 경우
+      throw new Error("보유 수량을 확인하세요.");
     }
   }
 };
 const currentStockPrice = () => {
-  console.log('현재 시가:', price.value.stck_oprc); // 다른 메서드에서 접근 가능
+  console.log("현재 시가:", price.value.stck_oprc); // 다른 메서드에서 접근 가능
 };
 
 const nextTurn = () => {
-  console.log('다음 턴');
+  console.log("다음 턴");
   if (currentTurn.value < totalTurn.value) {
     currentTurn.value++;
     console.log(currentTurn.value);
-    emit('next-turn', currentTurn.value); // 부모에게 이벤트 전달
+    emit("next-turn", currentTurn.value); // 부모에게 이벤트 전달
   }
 };
 
@@ -250,7 +260,7 @@ watch(
   () => props.stockData,
   (newData) => {
     if (newData && newData.length >= 5) {
-      console.log('Received stockData:', newData);
+      console.log("Received stockData:", newData);
       price.value.stck_bsop_date = newData[0];
       price.value.stck_oprc = newData[1];
       price.value.stck_clpr = newData[2];
@@ -263,13 +273,13 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type='number'] {
+input[type="number"] {
   -moz-appearance: textfield; /* Firefox용 */
 }
 /* 테두리 제거 */

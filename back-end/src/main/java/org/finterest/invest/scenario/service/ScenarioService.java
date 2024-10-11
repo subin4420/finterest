@@ -144,13 +144,19 @@ public class ScenarioService {
             effect = vo.getGlobalEffect();
         }
 
-        double randomFactor = (Math.random() * 2) - 1; // -5.00부터 5.00까지의 랜덤 값 생성
+        double randomFactor = (Math.random() * 3) - 1.5; // -1.5부터 1.5까지
+        double randomFactorLow = (Math.random() * 0.8) - 0.8; // -0.80부터 0까지
+        double randomFactorHigh = Math.random() * 0.8; // 0부터 0.80까지
 
         // 변동률 반영
-        double nextOprc = Double.parseDouble(curOprc) * (1 + (effect / 100)) * (1 + (randomFactor / 100));
+        double nextOprc = Double.parseDouble(curClpr) * (1 + (effect / 100)) * (1 + (randomFactor / 100)); // 차트 디자인을 위한 curClpr 객체 사용
         double nextClpr = Double.parseDouble(curClpr) * (1 + (effect / 100));
-        double nextLwpr = Double.parseDouble(curLwpr) * (1 + (effect / 100)) * (1 + (randomFactor / 100));
-        double nextHgpr = Double.parseDouble(curHgpr) * (1 + (effect / 100)) * (1 + (randomFactor / 100));
+
+        double maxValue = Math.max(nextOprc, nextClpr); // 더 큰 값
+        double minValue = Math.min(nextOprc, nextClpr); // 더 작은 값
+
+        double nextLwpr = minValue * (1 + (randomFactorLow / 100));
+        double nextHgpr = maxValue * (1 + (randomFactorHigh / 100));
 
         // 100의 자리에서 반올림
         nextOprc = Math.round(nextOprc / 100.0) * 100.0;

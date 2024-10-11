@@ -20,7 +20,11 @@
       </div>
     </div>
     <label for="purchase-price">거래 가격</label>
-    <input class="order-form__price" :value="price" readonly />
+    <input
+      class="order-form__price"
+      :value="isNaN(Number(price)) ? '0' : Number(price).toLocaleString()"
+      readonly
+    />
     <!-- 현재가를 표시 -->
 
     <label for="purchase-amount">거래 수량</label>
@@ -65,7 +69,9 @@
     <div class="order-form__state">
       <div class="order-form__state--line">
         <p>거래가능 금액</p>
-        <p>{{ availableFunds }} 원</p>
+        <p>
+          {{ isNaN(availableFunds) ? 0 : availableFunds.toLocaleString() }} 원
+        </p>
       </div>
       <div class="order-form__state--line">
         <p>총 금액</p>
@@ -78,11 +84,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useTradeStore } from '@/stores/tradeStore';
-import TradeService from '@/services/tradeService'; // TradeService import
-import auth from '@/router/auth';
-import { useAuthStore } from '@/stores/auth';
+import { ref, computed, onMounted } from "vue";
+import { useTradeStore } from "@/stores/tradeStore";
+import TradeService from "@/services/tradeService"; // TradeService import
+import auth from "@/router/auth";
+import { useAuthStore } from "@/stores/auth";
 
 const authStore = useAuthStore();
 
@@ -101,9 +107,9 @@ const viewStockHeld = async () => {
   try {
     const response = await TradeService.getUserFunds(); // 자산 정보 가져오기
     availableFunds.value = response.money; // API에서 가져온 money 값으로 설정
-    console.log('조회 성공:', response);
+    console.log("조회 성공:", response);
   } catch (error) {
-    console.error('조회 실패:', error);
+    console.error("조회 실패:", error);
   }
 };
 
@@ -158,16 +164,15 @@ const handleOrder = async () => {
       price: Number(price.value), // 현재가를 숫자로 변환
       quantity: amount.value,
       totalPrice: totalAmount.value,
-      
     };
-    console.log('구매 요청 데이터:', requestData); // 요청 데이터 출력
+    console.log("구매 요청 데이터:", requestData); // 요청 데이터 출력
 
     try {
       const response = await TradeService.buyStock(requestData); // TradeService를 사용하여 요청
-      console.log('서버 응답:', response.data);
+      console.log("서버 응답:", response.data);
     } catch (error) {
-      console.error('구매 요청 중 오류 발생:', error);
-      console.error('응답 데이터:', error.response.data); // 응답 데이터 출력
+      console.error("구매 요청 중 오류 발생:", error);
+      console.error("응답 데이터:", error.response.data); // 응답 데이터 출력
     }
   } else {
     console.log(`종목 코드: ${selectStockcode.value}`);
@@ -181,16 +186,15 @@ const handleOrder = async () => {
       price: Number(price.value), // 현재가를 숫자로 변환
       quantity: amount.value,
       totalPrice: totalAmount.value,
-      userId: userId, // user_id 추가
     };
-    console.log('판매 요청 데이터:', requestData); // 요청 데이터 출력
+    console.log("판매 요청 데이터:", requestData); // 요청 데이터 출력
 
     try {
       const response = await TradeService.sellStock(requestData); // TradeService를 사용하여 요청
-      console.log('서버 응답:', response.data);
+      console.log("서버 응답:", response.data);
     } catch (error) {
-      console.error('판매 요청 중 오류 발생:', error);
-      console.error('응답 데이터:', error.response.data); // 응답 데이터 출력
+      console.error("판매 요청 중 오류 발생:", error);
+      console.error("응답 데이터:", error.response.data); // 응답 데이터 출력
     }
   }
 };
@@ -199,17 +203,17 @@ onMounted(() => {
   viewStockHeld(); // 컴포넌트가 로드되면 API 요청을 실행
 });
 
-console.log('현재가:', price.value); // price가 업데이트될 때마다 로그 출력
+console.log("현재가:", price.value); // price가 업데이트될 때마다 로그 출력
 </script>
 
 <style lang="scss" scoped>
-input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type='number'] {
+input[type="number"] {
   -moz-appearance: textfield; /* Firefox용 */
 }
 /* 테두리 제거 */

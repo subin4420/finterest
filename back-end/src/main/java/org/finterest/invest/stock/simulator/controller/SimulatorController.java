@@ -39,6 +39,7 @@ public class SimulatorController {
     @PostMapping("/stock/buy")
     public ResponseEntity<String> buyStock(@RequestHeader("Authorization") String authToken, @RequestBody SimulatorVO vo) {
         Integer userId = tokenUtil.getUserIdFromToken(authToken);
+        vo.setUserId(userId);
         service.buyStock(vo);
         return new ResponseEntity<>("Trade buy stock successfully", HttpStatus.OK);
     }
@@ -46,6 +47,7 @@ public class SimulatorController {
     @PostMapping("/stock/sell")
     public ResponseEntity<String> sellStock(@RequestHeader("Authorization") String authToken, @RequestBody SimulatorVO vo) {
         Integer userId = tokenUtil.getUserIdFromToken(authToken);
+        vo.setUserId(userId);
         service.sellStock(vo);
         return new ResponseEntity<>("Trade sell stock successfully", HttpStatus.OK);
     }

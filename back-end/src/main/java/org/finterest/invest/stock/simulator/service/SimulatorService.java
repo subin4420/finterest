@@ -25,6 +25,7 @@ public class SimulatorService {
         // Long 변환 대신 BigDecimal 그대로 사용
         BigDecimal price = vo.getPrice();
         Long quantity = vo.getQuantity();
+        BigDecimal money = mapper.getUserMoney(vo.getUserId());
 
         // 현재 총 거래 금액 계산
         BigDecimal totalPrice = selectTotalPrice(vo.getStockCode(), vo.getUserId());
@@ -32,6 +33,10 @@ public class SimulatorService {
 
         // 현재 보유 수량 계산
         Long currentQuantity = selectTotalQuantity(vo.getStockCode(), vo.getUserId());
+
+        if (money.compareTo(currentTotalPrice) < 0) {
+            throw new IllegalArgumentException("보유 금액이 부족합니다.");
+        }
 
         // BigDecimal과 Long 연산
         vo.setTradeType("매수");
@@ -54,6 +59,10 @@ public class SimulatorService {
 
         // 현재 보유 수량 계산
         Long currentQuantity = selectTotalQuantity(vo.getStockCode(), vo.getUserId());
+
+        if (currentQuantity < quantity) {
+            throw new IllegalArgumentException("매도하려는 수량이 현재 보유 수량보다 많습니다.");
+        }
 
         // BigDecimal과 Long 연산
         vo.setTradeType("매도");
