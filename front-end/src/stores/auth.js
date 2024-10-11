@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
       console.error('로그인 실패:', error);
       throw error;
     }
-  };
+  };                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 
   const logout = () => {
     localStorage.clear();

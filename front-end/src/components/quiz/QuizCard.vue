@@ -1,7 +1,7 @@
 <template>
     <div class="content-card" @click="$emit('click', cardData)">
         <div class="image-wrapper">
-            <img :src="cardData.setImg || defaultImage" alt="썸네일 이미지" />
+            <img :src="QUIZ_IMG + cardData.setImg || defaultImage" alt="썸네일 이미지" />
         </div>
         <div class="card-info">
             <div class="category-score-wrapper">
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import { IMAGE_PATHS } from '@/constants/imagePaths';
 import { useQuizStore } from '@/stores/quizStore';
 export default {
     name: 'QuizCard',
@@ -36,6 +37,7 @@ export default {
     },
     data() {
         return {
+            QUIZ_IMG: IMAGE_PATHS.QUIZ_IMG,
             defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg'
         };
     },
