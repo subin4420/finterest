@@ -1,8 +1,11 @@
 <template>
   <div id="app">
     <ArchiveImage />
-    <ArchiveNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
-    
+    <ArchiveNavigationBar
+      @category-selected="filterByCategory"
+      :selectedCategory="selectedCategory"
+    />
+
     <!-- 학습 진행 상황 -->
     <div class="progress-section">
       <h3>전체 학습 진행률</h3>
@@ -39,11 +42,11 @@
     <div class="content-section">
       <h3>학습 자료</h3>
       <div class="content-grid">
-        <ArchiveCard 
-          v-for="archive in sortedAndFilteredTextArchives" 
-          :key="archive.materialId" 
+        <ArchiveCard
+          v-for="archive in sortedAndFilteredTextArchives"
+          :key="archive.materialId"
           :cardData="archive"
-          @click="handleCardClick(archive)" 
+          @click="handleCardClick(archive)"
         />
       </div>
     </div>
@@ -51,20 +54,20 @@
     <div class="content-section">
       <h3>영상 자료</h3>
       <div class="content-grid">
-        <ArchiveCard 
-          v-for="archive in sortedVideoArchives" 
-          :key="archive.materialId" 
-          :cardData="archive" 
-          @click="handleCardClick(archive)" 
+        <ArchiveCard
+          v-for="archive in sortedVideoArchives"
+          :key="archive.materialId"
+          :cardData="archive"
+          @click="handleCardClick(archive)"
         />
       </div>
     </div>
 
-    <ArchiveModal 
+    <ArchiveModal
       v-if="selectedCard && isModalVisible"
-      :isVisible="isModalVisible" 
-      :cardData="selectedCard" 
-      @update:isVisible="isModalVisible = $event" 
+      :isVisible="isModalVisible"
+      :cardData="selectedCard"
+      @update:isVisible="isModalVisible = $event"
     />
 
     <LoginRequiredModal
@@ -84,9 +87,9 @@ import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
 import ProgressBar from '@/components/common/ProgressBar.vue';
 import RecentActivityList from '@/components/archive/RecentActivityList.vue';
 import RecommendedArchives from '@/components/archive/RecommendedArchives.vue';
-import { onMounted, ref, computed } from "vue";
-import { useArchiveStore } from "@/stores/archiveStore";
-import { useAuthStore } from "@/stores/auth";
+import { onMounted, ref, computed } from 'vue';
+import { useArchiveStore } from '@/stores/archiveStore';
+import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -114,13 +117,28 @@ export default {
     const overallProgress = ref(0);
     const recentActivities = ref([
       { id: 1, type: 'study', text: '경제학 기초 학습', date: '2023-05-15' },
-      { id: 2, type: 'complete', text: '주식 투자 입문 완료', date: '2023-05-14' },
+      {
+        id: 2,
+        type: 'complete',
+        text: '주식 투자 입문 완료',
+        date: '2023-05-14',
+      },
       // ... 더 많은 활동 데이터
     ]);
 
     const recommendedArchives = ref([
-      { id: 1, title: '주식 시장의 이해', description: '주식 시장의 기본 개념을 배웁니다.', image: '/path/to/image1.jpg' },
-      { id: 2, title: '투자 전략 수립하기', description: '효과적인 투자 전략을 세우는 방법을 학습합니다.', image: '/path/to/image2.jpg' },
+      {
+        id: 1,
+        title: '주식 시장의 이해',
+        description: '주식 시장의 기본 개념을 배웁니다.',
+        image: '/path/to/image1.jpg',
+      },
+      {
+        id: 2,
+        title: '투자 전략 수립하기',
+        description: '효과적인 투자 전략을 세우는 방법을 학습합니다.',
+        image: '/path/to/image2.jpg',
+      },
       // ... 더 많은 추천 자료
     ]);
 
@@ -144,20 +162,24 @@ export default {
     const filteredTextArchives = computed(() => {
       if (!textArchives.value) return [];
       if (selectedCategory.value === '즐겨찾기') {
-        return textArchives.value.filter(archive => archive.favorite);
+        return textArchives.value.filter((archive) => archive.favorite);
       }
-      return selectedCategory.value 
-        ? textArchives.value.filter(archive => archive.categoryName === selectedCategory.value) 
+      return selectedCategory.value
+        ? textArchives.value.filter(
+            (archive) => archive.categoryName === selectedCategory.value
+          )
         : textArchives.value;
     });
 
     const filteredVideoArchives = computed(() => {
       if (!videoArchives.value) return [];
       if (selectedCategory.value === '즐겨찾기') {
-        return videoArchives.value.filter(archive => archive.favorite);
+        return videoArchives.value.filter((archive) => archive.favorite);
       }
-      return selectedCategory.value 
-        ? videoArchives.value.filter(archive => archive.categoryName === selectedCategory.value) 
+      return selectedCategory.value
+        ? videoArchives.value.filter(
+            (archive) => archive.categoryName === selectedCategory.value
+          )
         : videoArchives.value;
     });
 
@@ -183,7 +205,7 @@ export default {
     const sortedAndFilteredTextArchives = computed(() => {
       let result = sortedTextArchives.value;
       if (searchQuery.value) {
-        result = result.filter(archive => 
+        result = result.filter((archive) =>
           archive.title.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
       }
@@ -208,13 +230,13 @@ export default {
       router.push({ name: 'login' });
     }
 
-    return { 
-      sortedTextArchives, 
-      sortedVideoArchives, 
-      isModalVisible, 
-      selectedCard, 
-      handleCardClick, 
-      filterByCategory, 
+    return {
+      sortedTextArchives,
+      sortedVideoArchives,
+      isModalVisible,
+      selectedCard,
+      handleCardClick,
+      filterByCategory,
       selectedCategory,
       showLoginModal,
       goToLogin,
@@ -226,8 +248,8 @@ export default {
       recommendedArchives,
       sortedAndFilteredTextArchives,
     };
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -279,7 +301,11 @@ h3 {
   }
 }
 
-.progress-section, .recent-activity, .recommended-section, .search-bar, .sort-options {
+.progress-section,
+.recent-activity,
+.recommended-section,
+.search-bar,
+.sort-options {
   margin-bottom: 2rem;
   width: 80%;
   margin: 0 auto;

@@ -1,106 +1,120 @@
 <template>
-  <form class="order-form" @submit.prevent="handleOrder">
-    <h4>주문하기</h4>
-    <div class="turn-progress">
-      <div class="turn-info">
-        <!-- 현재 턴과 전체 턴을 표시 -->
-        <span class="current-turn">{{
-          String(currentTurn).padStart(2, '0')
-        }}</span>
-        /<span class="total-turn">{{ totalTurn }}턴</span>
-      </div>
-
-      <!-- 프로그레스 바 -->
-      <div class="progress-bar">
-        <div
-          class="progress"
-          :style="{ width: progressPercentage + '%' }"
-        ></div>
-      </div>
-
-      <!-- 다음 턴 버튼 -->
-      <div @click="nextTurn" class="next-turn-button">
-        <h6>다음 턴</h6>
-      </div>
-    </div>
-    <div class="order-form__togglebox">
-      <div class="order-form__togglebox--section">
-        <div
-          class="order-form__togglebox--purchase"
-          :class="{ selected: isBuying }"
-          @click="toggleBuySell(true)"
-        >
-          <div class="order-form__togglebox--purchase">구매</div>
+  <div class="order-container">
+    <form class="order-form" @submit.prevent="handleOrder">
+      <h4>주문하기</h4>
+      <div class="turn-progress">
+        <div class="turn-info">
+          <!-- 현재 턴과 전체 턴을 표시 -->
+          <span class="current-turn">{{
+            String(currentTurn).padStart(2, '0')
+          }}</span>
+          /<span class="total-turn">{{ totalTurn }}턴</span>
         </div>
-        <div
-          class="order-form__togglebox--sell"
-          :class="{ selected: !isBuying }"
-          @click="toggleBuySell(false)"
-        >
-          <div class="order-form__togglebox--sell">판매</div>
+
+        <!-- 프로그레스 바 -->
+        <div class="progress-bar">
+          <div
+            class="progress"
+            :style="{ width: progressPercentage + '%' }"
+          ></div>
+        </div>
+
+        <!-- 다음 턴 버튼 -->
+        <div @click="nextTurn" class="next-turn-button">
+          <h6>다음 턴</h6>
         </div>
       </div>
-    </div>
-    <label for="purchase-price">거래 가격</label>
-    <input class="order-form__price" :value="price.stck_oprc" readonly />
-
-    <label for="purchase-amount">거래 수량</label>
-    <div class="order-form__input">
-      <input class="no-border no-arrow" v-model.number="amount" type="number" />
-      <span> 주 </span>
-      <div class="order-form__amountbox">
-        <div class="order-form__amountbox--minus" @click="decreaseAmount">
-          -
+      <div class="order-form__togglebox">
+        <div class="order-form__togglebox--section">
+          <div
+            class="order-form__togglebox--purchase"
+            :class="{ selected: isBuying }"
+            @click="toggleBuySell(true)"
+          >
+            <b>구매</b>
+          </div>
+          <div
+            class="order-form__togglebox--sell"
+            :class="{ selected: !isBuying }"
+            @click="toggleBuySell(false)"
+          >
+            <b>판매</b>
+          </div>
         </div>
-        <div class="order-form__amountbox--plus" @click="increaseAmount">+</div>
       </div>
-    </div>
+      <label for="purchase-price">거래 가격</label>
+      <input class="order-form__price" :value="price.stck_oprc" readonly />
 
-    <div class="order-form__buttonbox">
-      <input
-        class="order-form__button"
-        type="button"
-        value="10%"
-        @click="setPercentage(10)"
-      />
-      <input
-        class="order-form__button"
-        type="button"
-        value="25%"
-        @click="setPercentage(25)"
-      />
-      <input
-        class="order-form__button"
-        type="button"
-        value="50%"
-        @click="setPercentage(50)"
-      />
-      <input
-        class="order-form__button"
-        type="button"
-        value="최대"
-        @click="setMaxAmount"
-      />
-    </div>
+      <label for="purchase-amount">거래 수량</label>
+      <div class="order-form__input">
+        <input class="no-border no-arrow" v-model.number="amount" type="number" :max="isBuying ? null : holdingStockAcount" />
+        <span> 주 </span>
+        <div class="order-form__amountbox">
+          <div class="order-form__amountbox--minus" @click="decreaseAmount">
+            -
+          </div>
+          <div class="order-form__amountbox--plus" @click="increaseAmount">+</div>
+        </div>
+      </div>
 
-    <div class="order-form__state">
-      <div class="order-form__state--line">
-        <p>거래가능 금액</p>
-        <p>
-          {{ isNaN(availableFunds) ? 0 : availableFunds.toLocaleString() }} 원
-        </p>
+      <div class="order-form__buttonbox">
+        <input
+          class="order-form__button"
+          type="button"
+          value="10%"
+          @click="setPercentage(10)"
+        />
+        <input
+          class="order-form__button"
+          type="button"
+          value="25%"
+          @click="setPercentage(25)"
+        />
+        <input
+          class="order-form__button"
+          type="button"
+          value="50%"
+          @click="setPercentage(50)"
+        />
+        <input
+          class="order-form__button"
+          type="button"
+          value="최대"
+          @click="setMaxAmount"
+        />
       </div>
-      <div class="order-form__state--line">
-        <p>총 금액</p>
-        <p>{{ isNaN(totalAmount) ? 0 : totalAmount.toLocaleString() }} 원</p>
+
+      <div class="order-form__state">
+        <div class="order-form__state--line">
+          <p>거래가능 금액</p>
+          <p>
+            {{ isNaN(availableFunds) ? 0 : availableFunds.toLocaleString() }} 원
+          </p>
+        </div>
+        <div class="order-form__state--line">
+          <p>총 금액</p>
+          <p>{{ isNaN(totalAmount) ? 0 : totalAmount.toLocaleString() }} 원</p>
+        </div>
+      </div>
+
+      <button type="submit">거래하기</button>
+    </form>
+
+    <!-- 보유 주식 수와 수익률 표시 -->
+    <div class="order-summary">
+      <div class="summary-card">
+        <div class="summary-item">
+          <p>보유 주식 수: <span class="highlight">{{ holdingStockAcount }} 주</span></p>
+        </div>
+        <div class="summary-item">
+          <p>수익률: <span :style="{ color: profitRate >= 0 ? 'red' : 'blue' }" class="highlight">{{ profitRate }}%</span></p>
+        </div>
+        <div class="summary-item">
+          <p>총 평가 금액: <span class="highlight">{{ isNaN(assessedAssets) ? 0 : assessedAssets.toLocaleString() }} 원</span></p>
+        </div>
       </div>
     </div>
-    <button type="submit">거래하기</button>
-    <div>
-      <p>총 평가자산</p>
-      <p>{{ isNaN(assessedAssets) ? 0 : assessedAssets.toLocaleString() }}</p>
-    </div>
-  </form>
+  </div>
 </template>
 
 <script setup>
@@ -180,14 +194,19 @@ const totalAmount = computed(() => {
   return validPrice * validAmount;
 });
 
-// 수량 증가/감소
+// 수량 증가/감소 수정
 const increaseAmount = () => {
-  amount.value++;
+  if (isBuying.value) {
+    amount.value++; // 구매 시 수량 증가
+  } else {
+    // 판매 시 보유 주식 수를 초과하지 않도록 설정
+    amount.value = Math.min(amount.value + 1, holdingStockAcount.value);
+  }
 };
 
 const decreaseAmount = () => {
   if (amount.value > 1) {
-    amount.value--;
+    amount.value--; // 수량 감소
   }
 };
 
@@ -205,7 +224,18 @@ const setMaxAmount = () => {
   amount.value = maxAmount;
 };
 
-// 주문 처리
+// 수익률 계산 수정
+const profitRate = computed(() => {
+  if (holdingStockAcount.value === 0) return 0; // 보유 주식이 없으면 수익률은 0
+  const purchasePrice = price.value.stck_oprc; // 거래 가격
+  const currentPrice = price.value.stck_clpr; // 현재 주가
+  if (purchasePrice && currentPrice) {
+    return ((currentPrice - purchasePrice) / purchasePrice * 100).toFixed(2); // 수익률 계산
+  }
+  return 0;
+});
+
+// 주문 처리 수정
 const handleOrder = async () => {
   const total = totalAmount.value; // computed 속성은 .value로 접근
   if (isBuying.value) {
@@ -217,10 +247,12 @@ const handleOrder = async () => {
     }
   } else {
     console.log('sell');
-    if (holdingStockAcount.value > 0) {
+    if (holdingStockAcount.value >= amount.value) { // 판매할 수 있는 주식 수 제한
       holdingAmount.value -= total;
       availableFunds.value += total;
       holdingStockAcount.value -= amount.value;
+    } else {
+      console.error('판매할 수 있는 주식 수가 부족합니다.'); // 에러 메시지
     }
   }
 };
@@ -483,4 +515,51 @@ input.no-border {
 .next-turn-button:hover {
   background-color: #e0e0e0;
 }
+
+.order-container {
+  display: flex;
+  gap: 20px; /* 주문 폼과 요약 사이의 간격 */
+  width: 100%; /* 전체 너비 사용 */
+}
+
+.order-form {
+  flex: 1; /* 주문 폼이 가능한 공간을 차지하도록 설정 */
+  background-color: #f9f9f9; /* 폼 배경 색상 */
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.summary-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.summary-card:hover {
+  transform: scale(1.02); /* 카드에 마우스 오버 시 확대 효과 */
+}
+
+.summary-item {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.highlight {
+  font-weight: normal;
+  font-size: 18px;
+  color: #333; /* 텍스트 색상 */
+}
+
+/* 기존 스타일 ... */
 </style>
