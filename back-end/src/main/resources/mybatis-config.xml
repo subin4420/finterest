@@ -18,6 +18,9 @@
         <package name="org.finterest.notice.domain"/>
         <package name="org.finterest.user.domain"/> <!-- User 관련 패키지 추가 -->
         <package name="org.finterest.invest.board.domain" />
+        <package name="org.finterest.invest.scenario.domain"/>
+        <package name="org.finterest.invest.portfolio.domain"/>
+
     </typeAliases>
 
     <mappers>
@@ -37,6 +40,8 @@
         <mapper resource="org/finterest/comment/mapper/CommentMapper.xml"/>
         <mapper resource="org/finterest/stock/overall/mapper/OverallMapper.xml"/>
         <mapper resource="org/finterest/stock/simulator/mapper/SimulatorMapper.xml"/>
+        <mapper resource="org/finterest/scenario/mapper/ScenarioMapper.xml" />
+        <mapper resource="org/finterest/invest/portfolio/mapper/PortfolioMapper.xml"/>
 
     </mappers>
 </configuration>

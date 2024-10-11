@@ -107,7 +107,7 @@ public class ChartService {
         return mapper.updateOauthToken(accessToken);
     }
 
-    String getOauthToken() {
+    public String getOauthToken() {
         return mapper.getOauthToken();
     }
 }

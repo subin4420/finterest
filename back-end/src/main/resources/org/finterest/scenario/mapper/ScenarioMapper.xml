@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.finterest.invest.scenario.mapper.ScenarioMapper">
+
+    <!-- 모든 시나리오 가져오기 -->
+    <select id="getAllScenarios" resultType="org.finterest.invest.scenario.domain.ScenarioVO">
+        SELECT
+            scenario_id AS scenarioId,
+            description,
+            market_sector AS marketSector,
+            stock_effect AS stockEffect,
+            global_effect AS globalEffect
+        FROM Scenario
+    </select>
+
+    <!-- 모든 시나리오 변환 가져오기 -->
+    <select id="getAllScenarioConversions" resultType="org.finterest.invest.scenario.domain.ScenarioConversionVO">
+        SELECT
+            id,
+            stock_name AS stockName,
+            initial_price AS initialPrice,
+            market_sector AS marketSector,
+            scenario_id AS scenarioId,
+            srtnCd AS srtnCd
+        FROM Scenario_Conversion
+    </select>
+
+    <select id="selectStockName"
+            parameterType="int"
+            resultType="String">
+        SELECT stock_name FROM scenario_conversion
+        WHERE id = #{randomId}
+    </select>
+
+    <select id="selectStockCode"
+            parameterType="int"
+            resultType="String">
+        SELECT srtnCd FROM scenario_conversion
+        WHERE id = #{randomId}
+    </select>
+    <select id="selectMarketSector"
+            parameterType="int"
+            resultType="String">
+        SELECT market_sector FROM scenario_conversion
+        WHERE id = #{randomId}
+    </select>
+    <select id="selectScenario"
+            parameterType="int"
+            resultType="org.finterest.invest.scenario.domain.ScenarioVO">
+        SELECT * FROM scenario
+        WHERE scenario_id = #{randomId}
+    </select>
+</mapper>

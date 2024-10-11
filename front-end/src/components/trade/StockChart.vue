@@ -247,6 +247,7 @@ const updateChartData = (newData) => {
   data0.volumes.push(newData[5]); // 거래량 추가
 
   // 현재가를 tradeStore에 저장 (newData[2] 사용)
+
   tradeStore.setStockPrice(newData[2]); // newData[2]를 현재가로 사용
 
   if (myChart) {

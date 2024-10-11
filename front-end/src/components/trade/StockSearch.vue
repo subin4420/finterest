@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { useTradeStore } from "@/stores/tradeStore"; // Pinia 스토어 가져오기
+import { useTradeStore } from '@/stores/tradeStore'; // Pinia 스토어 가져오기
 
 export default {
   props: {
@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      searchQuery: "",
+      searchQuery: '',
       filteredStockList: [],
     };
   },
@@ -80,14 +80,17 @@ export default {
     },
     selectStock(stock) {
       const tradeStore = useTradeStore();
+      // 주식 코드와 이름을 함께 설정
       tradeStore.setSelectedStockCode(stock.srtnCd);
-      console.log("선택된 주식 코드:", tradeStore.selectedStockCode);
+      tradeStore.setStockName(stock.itmsNm);
+      console.log('선택된 주식 코드:', tradeStore.selectedStockCode);
+      console.log('선택된 주식 이름:', tradeStore.stockName);
     },
     getLogoPath(stockCode) {
       return `/logos/${stockCode}.png`; // stockCode에 따라 경로를 설정
     },
     formatCurrency(amount) {
-      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
   },
   created() {
@@ -95,6 +98,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .search-list-container {
   border-radius: 10px; /* 전체 모서리 둥글게 */
@@ -112,7 +116,7 @@ export default {
   padding-top: 20px; /* padding-top 추가 */
 }
 
-input[type="text"] {
+input[type='text'] {
   width: 100%; /* 입력창이 컨테이너에 맞게 확장 */
   padding: 10px; /* padding 추가 */
   border: 1px solid #eaeaea; /* 테두리 추가 */
@@ -177,13 +181,10 @@ li:hover {
 
 .stock-name {
   font-weight: bold;
-  margin-right: auto; /* 오른쪽 여백을 자동으로 설정하여 종가와의 거리를 두게 함 */
 }
 
 .stock-end-price {
-  font-weight: bold;
-  font-size: 15px;
-  color: gray;
-  text-align: right; /* 오른쪽 정렬 */
+  font-size: 14px;
+  color: #333;
 }
 </style>

@@ -81,11 +81,16 @@
 import { ref, computed, onMounted } from 'vue';
 import { useTradeStore } from '@/stores/tradeStore';
 import TradeService from '@/services/tradeService'; // TradeService import
+import auth from '@/router/auth';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 const tradeStore = useTradeStore();
 const selectStockcode = computed(() => tradeStore.getSelectedStockCode);
 const price = computed(() => tradeStore.getStockPrice); // tradeStore에서 현재가 가져오기
 const stockName = computed(() => tradeStore.getStockName); // stockName 추가
+const userId = authStore.getUserId;
 
 const isBuying = ref(true); // 구매/판매 토글 상태
 const amount = ref(1); // 구매 수량
@@ -153,6 +158,7 @@ const handleOrder = async () => {
       price: Number(price.value), // 현재가를 숫자로 변환
       quantity: amount.value,
       totalPrice: totalAmount.value,
+      
     };
     console.log('구매 요청 데이터:', requestData); // 요청 데이터 출력
 
@@ -175,6 +181,7 @@ const handleOrder = async () => {
       price: Number(price.value), // 현재가를 숫자로 변환
       quantity: amount.value,
       totalPrice: totalAmount.value,
+      userId: userId, // user_id 추가
     };
     console.log('판매 요청 데이터:', requestData); // 요청 데이터 출력
 
