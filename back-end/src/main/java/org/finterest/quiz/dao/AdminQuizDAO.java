@@ -1,6 +1,7 @@
 package org.finterest.quiz.dao;
 
 import org.apache.ibatis.annotations.Param;
+import org.finterest.quiz.domain.vo.QuizSetsVO;
 import org.finterest.quiz.domain.vo.QuizVO;
 import org.finterest.quiz.mapper.AdminQuizMapper;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -17,6 +18,33 @@ public class AdminQuizDAO {
     public AdminQuizDAO(SqlSessionTemplate sqlSessionTemplate) {
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
+
+
+    // 1-1. 퀴즈 세트 생성
+    public void insertQuizSet(QuizSetsVO quizSetVO) {
+        sqlSessionTemplate.getMapper(AdminQuizMapper.class).insertQuizSet(quizSetVO);
+    }
+
+    // 1-2. 퀴즈 세트와 퀴즈 문제 연결
+    public void insertQuizSetQuestions(int setId, int quizId) {
+        sqlSessionTemplate.getMapper(AdminQuizMapper.class).insertQuizSetQuestions(setId, quizId);
+    }
+
+    // 2. 퀴즈 세트 조회
+    public List<QuizSetsVO> selectQuizSets(Integer categoryId){
+        return sqlSessionTemplate.getMapper(AdminQuizMapper.class).selectQuizSets(categoryId);
+    }
+
+    // 3. 퀴즈 세트 수정
+    public void updateQuizSet(QuizSetsVO quizSetsVO){
+        sqlSessionTemplate.getMapper(AdminQuizMapper.class).updateQuizSet(quizSetsVO);
+    }
+
+    // 3-2. 퀴즈 세트와 문제 연결 수정
+    public void updateQuizSetQuestions(int setId, int quizId){
+        sqlSessionTemplate.getMapper(AdminQuizMapper.class).updateQuizSetQuestions(setId, quizId);
+    }
+
 
     // 4. 퀴즈 세트 삭제
     public void deleteQuizSetResultsBySetId(int setId){

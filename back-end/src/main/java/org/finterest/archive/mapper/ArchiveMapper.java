@@ -41,6 +41,8 @@ public interface ArchiveMapper {
     // 학습 진행 상태(completed) 업데이트 (반환값을 int로 설정)
     int updateProgressStatus(@Param("userId") int userId, @Param("materialId") int materialId, @Param("status") String status);
 
+    void insertPoint(@Param("userId")int userId);
+
     // 학습 진행 상태 조회
     ProgressVO getProgressForUserAndMaterial(@Param("userId") int userId, @Param("materialId") int materialId);
     void insertProgress(@Param("userId") int userId, @Param("materialId") int materialId, @Param("status") String status, @Param("startedAt") String startedAt);

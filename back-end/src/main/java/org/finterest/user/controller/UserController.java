@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.finterest.common.util.UploadFiles;
+import org.finterest.point.service.PointService;
 import org.finterest.user.dto.*;
 import org.finterest.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
-
 
     @Value("${avatar.path}")  // application.properties에서 경로 주입
     private String avatarPath;

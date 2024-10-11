@@ -2,12 +2,28 @@ package org.finterest.quiz.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.finterest.quiz.domain.vo.QuizSetsVO;
 import org.finterest.quiz.domain.vo.QuizVO;
 
 import java.util.List;
 
 @Mapper
 public interface AdminQuizMapper {
+    // 1-1. 퀴즈 세트 생성
+    void insertQuizSet(QuizSetsVO quizSetVO);
+    // 1-2. 퀴즈 세트와 퀴즈 문제 연결
+    //void insertQuizSetQuestions(int setId, int quizId);
+    void insertQuizSetQuestions(@Param("setId") int setId, @Param("quizId") int quizId);
+
+    // 2. 퀴즈 세트 목록 조회 (카테고리별 필터링 가능)
+    List<QuizSetsVO> selectQuizSets(@Param("categoryId") Integer categoryId);
+
+    // 3. 퀴즈 세트 수정
+    void updateQuizSet(QuizSetsVO quizSetsVO);
+
+    // 3-2. 퀴즈 세트와 문제 연결 수정
+    void updateQuizSetQuestions(@Param("setId") int setId, @Param("quizId") int quizId);
+
 
     // 4. 퀴즈 세트 삭제
     void deleteQuizSetResultsBySetId(@Param("setId") int setId);

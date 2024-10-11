@@ -18,7 +18,11 @@ public class QuizSetsVO {
     private String categoryName;   // category_name
     private String createdAt;      // created_at
     private String updatedAt;      // updated_at
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // null 또는 빈 리스트일 경우 직렬화하지 않음
     private Integer userScore;  // 사용자가 해당 세트에서 얻은 점수 (로그인한 경우)
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // null 또는 빈 리스트일 경우 직렬화하지 않음
     private String completedAt;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // null 또는 빈 리스트일 경우 직렬화하지 않음

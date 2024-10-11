@@ -159,6 +159,14 @@
           AND material_id = #{materialId}
     </update>
 
+    <!-- 퀴즈 포인트 저장 -->
+    <insert id="insertPoint" parameterType="map">
+        INSERT INTO Points (user_id, source, points_change, created_at)
+        SELECT #{userId}, rule_id, points_awarded, NOW()
+        FROM Point_Rules
+        WHERE activity_name = '학습자료'
+    </insert>
+
     <!-- 특정 학습 자료와 사용자의 진행 상태 조회 -->
     <select id="getProgressForMaterialAndUser" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
         SELECT *

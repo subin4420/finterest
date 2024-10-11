@@ -21,6 +21,7 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     // application.properties에서 업로드 경로를 가져옴
     @Value("${upload.path}")
     private String location;
+
     final long MAX_FILE_SIZE = 1024 * 1024 * 10L;
     final long MAX_REQUEST_SIZE = 1024 * 1024 * 20L;
     final int FILE_SIZE_THRESHOLD = 1024 * 1024 * 5;
@@ -43,8 +44,9 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         // 경로 유효성 검사 및 디렉토리 생성
-        String a = "/Users/park/Desktop/upload";
-        System.out.println("location is "+location);
+        //String a = "/Users/park/Desktop/upload";
+        String a = "C:/finterest_img/upload";
+        System.out.println("location is "+a);
         File uploadDir = new File(a);
         if (!uploadDir.exists()) {
             boolean dirCreated = uploadDir.mkdirs();  // 디렉토리 생성
@@ -71,7 +73,7 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")  // 모든 경로에 대해 CORS 허용
-                .allowedOrigins("http://localhost:5173")  // 특정 도메인 허용
+                .allowedOrigins("http://localhost:5173", "hgkttp://localhost:5174")  // 특정 도메인 허용
                 .allowedMethods("GET", "POST", "PUT", "DELETE")  // 허용할 HTTP 메소드 지정
                 .allowedHeaders("*")  // 모든 헤더 허용
                 .allowCredentials(true);  // 인증 정보 허용

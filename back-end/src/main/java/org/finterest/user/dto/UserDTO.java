@@ -9,6 +9,7 @@ import org.finterest.security.account.domain.UserVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class UserDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date signupDate;  // 가입일
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
-    private Date lastLogin;  // 마지막 로그인 시간
+    private LocalDate lastLogin;  // 마지막 로그인 시간
     private int totalPoints;  // 누적 포인트 (Default: 0)
 
     MultipartFile avatar;  // 아바타 이미지

@@ -3,11 +3,44 @@
     <ArchiveImage />
     <ArchiveNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
     
+    <!-- 학습 진행 상황 -->
+    <div class="progress-section">
+      <h3>전체 학습 진행률</h3>
+      <ProgressBar :value="overallProgress" :max="100" />
+    </div>
+
+    <!-- 최근 학습 활동 -->
+    <div class="recent-activity">
+      <h3>최근 학습 활동</h3>
+      <recent-activity-list :activities="recentActivities" />
+    </div>
+
+    <!-- 추천 학습 자료 -->
+    <div class="recommended-section">
+      <h3>추천 학습 자료</h3>
+      <recommended-archives :archives="recommendedArchives" />
+    </div>
+
+    <!-- 검색 바 -->
+    <div class="search-bar">
+      <input v-model="searchQuery" placeholder="학습 자료 검색..." />
+    </div>
+
+    <!-- 정렬 옵션 -->
+    <div class="sort-options">
+      <select v-model="sortOption">
+        <option value="date">날짜순</option>
+        <option value="difficulty">난이도순</option>
+        <option value="popularity">인기순</option>
+      </select>
+    </div>
+
+    <!-- 기존 콘텐츠 섹션 -->
     <div class="content-section">
       <h3>학습 자료</h3>
       <div class="content-grid">
         <ArchiveCard 
-          v-for="archive in filteredTextArchives" 
+          v-for="archive in sortedAndFilteredTextArchives" 
           :key="archive.materialId" 
           :cardData="archive"
           @click="handleCardClick(archive)" 
@@ -19,7 +52,7 @@
       <h3>영상 자료</h3>
       <div class="content-grid">
         <ArchiveCard 
-          v-for="archive in filteredVideoArchives" 
+          v-for="archive in sortedVideoArchives" 
           :key="archive.materialId" 
           :cardData="archive" 
           @click="handleCardClick(archive)" 
@@ -48,6 +81,9 @@ import ArchiveNavigationBar from '@/components/archive/ArchiveNavigationBar.vue'
 import ArchiveCard from '@/components/archive/ArchiveCard.vue';
 import ArchiveModal from '@/components/archive/ArchiveModal.vue';
 import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
+import ProgressBar from '@/components/common/ProgressBar.vue';
+import RecentActivityList from '@/components/archive/RecentActivityList.vue';
+import RecommendedArchives from '@/components/archive/RecommendedArchives.vue';
 import { onMounted, ref, computed } from "vue";
 import { useArchiveStore } from "@/stores/archiveStore";
 import { useAuthStore } from "@/stores/auth";
@@ -60,7 +96,10 @@ export default {
     ArchiveCard,
     ArchiveModal,
     ArchiveNavigationBar,
-    LoginRequiredModal
+    LoginRequiredModal,
+    ProgressBar,
+    RecentActivityList,
+    RecommendedArchives,
   },
   setup() {
     const archiveStore = useArchiveStore();
@@ -70,6 +109,11 @@ export default {
     const selectedCard = ref({});
     const selectedCategory = ref(null);
     const showLoginModal = ref(false);
+    const searchQuery = ref('');
+    const sortOption = ref('date');
+    const overallProgress = ref(0);
+    const recentActivities = ref([]);
+    const recommendedArchives = ref([]);
 
     const { textArchives, videoArchives } = archiveStore;
 
@@ -108,13 +152,47 @@ export default {
         : videoArchives.value;
     });
 
+    const sortedTextArchives = computed(() => {
+      if (!filteredTextArchives.value) return [];
+      return [...filteredTextArchives.value].sort((a, b) => {
+        if (a.status === 'incomplete' && b.status !== 'incomplete') return -1;
+        if (b.status === 'incomplete' && a.status !== 'incomplete') return 1;
+        return 0;
+      });
+    });
+
+    const sortedVideoArchives = computed(() => {
+      if (!filteredVideoArchives.value) return [];
+      return [...filteredVideoArchives.value].sort((a, b) => {
+        if (a.status === 'incomplete' && b.status !== 'incomplete') return -1;
+        if (b.status === 'incomplete' && a.status !== 'incomplete') return 1;
+        return 0;
+      });
+    });
+
+    // 검색과 정렬을 적용한 계산된 속성
+    const sortedAndFilteredTextArchives = computed(() => {
+      let result = sortedTextArchives.value;
+      if (searchQuery.value) {
+        result = result.filter(archive => 
+          archive.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+        );
+      }
+      // 정렬 로직 구현
+      // ...
+      return result;
+    });
+
     function handleCardClick(archive) {
-      if (!authStore.isLogin) {  // isAuthenticated 대신 isLogin 사용
+      console.log('Card clicked:', archive);
+      console.log('Is user logged in?', authStore.isLogin);
+      if (!authStore.isLogin) {
         showLoginModal.value = true;
       } else {
         selectedCard.value = archive;
         isModalVisible.value = true;
       }
+      console.log('Modal visibility:', isModalVisible.value);
     }
 
     function goToLogin() {
@@ -122,15 +200,22 @@ export default {
     }
 
     return { 
-      filteredTextArchives, 
-      filteredVideoArchives, 
+      sortedTextArchives, 
+      sortedVideoArchives, 
       isModalVisible, 
       selectedCard, 
       handleCardClick, 
       filterByCategory, 
       selectedCategory,
       showLoginModal,
-      goToLogin
+      goToLogin,
+      authStore, // authStore를 템플릿에서 사용할 수 있도록 추가
+      searchQuery,
+      sortOption,
+      overallProgress,
+      recentActivities,
+      recommendedArchives,
+      sortedAndFilteredTextArchives,
     };
   }
 }
@@ -184,4 +269,12 @@ h3 {
     max-width: 100%;
   }
 }
+
+.progress-section, .recent-activity, .recommended-section, .search-bar, .sort-options {
+  margin-bottom: 2rem;
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* 추가 스타일 ... */
 </style>

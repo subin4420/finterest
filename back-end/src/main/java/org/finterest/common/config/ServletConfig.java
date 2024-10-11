@@ -17,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.finterest.user.controller",
         "org.finterest.point.controller",
         "org.finterest.notice.controller",
+        "org.finterest.adminChart.controller",
         //A_Team
         "org.finterest.invest.board.controller",
         "org.finterest.invest.stock.overall.controller",

@@ -36,4 +36,8 @@ public class PointDAO {
     public UserPointVO getUserById(@Param("userId") int userId){
         return sqlSessionTemplate.getMapper(PointMapper.class).getUserById(userId);
     }
+
+    public int insertPointForAttendance(int userId){
+        return sqlSessionTemplate.getMapper(PointMapper.class).insertPointHistory(userId);
+    }
 }

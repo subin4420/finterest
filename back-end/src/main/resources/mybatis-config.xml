@@ -31,6 +31,8 @@
         <mapper resource="org/finterest/notice/mapper/noticeMapper.xml"/>
         <mapper resource="org/finterest/notice/mapper/adminNoticeMapper.xml"/>
         <mapper resource="org/finterest/quiz/mapper/adminQuizMapper.xml"/>
+        <mapper resource="org/finterest/adminChart/mapper/adminChartMapper.xml"/>
+
 
         <mapper resource="org/finterest/board/mapper/BoardMapper.xml"/>
         <mapper resource="org/finterest/conversion/mapper/ConversionMapper.xml"/>

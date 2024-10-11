@@ -2,7 +2,7 @@
     <div class="content-card">
         <!-- 이미지 섹션 -->
         <div class="image-wrapper">
-            <img :src="cardData.materialImg || defaultImage" alt="썸네일 이미지" />
+            <img :src="ARCHIVE_IMAGE_PATHS+cardData.materialImg || defaultImage" alt="썸네일 이미지" />
             <button 
              v-if="showFavoriteButton"
             class="favorite-button" 
@@ -20,15 +20,15 @@
                 <div class="category-title">[{{ cardData.categoryName }}]</div>
                 <div v-if="cardData.status" :class="['status', statusClass]">{{ statusText }}</div>
             </div>
-            <div class="title">{{ cardData.title }}</div>
-            <p class="summary">{{ cardData.content }}</p>
+            <div class="title" v-html="cardData.title"></div>
+            <div class="summary" v-html="truncateContent(cardData.content)"></div>
         </div>
     </div>
 </template>
 
 <script>
 import { useArchiveStore } from '@/stores/archiveStore';
-
+import { IMAGE_PATHS } from '@/constants/imagePaths';
 export default {
     name: 'ArchiveCard',
     props: {
@@ -36,15 +36,16 @@ export default {
             type: Object,
             required: true
         },
-        showFavoriteButton: {   // 이 prop으로 favorite 버튼 표시 여부를 결정
+        showFavoriteButton: {
             type: Boolean,
             default: true
         }
     },
     data() {
         return {
-            defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg', // 대체 이미지 URL
-            isFavorite: this.cardData.favorite // 서버에서 즐겨찾기 여부 전달받음
+            ARCHIVE_IMAGE_PATHS: IMAGE_PATHS.ARCHIVE_IMG,
+            defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg',
+            isFavorite: this.cardData.favorite
         };
     },
     computed: {
@@ -87,11 +88,16 @@ export default {
                 await archiveStore.removeFromFavorites(this.cardData.materialId);
                 this.cardData.favorite = false; // UI에 즉시 반영
             }
+        },
+        truncateContent(content) {
+            // HTML 태그를 제거하고 텍스트만 추출
+            const plainText = content.replace(/<[^>]*>/g, '');
+            // 100자로 제한하고 말줄임표 추가
+            return plainText.length > 100 ? plainText.slice(0, 100) + '...' : plainText;
         }
     }
 };
 </script>
-
 
 <style scoped>
 .content-card {
@@ -246,5 +252,22 @@ export default {
     .summary {
         font-size: 10px; /* 작은 화면에서 글자 크기 줄임 */
     }
+}
+
+.title, .summary {
+    /deep/ h1, /deep/ h2, /deep/ h3 {
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.summary {
+    max-height: 3em; /* 3줄로 제한 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 </style>
