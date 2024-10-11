@@ -71,9 +71,7 @@
                       : conversionStore.userBalance.money
                   "
                 />
-                <div class="arrow-container">
-                  <i class="fas fa-arrow-down"></i>
-                </div>
+                <div class="arrow-container"></div>
                 <p class="conversion-result">
                   {{
                     conversionMode === 'pointsToMoney'
@@ -475,7 +473,7 @@ export default {
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   flex: 1;
-  margin: 0 10px;
+  margin: 25px 10px;
   transition: transform 0.3s;
 }
 
