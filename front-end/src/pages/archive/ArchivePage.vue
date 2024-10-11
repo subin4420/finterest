@@ -2,38 +2,6 @@
   <div id="app">
     <ArchiveImage />
     <ArchiveNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
-    
-    <!-- 학습 진행 상황 -->
-    <div class="progress-section">
-      <h3>전체 학습 진행률</h3>
-      <ProgressBar :value="overallProgress" :max="100" />
-    </div>
-
-    <!-- 최근 학습 활동 -->
-    <div class="recent-activity">
-      <h3>최근 학습 활동</h3>
-      <RecentActivityList :activities="recentActivities" />
-    </div>
-
-    <!-- 추천 학습 자료 -->
-    <div class="recommended-section">
-      <h3>추천 학습 자료</h3>
-      <RecommendedArchives :archives="recommendedArchives" />
-    </div>
-
-    <!-- 검색 바 -->
-    <div class="search-bar">
-      <input v-model="searchQuery" placeholder="학습 자료 검색..." />
-    </div>
-
-    <!-- 정렬 옵션 -->
-    <div class="sort-options">
-      <select v-model="sortOption">
-        <option value="date">날짜순</option>
-        <option value="difficulty">난이도순</option>
-        <option value="popularity">인기순</option>
-      </select>
-    </div>
 
     <!-- 기존 콘텐츠 섹션 -->
     <div class="content-section">
@@ -84,7 +52,7 @@ import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
 import ProgressBar from '@/components/common/ProgressBar.vue';
 import RecentActivityList from '@/components/archive/RecentActivityList.vue';
 import RecommendedArchives from '@/components/archive/RecommendedArchives.vue';
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { useArchiveStore } from "@/stores/archiveStore";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from 'vue-router';
@@ -112,11 +80,7 @@ export default {
     const searchQuery = ref('');
     const sortOption = ref('date');
     const overallProgress = ref(0);
-    const recentActivities = ref([
-      { id: 1, type: 'study', text: '경제학 기초 학습', date: '2023-05-15' },
-      { id: 2, type: 'complete', text: '주식 투자 입문 완료', date: '2023-05-14' },
-      // ... 더 많은 활동 데이터
-    ]);
+    const recentActivities = ref([]);
 
     const recommendedArchives = ref([
       { id: 1, title: '주식 시장의 이해', description: '주식 시장의 기본 개념을 배웁니다.', image: '/path/to/image1.jpg' },
@@ -130,11 +94,15 @@ export default {
       try {
         await archiveStore.fetchTextArchive();
         await archiveStore.fetchVideoArchive();
-        console.log('Text Archives:', textArchives.value);
-        console.log('Video Archives:', videoArchives.value);
+        await archiveStore.fetchRecentActivities();
+        recentActivities.value = archiveStore.recentActivities;
       } catch (error) {
-        console.error('Error during archive fetch:', error);
+        console.error('Error during data fetch:', error);
       }
+    });
+
+    watch(() => archiveStore.recentActivities, (newActivities) => {
+      recentActivities.value = newActivities;
     });
 
     const filterByCategory = (category) => {
@@ -192,6 +160,13 @@ export default {
       return result;
     });
 
+    const recentArchives = computed(() => {
+      const allArchives = [...sortedTextArchives.value, ...sortedVideoArchives.value];
+      return allArchives
+        .sort((a, b) => new Date(b.lastAccessedAt) - new Date(a.lastAccessedAt))
+        .slice(0, 4); // 최근 4개의 자료만 표시
+    });
+
     function handleCardClick(archive) {
       console.log('Card clicked:', archive);
       console.log('Is user logged in?', authStore.isLogin);
@@ -225,6 +200,7 @@ export default {
       recentActivities,
       recommendedArchives,
       sortedAndFilteredTextArchives,
+      recentArchives,
     };
   }
 }
@@ -235,7 +211,7 @@ h3 {
   font-size: 1.8rem; /* 폰트 크기를 조금 더 키워서 눈에 띄게 */
   font-weight: bold; /* 텍스트를 굵게 */
   color: #333; /* 짙은 회색으로 시각적으로 부드럽게 */
-  text-align: left; /* 텍스트를 중앙에 배치 */
+  text-align: left; /* 텍스트 중앙에 배치 */
   margin-bottom: 1.5rem; /* 제목 아래쪽에 간격 추가 */
   padding-bottom: 0.5rem; /* 제목과 카드 사이에 간격 */
   border-bottom: 2px solid #ccc; /* 제목 아래에 구분선 추가 */
@@ -283,6 +259,79 @@ h3 {
   margin-bottom: 2rem;
   width: 80%;
   margin: 0 auto;
+}
+
+.recent-materials {
+  margin-bottom: 2rem;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.recent-materials .content-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.recent-materials .content-grid > * {
+  flex: 1 1 calc(25% - 1rem);
+  max-width: calc(25% - 1rem);
+}
+
+@media (max-width: 1200px) {
+  .recent-materials .content-grid > * {
+    flex: 1 1 calc(50% - 1rem);
+    max-width: calc(50% - 1rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .recent-materials .content-grid > * {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+.summary-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.summary-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  border-bottom: none;
+}
+
+.recent-materials-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.recent-materials-list li {
+  padding: 0.5rem 0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.recent-materials-list li:hover {
+  background-color: #e9ecef;
+}
+
+.search-bar {
+  margin-top: 1rem;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
 }
 
 /* 추가 스타일 ... */

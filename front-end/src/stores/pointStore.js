@@ -52,6 +52,7 @@ const fetchTotalPoints = async () => {
   try {
     const data = await getTotalPoints(); // 누적 포인트 조회
     state.totalPoints = data.totalPoints;
+    console.log("누적 포인트: " + state.totalPoints);
   } catch (error) {
     console.error('Error fetching total points:', error);
   }

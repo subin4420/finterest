@@ -107,7 +107,7 @@ export default {
       { value: 'deducted', label: '차감' },
     ]);
 
-    // 현재 탭에 맞는 상태 목록 반환
+    // 현재 탭에 맞는 상 목록 반환
     const currentStatuses = computed(() => {
       if (activeTab.value === 'archive') {
         return learningStatuses.value;
@@ -431,4 +431,130 @@ h3{
 }
 
 /* 기타 스타일은 그대로 유지 */
+
+/* 반응형 스타일 수정 */
+@media (max-width: 1200px) {
+  .content-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar-container {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    padding: 0;
+  }
+
+  .list-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px 0;
+  }
+
+  .list-group-item {
+    flex: 0 0 auto;
+    margin: 5px;
+  }
+
+  .sidebar-link {
+    padding: 10px 15px;
+    margin: 0;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .sidebar-link.active::after {
+    display: none;
+  }
+
+  .content {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+  }
+
+  .points-summary, .money-summary {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+
+  .points-box, .money-box {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+  }
+
+  .points-title, .money-title {
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 10px;
+  }
+
+  .sidebar-container, .content {
+    padding: 15px;
+  }
+
+  .sidebar-link {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .tabs button {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .list-group {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-container, .content {
+    padding: 10px;
+  }
+
+  .sidebar-link {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .points-box, .money-box {
+    padding: 8px;
+  }
+
+  .points-title, .money-title {
+    font-size: 16px;
+  }
+
+  .points-value, .money-value {
+    font-size: 18px;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+  }
+
+  .tabs button {
+    font-size: 12px;
+    margin-right: 5px;
+  }
+}
 </style>
