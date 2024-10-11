@@ -14,6 +14,7 @@ import java.util.List;
 public class PointService {
     private final PointDAO pointDAO;
 
+
     @Autowired
     public PointService(PointDAO pointDAO) {
         this.pointDAO = pointDAO;
@@ -36,5 +37,8 @@ public class PointService {
         return pointDAO.getUserById(userId);
     }
 
+    public int insertPointForAttendance(int userId){
+        return pointDAO.insertPointForAttendance(userId);
+    }
 
 }

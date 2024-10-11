@@ -11,15 +11,13 @@
             </div>
             <div class="content-section">
                 <div class="title-section">
-                    <img :src="cardData.materialImg || defaultImage" alt="썸네일 이미지" />
+                    <img :src="IMAGE_PATHS.ARCHIVE_IMG + cardData.materialImg || defaultImage" alt="썸네일 이미지" />
                     <div class="title-info">
                         <h2>{{ cardData.title }}</h2>
                         <p><i class="fas fa-folder"></i> {{ cardData.categoryName }}</p>
                     </div>
                 </div>
-                <div class="archive-content">
-                    <p>{{ cardData.content }}</p>
-                </div>
+                <div class="archive-content" v-html="cardData.content"></div>
             </div>
             <button 
                 class="complete-button" 
@@ -34,6 +32,7 @@
 </template>
 
 <script>
+import { IMAGE_PATHS } from '@/constants/imagePaths';
 import { useArchiveStore } from '@/stores/archiveStore';
 
 export default {
@@ -46,6 +45,7 @@ export default {
     },
     data() {
         return {
+            IMAGE_PATHS,
             defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg'
         };
     },
@@ -220,8 +220,19 @@ img {
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
+/* HTML 태그 스타일링 */
+.archive-content :deep(h1),
+.archive-content :deep(h2),
+.archive-content :deep(h3) {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
 .complete-button {
     background-color: #00c4d1;
     color: white;
@@ -235,44 +246,45 @@ img {
     align-items: center;
     justify-content: center;
 }
-
-.complete-button:hover:not(:disabled) {
-    background-color: #00a8b3;
+.archive-content :deep(h1) {
+    font-size: 24px;
 }
 
-.complete-button.completed {
-    background-color: #95a5a6;
+.archive-content :deep(h2) {
+    font-size: 20px;
 }
 
-.complete-button:disabled {
-    opacity: 0.6;
-    cursor: default;
-    /* cursor: not-allowed; */
+.archive-content :deep(h3) {
+    font-size: 18px;
 }
 
-.complete-button i {
-    margin-right: 5px;
+.archive-content :deep(p) {
+    margin-bottom: 15px;
+    line-height: 1.6;
 }
 
+.archive-content :deep(ul),
+.archive-content :deep(ol) {
+    margin-bottom: 15px;
+    padding-left: 20px;
+}
+
+.archive-content :deep(li) {
+    margin-bottom: 5px;
+}
+
+/* 반응형 스타일 */
 @media (max-width: 768px) {
-    .modal-content {
-        width: 95%;
-        padding: 20px;
+    .archive-content :deep(h1) {
+        font-size: 22px;
     }
 
-    .title-section {
-        flex-direction: column;
-        align-items: flex-start;
+    .archive-content :deep(h2) {
+        font-size: 18px;
     }
 
-    .title-info {
-        margin-left: 0;
-        margin-top: 15px;
-    }
-
-    img {
-        width: 100%;
-        height: auto;
+    .archive-content :deep(h3) {
+        font-size: 16px;
     }
 }
 </style>

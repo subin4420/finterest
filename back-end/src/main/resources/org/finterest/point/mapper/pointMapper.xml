@@ -46,5 +46,14 @@
         WHERE user_id = #{userId}
     </select>
 
+    <!-- 출석 포인트 이력 추가 -->
+    <insert id="insertPointHistory" parameterType="int">
+        INSERT INTO Points (user_id, source, points_change, created_at)
+        VALUES (#{userId},
+                (SELECT rule_id FROM Point_Rules WHERE activity_name = '출석체크'),
+                (SELECT points_awarded FROM Point_Rules WHERE activity_name = '출석체크'),
+                NOW())
+    </insert>
+
 
 </mapper>

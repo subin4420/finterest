@@ -22,4 +22,6 @@ public interface PointMapper {
     int selectTotalMoney(@Param("userId") int userId);
 
     UserPointVO getUserById(@Param("userId") int userId);
+
+    int insertPointHistory(@Param("userId") int userId);
 }

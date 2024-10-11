@@ -32,7 +32,8 @@ public class UserVO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date updateDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private Date lastLogin;  // 마지막 로그인 시간
+    private LocalDate lastLogin;  // LocalDate 타입으로 변경
+
     private int totalPoints;  // 누적 포인트
 
     // 권한 목록, Join 처리 필요
