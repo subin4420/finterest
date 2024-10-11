@@ -1,0 +1,13 @@
+bfg-1.14.0.jar
+back-end/build.gradle
+back-end/.idea/gradle.xml
+back-end/.idea/misc.xml
+back-end/.idea/workspace.xml
+build/libs/backend-1.0-SNAPSHOT.war
+front-end/.env
+
+# Ignore specific files
+application.properties
+back-end/src/main/webapp/resources/assets/index-DNXDbxZM.js
+build/resources/main/application.properties
+front-end/.env

@@ -2,10 +2,24 @@
   <div class="chatbot-container" v-if="isOpen">
     <div class="chatbot-content">
       <div class="header">
-        <h5>Finterest 챗봇</h5>
+        <h5>Finterest AI 챗봇</h5>
         <br />
-        <h6>💬챗봇을 통해 문의를 해결해보세요!</h6>
-        <button class="close" @click="closeChatBot">&times;</button>
+        <h6>💬AI챗봇을 통해 문의를 해결해보세요!</h6>
+        <button class="close" @click="closeChatBot">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-chevron-down"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
+            />
+          </svg>
+        </button>
       </div>
       <div class="responses" ref="responsesContainer">
         <div
@@ -16,6 +30,12 @@
             'bot-message': msg.sender === 'bot',
           }"
         >
+          <div class="profile" v-if="index === messages.length - 1">
+            <img
+              src="@/assets/images/chatbot-image.png"
+              alt="@/assets/chatbot-image.png"
+            />
+          </div>
           <div>
             <span class="message-text">{{ msg.text }}</span>
           </div>
@@ -29,12 +49,26 @@
           <textarea
             ref="userInputArea"
             v-model="userInput"
-            placeholder="챗봇에게 물어보세요"
-            @keyup.enter="sendMessage"
+            placeholder="AI 챗봇에게 물어보세요"
             @input="resizeTextarea"
+            @keydown.enter.prevent="sendMessage"
           ></textarea>
           <button @click="sendMessage" class="send-button">
-            <span class="material-symbols-outlined"><b>⇧</b></span>
+            <span class="material-symbols-outlined"
+              ><b>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-send-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"
+                  />
+                </svg> </b
+            ></span>
           </button>
         </div>
       </div>
@@ -44,7 +78,7 @@
     class="chatbot-icon"
     v-if="!isOpen"
     @click="openChatBot"
-    src="@/assets/chatbot-icon.png"
+    src="../assets/chatbot-icon.png"
     alt="챗봇 열기"
   />
 </template>
@@ -53,6 +87,7 @@
 import axios from 'axios';
 
 export default {
+  emits: ['close'],
   data() {
     return {
       userInput: '',
@@ -64,6 +99,7 @@ export default {
   methods: {
     closeChatBot() {
       this.isOpen = false;
+      this.$emit('close');
     },
     openChatBot() {
       this.isOpen = true;
@@ -76,7 +112,10 @@ export default {
       });
     },
     async sendMessage() {
-      if (!this.userInput) return;
+      if (!this.userInput.trim()) {
+        console.error('사용자 입력이 없습니다.');
+        return;
+      }
 
       const message = {
         sender: 'user',
@@ -86,17 +125,31 @@ export default {
 
       this.messages.push(message);
       this.saveMessages();
+      console.log('사용자 입력:', this.userInput);
 
       try {
         const response = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
+          `/api/chatbot/ask/${this.userInput}`, //수정
           {
-            model: 'gpt-3.5-turbo',
-            messages: [{ role: 'user', content: this.userInput }],
+            model: 'gpt-4o',
+            messages: [
+              {
+                role: 'user',
+                query: this.userInput, // 사용자가 입력한 메시지
+              },
+            ],
           },
+          // {
+          //   query: this.userInput,
+          //   response_mode: 'streaming',
+          //   user: 'unique_user_id', // 유저 식별자 (유니크하게 설정 필요)
+          //   conversation_id:
+          //     this.messages.length > 1
+          //       ? this.messages[this.messages.length - 2].conversation_id
+          //       : undefined,
+          // },
           {
             headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`, // 환경 변수 사용
               'Content-Type': 'application/json',
             },
           }
@@ -104,14 +157,14 @@ export default {
 
         const botMessage = {
           sender: 'bot',
-          text: response.data.choices[0].message.content,
+          text: response.data || '답변을 가져오지 못했습니다.', //수정
           timestamp: this.getCurrentTime(),
         };
 
         this.messages.push(botMessage);
         this.saveMessages();
       } catch (error) {
-        console.error('챗봇 오류: ', error); // 수정된 부분
+        console.error('에러 발생:', error);
         this.messages.push({
           sender: 'bot',
           text: '챗봇 응답 오류가 발생했습니다.',
@@ -126,7 +179,7 @@ export default {
     sendGreeting() {
       const greetingMessage = {
         sender: 'bot',
-        text: '안녕하세요! Finterst 챗봇 입니다. 무엇을 도와드릴까요?',
+        text: '안녕하세요! Finterst 챗봇 입니다. 무엇을 도움드릴까요?',
         timestamp: this.getCurrentTime(),
       };
       this.messages.push(greetingMessage);
@@ -185,10 +238,10 @@ export default {
   position: fixed;
   bottom: 30px;
   right: 15px;
-  width: 350px;
-  height: 620px;
+  width: 400px;
+  height: 650px;
   background-color: white;
-  border-radius: 10px;
+  border-radius: 30px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
@@ -205,7 +258,6 @@ export default {
 .header {
   background: #00c4d1;
   color: white;
-
   justify-content: space-between;
   align-items: center;
   padding: 10px;
@@ -219,9 +271,12 @@ export default {
 }
 
 .close {
+  position: absolute;
+  left: 90%;
+  top: 1%;
   background: transparent;
   border: none;
-  font-size: 20px;
+  font-size: 30px;
   color: white;
   cursor: pointer;
 }
@@ -235,21 +290,31 @@ export default {
 }
 
 .user-message {
-  width: 250px;
-  background: #00c4d1;
-  color: white;
-  padding: 5px;
-  border-radius: 10px;
+  background: rgb(182, 218, 255);
+  color: rgb(36, 51, 66);
+  padding: 10px;
+  border-radius: 1.25rem 1.25rem 0;
   margin-bottom: 10px;
-  align-self: flex-end;
+  margin-top: 5px;
+  align-self: end;
+  position: relative;
+  max-width: 70%;
+  margin-right: 10px;
 }
 
 .bot-message {
   width: 250px;
-  background: darkgray;
+  background: rgb(233, 235, 237);
   padding: 5px;
-  border-radius: 5px 5px 0 0;
-  margin-bottom: 5px;
+  margin: 20px 20px 5px 40px;
+  border-radius: 0px 1.25rem 1.25rem;
+  position: relative;
+}
+
+.bot-message .profile {
+  position: absolute;
+  top: -23px;
+  left: -35px;
 }
 
 .timestamp {
@@ -261,7 +326,9 @@ export default {
 }
 
 .input-container {
+  position: relative;
   display: flex;
+  align-items: flex-end;
 }
 
 textarea {
@@ -272,20 +339,32 @@ textarea {
   border: 1px solid #ccc;
   padding: 10px;
   resize: none;
+  margin-right: -40px;
+  z-index: 1;
 }
 
 .send-button {
-  width: 85px;
-
+  position: absolute;
+  right: 15px;
+  bottom: 18px;
   background-color: #00c4d1;
   color: white;
   border: none;
-  border-radius: 3px;
+  border-radius: 7px;
   cursor: pointer;
-  margin-left: 10px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
 }
 
 .send-button:hover {
-  background-color: #3498db;
+  opacity: 0.8;
+}
+
+.profile img {
+  top: 30px;
+  left: 50px;
+  width: 40px;
+  height: 40px;
 }
 </style>

@@ -1,0 +1,10 @@
+# pack-refs with: peeled fully-peeled sorted 
+42afb973db0d10b0fb72c43aac43f12b8c3c3bc4 refs/heads/A_B_통합
+03c13c74bac47b687c98557be9c446fa913a0b24 refs/heads/A_Team
+3301c03dfe3d43d83ffd65a390cb84f66c0b0cbb refs/heads/B_Team
+6a80b059f3a65594bc4833ac66b14b6cb5c248ef refs/heads/B_Team_Security없는거
+4195503a3c4097125631b7aef3f31e2fd4097802 refs/heads/C_Team
+6653168da9789b55480499ee060caf553db5c519 refs/heads/dev
+4fd5bcec72f8f9450a97958d3d1dc0c352a4e3c0 refs/heads/main
+862e2a6023d3cd3da85ab1d37fd31c518fea7c78 refs/pull/1/head
+6f50e4f73b574f8bcfcd79ef1301961a8f10c695 refs/pull/2/head

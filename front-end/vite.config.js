@@ -24,10 +24,11 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+        secure: false,
       },
     },
   },
   build: {
-    outDir: 'C:/KB_Fullstack/09_Spring+Vue/scoula/backend/src/main/webapp/resources',
+    outDir: 'C:/finalProject/back-end/src/main/webapp/resources',
   },
 });

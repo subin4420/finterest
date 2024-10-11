@@ -24,7 +24,6 @@ public class AdminPointController {
         this.adminPointService = adminPointService;
     }
 
-
     // 포인트 적립/차감 내역 조회 및 전체 사용자 누적 포인트 조회 API
     @GetMapping("/points")
     public ResponseEntity<Map<String, Object>> getPoints(
@@ -35,6 +34,7 @@ public class AdminPointController {
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
             @RequestParam(value = "viewType", required = false, defaultValue = "summary") String viewType
     ) {
+
         Map<String, Object> response = new HashMap<>();
 
         if ("detail".equalsIgnoreCase(viewType)) {

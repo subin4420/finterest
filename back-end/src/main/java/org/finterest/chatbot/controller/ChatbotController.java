@@ -1,38 +1,39 @@
 package org.finterest.chatbot.controller;
 
-import org.finterest.chatbot.dto.OpenAiRequestDto;
-import org.finterest.chatbot.dto.UserMessageDto;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.finterest.chatbot.service.ChatbotService;
-import org.finterest.chatbot.vo.ChatbotResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
+
 @RestController
+@RequestMapping("/api/chatbot")
+@RequiredArgsConstructor
+@Slf4j
 public class ChatbotController {
-    private final ChatbotService chatbotService; // OpenAI API와 연결하는 서비스
 
-    public ChatbotController(ChatbotService chatbotService) {
-        this.chatbotService = chatbotService;
-    }
+    private final ChatbotService chatbotService;
 
-    @PostMapping("/chat")
-    public ResponseEntity<String> handleMessage(@RequestBody UserMessageDto userMessageDto){
-        try{
-            //OpenAiRequestDto 생성
-            OpenAiRequestDto requestDto = new OpenAiRequestDto(
-                    userMessageDto.getModel(), userMessageDto.getMessages()
-            );
 
-            // WebSocketSession은 REST 컨트롤러에서는 사용할 수 없으므로, null로 전달
-            ChatbotResponse response = chatbotService.processUserMessage(requestDto);
-            return new ResponseEntity<>(response.getResponse(), HttpStatus.OK);
+    @PostMapping("/ask/{query}")
+    public ResponseEntity<String> ask(@PathVariable String query) {
+        // 사용자 질문 = query
+        String stockPrice = chatbotService.getStockPrice(query);
 
-        } catch(Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>("서버 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        // HTTP 헤더에 Content-Type 설정 (한글)
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("text", "html", StandardCharsets.UTF_8)); // UTF-8 설정
+
+        // ResponseEntity로 응답 반환
+        return new ResponseEntity<>(stockPrice, headers, HttpStatus.OK);
     }
 }

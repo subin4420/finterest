@@ -1,0 +1,449 @@
+[33mcommit b1760ff3a4cd29a0c5e2da254e35cf9d13010d5a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mC_Team_Test[m[33m)[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Fri Oct 11 15:24:36 2024 +0900
+
+    feat: git ignore 업로드
+
+[33mcommit 549f716bcf0780896429ae15a796739d999e4ad3[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Fri Oct 11 15:22:22 2024 +0900
+
+    feat: 챗봇 function calling 구현
+
+[33mcommit 8dd83c26218301e2efce06376fa0086646967a76[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Fri Oct 11 13:46:17 2024 +0900
+
+    feat: chatbot function calling(실시간 미국 주가 정보 호출)
+
+[33mcommit c8c555aa9e654b3887482f1d52a8813d748a97d2[m[33m ([m[1;32mC_Team[m[33m)[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Fri Oct 11 13:19:04 2024 +0900
+
+    feat: 챗봇 실시간 주식 가격 function calling(미국 주식) 1차 완성
+
+[33mcommit 803702664c3870c6de7d90ec404955ea973591ac[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Tue Oct 8 18:01:57 2024 +0900
+
+    feat: RestAPI front, back 구현
+
+[33mcommit bc7baee8158f5de1f964d6657ad8a3e460084999[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Fri Oct 4 14:13:31 2024 +0900
+
+    feat: .gitignore파일에 env 파일 제외 코드 추가
+
+[33mcommit ee361f59505cd44c7e4837865db681797e1e6137[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Fri Oct 4 14:12:28 2024 +0900
+
+    feat: Remove .env file from tracking
+
+[33mcommit 77c10aeaad98f452bbe21433892a337d979d21f0[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Fri Oct 4 14:05:09 2024 +0900
+
+    feat: env 파일 api키 수정
+
+[33mcommit f5eac196f14287262dc4752400f63749e5f5d57c[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Tue Oct 1 17:33:13 2024 +0900
+
+    Revert "feat: env 파일 api키 수정"
+    
+    This reverts commit 1b52beb9d8f8d213ab4f20d9256b44d496e29250.
+
+[33mcommit 1b52beb9d8f8d213ab4f20d9256b44d496e29250[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Tue Oct 1 17:29:07 2024 +0900
+
+    feat: env 파일 api키 수정
+
+[33mcommit fe7d88586bde79a914d54aca1f2270bf68ed84cf[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Tue Oct 1 11:30:15 2024 +0900
+
+    feat: chatbot front 경로 수정(절대>상대) & 디자인 변경, backend ranking쪽 추가
+
+[33mcommit dd6c65bd4e6d9e6cc229ebbff90cf2e3ac49face[m[33m ([m[1;31morigin/C_Team[m[33m)[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 17:42:40 2024 +0900
+
+    del: 빌드파일 삭제
+
+[33mcommit 0bbebb31f4515ac84021ef88aa9c635c43af4024[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 17:40:16 2024 +0900
+
+    feat: 시큐리티 코드 우리 프로젝트에 맞춰서 일단 작성
+
+[33mcommit 081661b79f68541f608e8eda694df491672763b4[m
+Merge: 18e9402 30c4473
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Thu Sep 26 15:20:40 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    # Conflicts:
+    #       front-end/src/components/layouts/Header.vue
+    #       front-end/src/pages/myLearning/MyLearningPage.vue
+
+[33mcommit 18e9402606e91a9d97432701fde3748d8ef0b10a[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Thu Sep 26 14:52:06 2024 +0900
+
+    feat: myLearning 사이드바 기능 추가
+
+[33mcommit 30c4473034ddc941d95ad653705c1f7c66b09093[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 14:49:54 2024 +0900
+
+    feat: myLearningPage 수정
+
+[33mcommit e8e27bcf8e053f5e7ba2be96499dabab6f012fb5[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 14:09:35 2024 +0900
+
+    fix: 이미지 영어이름으로 바꾸고 동작할 수 있게 이미지 사용하는 코드들 수정
+
+[33mcommit ef5cc6205f78e8cdc1f7f97327c658a3c573d5d8[m
+Author: Moon Ji Eun <jieun7006@naver.com>
+Date:   Thu Sep 26 14:04:16 2024 +0900
+
+    fix 이미지 영문으로 변경
+
+[33mcommit f185b573ba7f6c910e84eec6a49356a5d5b57df2[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 13:56:42 2024 +0900
+
+    빌드 파일 삭제
+
+[33mcommit 4a2d2f392546b8837caa64e6ce94adecea8dafce[m
+Merge: 32d9e41 1b64949
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 13:39:39 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    * 'B_Team' of https://github.com/subin4420/finterest:
+      feat: Archive 사용자 jwt 기능 추가
+
+[33mcommit 32d9e414966afa57516970c2a607f7780ac2f9b5[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 13:39:30 2024 +0900
+
+    feat: 시큐리티 변경 시작 + 빌드 파일
+
+[33mcommit 1b6494922c61066a2423762b8f6320f42164377b[m
+Merge: 1119fab 22ebbc2
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Thu Sep 26 10:49:43 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+
+[33mcommit 1119fab2aed4b360385651d21e81fae81d1df500[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Thu Sep 26 10:49:30 2024 +0900
+
+    feat: Archive 사용자 jwt 기능 추가
+
+[33mcommit 22ebbc218abe894d6c953204af31e3835b00fc6b[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 10:37:00 2024 +0900
+
+    feat: 챗봇 기능과 통합(백엔드)
+
+[33mcommit f4dd9a9435e0b0984d59e2ded1ea6b0fb210a352[m
+Merge: 13b9e8a 0d7f720
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 09:54:08 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    * 'B_Team' of https://github.com/subin4420/finterest:
+      feat: point, point_rules, notice 사용자, 관리자 기능 추가
+
+[33mcommit 13b9e8a28a71e3f6d29056b8ec71d4fda43ebef3[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 26 09:54:04 2024 +0900
+
+    Feat: 학습, 퀴즈 페이지 카드형태 완성 + 카테고리 필터링
+
+[33mcommit 0d7f7207822c0537f68c6b22ee05967e9db267e9[m
+Merge: 8caab59 96cdce9
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Thu Sep 26 09:49:52 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+
+[33mcommit 8caab59f28332ee7ed392817f917b076d150465b[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Thu Sep 26 09:49:37 2024 +0900
+
+    feat: point, point_rules, notice 사용자, 관리자 기능 추가
+
+[33mcommit 96cdce9d7db3624de5dcdbdd07bd682e4961afa6[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Wed Sep 25 10:34:32 2024 +0900
+
+    feat: 프론트 파일 업로드 공통 컴포넌트와 아카이브 부분 하는 중
+
+[33mcommit 33b7518571e463f42fa84a0c2e128ca36082f6ee[m
+Merge: 9ed0008 9d21cef
+Author: subinPark <subin4420@gmail.com>
+Date:   Wed Sep 25 09:51:28 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    * 'B_Team' of https://github.com/subin4420/finterest:
+      refactor: 아카이브 오타 수정
+      feat: 사용자 퀴즈 기능 추가
+
+[33mcommit 9ed00088f086896fdda06cd4179249c68c8c1d99[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Wed Sep 25 09:51:18 2024 +0900
+
+    feat: user part
+
+[33mcommit 9d21cefeee1961bbc719458b02c52c1a9ad8a11d[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Tue Sep 24 22:13:03 2024 +0900
+
+    refactor: 아카이브 오타 수정
+
+[33mcommit bcedd5e3151ee86f8b3494204d9b75fe369f4e7c[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Tue Sep 24 15:27:34 2024 +0900
+
+    feat: 사용자 퀴즈 기능 추가
+
+[33mcommit 3816dea77006cc316a484cc61152abc750272ed4[m
+Merge: f0da0ca f838315
+Author: subinPark <subin4420@gmail.com>
+Date:   Mon Sep 23 16:01:40 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    * 'B_Team' of https://github.com/subin4420/finterest:
+      feat: 아카이브 관리자 기능 추가
+    
+    # Conflicts:
+    #       back-end/src/main/resources/mybatis-config.xml
+    #       back-end/src/main/resources/org/finterest/achieve/mapper/adminAchieveMapper.xml
+
+[33mcommit f0da0ca0cafe89f3e63eea19eb525a1f93510630[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Mon Sep 23 15:56:57 2024 +0900
+
+    feat: user 추가(get, getList, join만)
+
+[33mcommit f83831565916b6f2ed7508d9ef47059b4be78a62[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Mon Sep 23 15:30:04 2024 +0900
+
+    feat: 아카이브 관리자 기능 추가
+
+[33mcommit f0c7a234df95b443e016d1a204e2c4419c0be947[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Sun Sep 22 01:58:42 2024 +0900
+
+    feat: 아카이브 매퍼 수정
+
+[33mcommit ca1e96f0b5e184eaf848ee98cc343af6f8c2818a[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Sun Sep 22 01:08:35 2024 +0900
+
+    refactor: 아카이브, 퀴즈 불필요한 변수 제거 및 코드 정리
+
+[33mcommit 58f1acbf8858310d4b2cc2909ef6ed20c44ba4dc[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Sat Sep 21 16:02:09 2024 +0900
+
+    feat: 퀴즈 세트 기능 추가
+
+[33mcommit e08698689191bb0ddadd3bcf67b17fb6b170cd34[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Fri Sep 20 20:24:26 2024 +0900
+
+    feat: quiz_sets 기능 추가
+
+[33mcommit 120c2eb3f2125e5637e167c16c4564dd9602c0e7[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Fri Sep 20 17:07:58 2024 +0900
+
+    fix: 아카이브 매퍼 오류 수정
+
+[33mcommit 53763513c2f1cb3e26ea767cf4b33a9e5831f1ff[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Fri Sep 20 16:09:24 2024 +0900
+
+    feat: 아카이브 백엔드 기능
+
+[33mcommit 6635f30e0e50694ce4af19a69ac25b666b6cd4da[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Fri Sep 20 15:34:42 2024 +0900
+
+    feat: 아카이브 기능 추가
+
+[33mcommit bb3eef81b86074285d96bfb5cac7f5056dd6ab89[m
+Merge: 1aecad3 170d6c2
+Author: subinPark <subin4420@gmail.com>
+Date:   Fri Sep 20 15:32:18 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    * 'B_Team' of https://github.com/subin4420/finterest:
+      feat: archive select all 기능 추가
+
+[33mcommit 1aecad3c02b205381a60dfd82752ae6314e0c9cb[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Fri Sep 20 15:32:07 2024 +0900
+
+    spring 부분 돌아갈 수 있게 시큐리티 부분 없앰
+
+[33mcommit 170d6c2c55c3351ddf369922feb0215e8adea3a5[m
+Author: minjeongj0 <160578786+minjeongj0@users.noreply.github.com>
+Date:   Fri Sep 20 09:34:00 2024 +0900
+
+    feat: archive select all 기능 추가
+
+[33mcommit 2dae0853960002748c279af659d81f522b386828[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 14:31:37 2024 +0900
+
+    add 기본 파일 controller
+
+[33mcommit 91cf87e8c4fa34148447d819b1627cba14744623[m
+Merge: 473205e 89f568d
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 13:43:44 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    * 'B_Team' of https://github.com/subin4420/finterest:
+      refactor: ChangePassword.vue, FindPassword.vue, 정리
+
+[33mcommit 473205e92dd744149930a1c83cd7cd8be6c20bd1[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 13:43:40 2024 +0900
+
+    style scoped
+
+[33mcommit 89f568d774b545f0b36f6a1c140411d2b5a73dbb[m
+Author: minjeonj0 <whalswjd99@gmail.com>
+Date:   Thu Sep 19 13:37:54 2024 +0900
+
+    refactor: ChangePassword.vue, FindPassword.vue, 정리
+
+[33mcommit e1ae479825265171d10db079280c4240177ebab8[m
+Author: minjeonj0 <whalswjd99@gmail.com>
+Date:   Thu Sep 19 13:19:18 2024 +0900
+
+    refactor: Header, index.js, MyLearning, NoticeBoard, ProfileSetting, Archive
+
+[33mcommit c3b0c7539ccadd444efe78a973d068cebf7c592b[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 11:28:46 2024 +0900
+
+    add: PasswordMissmatchException.java
+    fix: RestExceptionAdvice.java 의 import 경로 수정(PasswordMissmatchExcption)
+
+[33mcommit 3c90cb2a3049575e16d851cae2610c7c44ab32bc[m
+Merge: 9065442 0a7d9bf
+Author: minjeonj0 <whalswjd99@gmail.com>
+Date:   Thu Sep 19 11:20:58 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    # Conflicts:
+    #       front-end/src/main.js
+
+[33mcommit 90654424d082b5bdfa475aaf894034b7fca04bc8[m
+Author: minjeonj0 <whalswjd99@gmail.com>
+Date:   Thu Sep 19 11:17:25 2024 +0900
+
+    feat: 비밀번호 찾기, 비밀번호 UI 구현
+
+[33mcommit 0a7d9bff12407b843db8a950f5253127b179cc02[m
+Merge: 6f313d9 247003f
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 11:16:02 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+    
+    * 'B_Team' of https://github.com/subin4420/finterest:
+      feat: 로그인, 회원가입, 비밀번호 찾기 UI 구현
+
+[33mcommit 6f313d9f3357e996b9e2a54996ed4cbc4d89e915[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 11:14:24 2024 +0900
+
+    add vuetify config
+
+[33mcommit 4aacfe71474563bc25fd173819244f52644db009[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 11:13:43 2024 +0900
+
+    add backend spring legacy directory structure
+
+[33mcommit 247003fda63fa7fe535154d756cf0462fd582952[m
+Author: minjeonj0 <whalswjd99@gmail.com>
+Date:   Thu Sep 19 10:41:33 2024 +0900
+
+    feat: 로그인, 회원가입, 비밀번호 찾기 UI 구현
+
+[33mcommit 7d0e1daafa31a0923ab40ec9d60b938153a2a1f5[m
+Merge: 412ff81 3b662d5
+Author: minjeonj0 <whalswjd99@gmail.com>
+Date:   Thu Sep 19 10:00:53 2024 +0900
+
+    Merge branch 'B_Team' of https://github.com/subin4420/finterest into B_Team
+
+[33mcommit 412ff8109bbcf5f69f350f92f3a68fabe10c2bf1[m
+Author: minjeonj0 <whalswjd99@gmail.com>
+Date:   Thu Sep 19 10:00:45 2024 +0900
+
+    color change
+
+[33mcommit 3b662d589259385cfa3c39834c39053476e3887f[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 09:59:46 2024 +0900
+
+    add: 로그인 화면에 Header, Footer 안 나오게 수정
+
+[33mcommit ccad7160467b932b4f73e5f200e81b4159e02a32[m
+Author: minjeonj0 <whalswjd99@gmail.com>
+Date:   Thu Sep 19 09:39:55 2024 +0900
+
+    hhvh
+
+[33mcommit 6148f05ccd7f35c78ca703b87036beac91af31a7[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 09:33:14 2024 +0900
+
+    gitignore 올림
+
+[33mcommit 19ffb99f719bbdafdee01ee5e71ada7cb9e8842c[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 09:27:23 2024 +0900
+
+    add userStore.js
+
+[33mcommit 7bfb61d3d550303984c34bf8d08508fdb0673920[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Thu Sep 19 09:22:27 2024 +0900
+
+    프로젝트 디렉토리 삭제 바로 front-end폴더에 넣었음
+
+[33mcommit e064e94fe925df25ea875e63dd7ac9613147d2b4[m
+Author: subinPark <subin4420@gmail.com>
+Date:   Wed Sep 18 18:24:38 2024 +0900
+
+    add front template
+
+[33mcommit 9434368eb67fcdc3585b95998af59ffd142236a5[m
+Author: subin4420 <62369723+subin4420@users.noreply.github.com>
+Date:   Wed Sep 18 18:16:29 2024 +0900
+
+    Initial commit
