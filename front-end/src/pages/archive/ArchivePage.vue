@@ -12,13 +12,13 @@
     <!-- 최근 학습 활동 -->
     <div class="recent-activity">
       <h3>최근 학습 활동</h3>
-      <recent-activity-list :activities="recentActivities" />
+      <RecentActivityList :activities="recentActivities" />
     </div>
 
     <!-- 추천 학습 자료 -->
     <div class="recommended-section">
       <h3>추천 학습 자료</h3>
-      <recommended-archives :archives="recommendedArchives" />
+      <RecommendedArchives :archives="recommendedArchives" />
     </div>
 
     <!-- 검색 바 -->
@@ -112,8 +112,17 @@ export default {
     const searchQuery = ref('');
     const sortOption = ref('date');
     const overallProgress = ref(0);
-    const recentActivities = ref([]);
-    const recommendedArchives = ref([]);
+    const recentActivities = ref([
+      { id: 1, type: 'study', text: '경제학 기초 학습', date: '2023-05-15' },
+      { id: 2, type: 'complete', text: '주식 투자 입문 완료', date: '2023-05-14' },
+      // ... 더 많은 활동 데이터
+    ]);
+
+    const recommendedArchives = ref([
+      { id: 1, title: '주식 시장의 이해', description: '주식 시장의 기본 개념을 배웁니다.', image: '/path/to/image1.jpg' },
+      { id: 2, title: '투자 전략 수립하기', description: '효과적인 투자 전략을 세우는 방법을 학습합니다.', image: '/path/to/image2.jpg' },
+      // ... 더 많은 추천 자료
+    ]);
 
     const { textArchives, videoArchives } = archiveStore;
 
