@@ -17,7 +17,8 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.finterest.user.controller",
         "org.finterest.invest.conversion.controller",
         "org.finterest.invest.comment.controller",
-        "org.finterest.invest.scenario.controller"
+        "org.finterest.invest.scenario.controller",
+        "org.finterest.invest.portfolio.controller"
 })
 public class ServletConfig  implements WebMvcConfigurer {
 

@@ -267,6 +267,7 @@ const loadChartData = async (selectStockcode) => {
   console.log(selectStockcode);
   try {
     const pastData = await axios.get(`/api/chart/data/${selectStockcode}`); // 비동기 데이터 수신을 기다림
+    tradeStore.savedStartPrice(pastData.data[29][2]); // 시간 외 거래를 위한 당일 종가 가격 저장
     const formattedData = pastData.data.map((data) => [
       data[0], // 시간
       data[1], // 시가
