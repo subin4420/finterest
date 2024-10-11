@@ -8,6 +8,7 @@ const state = reactive({
 
   textArchives: [], // 텍스트 자료
   videoArchives: [], // 비디오 자료
+  recentActivities: [], // 빈 배열로 초기화
 });
 
 // text 자료 조회
@@ -68,9 +69,6 @@ const fetchAllArchives = async (type, categoryId, favorites) => {
   }
 };
 
-
-
-
 // 완료된 자료만 조회
 const fetchCompletedArchives = async () => {
   try {
@@ -91,6 +89,57 @@ const fetchInProgressArchives = async () => {
   }
 };
 
+// 최근 활동 조회
+const fetchRecentActivities = async () => {
+  try {
+    const data = await getArchiveProgress();
+    console.log('Raw data from getArchiveProgress:', data);
+
+    const processedActivities = data.progress
+      .filter(item => item.status !== null)
+      .map(item => {
+        let type, date;
+        if (item.status === 'completed') {
+          type = 'complete';
+          date = item.completedAt;
+        } else if (item.status === 'incomplete') {
+          type = 'study';
+          date = item.startedAt;
+        } else {
+          type = 'start';
+          date = item.startedAt;
+        }
+        return {
+          id: item.materialId,
+          type: type,
+          text: item.title,
+          date: date
+        };
+      })
+      .sort((a, b) => new Date(b.date) - new Date(a.date)); // 날짜 기준 내림차순 정렬
+    
+    state.recentActivities = processedActivities;
+    console.log('Processed recent activities:', state.recentActivities);
+  } catch (error) {
+    console.error('Error fetching recent activities:', error);
+    state.recentActivities = [];
+  }
+};
+
+// 전체 학습 진행률 계산
+const calculateOverallProgress = async () => {
+  try {
+    const data = await getArchiveProgress();
+    const totalArchives = data.progress.length;
+    const completedArchives = data.progress.filter(item => item.status === 'completed').length;
+    
+    const progress = totalArchives > 0 ? (completedArchives / totalArchives) * 100 : 0;
+    return Math.round(progress); // 소수점 반올림
+  } catch (error) {
+    console.error('Error calculating overall progress:', error);
+    return 0;
+  }
+};
 
 // 즐겨찾기 추가
 const addToFavorites = async (materialId) => {
@@ -167,5 +216,7 @@ export const useArchiveStore = () => {
 
     fetchTextArchive,  // 텍스트 자료 조회 함수 내보내기
     fetchVideoArchive, // 비디오 자료 조회 함수 내보내기
+    fetchRecentActivities, // 새로운 함수 추가
+    calculateOverallProgress, // 새로운 함수 추가
   };
 };
