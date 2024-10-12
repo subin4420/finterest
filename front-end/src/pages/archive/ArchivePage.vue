@@ -46,7 +46,14 @@
     </div>
 
     <ArchiveModal 
-      v-if="selectedCard && isModalVisible"
+      v-if="selectedCard && isModalVisible && !isVideoContent(selectedCard)"
+      :isVisible="isModalVisible" 
+      :cardData="selectedCard" 
+      @update:isVisible="isModalVisible = $event" 
+    />
+
+    <VideoModal 
+      v-if="selectedCard && isModalVisible && isVideoContent(selectedCard)"
       :isVisible="isModalVisible" 
       :cardData="selectedCard" 
       @update:isVisible="isModalVisible = $event" 
@@ -69,6 +76,7 @@ import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
 import ProgressBar from '@/components/common/ProgressBar.vue';
 import RecentActivityList from '@/components/archive/RecentActivityList.vue';
 import RecommendedArchives from '@/components/archive/RecommendedArchives.vue';
+import VideoModal from '@/components/archive/VideoModal.vue';
 import { onMounted, ref, computed, watch } from "vue";
 import { useArchiveStore } from "@/stores/archiveStore";
 import { useAuthStore } from "@/stores/auth";
@@ -85,6 +93,7 @@ export default {
     ProgressBar,
     RecentActivityList,
     RecommendedArchives,
+    VideoModal,
   },
   setup() {
     const archiveStore = useArchiveStore();
@@ -184,6 +193,11 @@ export default {
         .slice(0, 4); // 최근 4개의 자료만 표시
     });
 
+    const isVideoContent = (archive) => {
+      // YouTube ID 형식 확인 (11자리 문자열)
+      return archive.materialImg && archive.materialImg.length === 11;
+    };
+
     function handleCardClick(archive) {
       console.log('Card clicked:', archive);
       console.log('Is user logged in?', authStore.isLogin);
@@ -221,6 +235,7 @@ export default {
       sortedAndFilteredTextArchives,
       recentArchives,
       activeTab,
+      isVideoContent,
     };
   }
 }
