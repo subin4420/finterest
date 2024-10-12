@@ -44,8 +44,8 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         // 경로 유효성 검사 및 디렉토리 생성
-        //String a = "/Users/park/Desktop/upload";
-        String a = "C:/finterest_img/upload";
+        String a = "/Users/park/Desktop/upload";
+        //String a = "C:/finterest_img/upload";
         System.out.println("location is "+a);
         File uploadDir = new File(a);
         if (!uploadDir.exists()) {
