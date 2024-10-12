@@ -21,7 +21,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-sm navbar-dark">
+  <nav class="navbar navbar-expand-sm navbar-dark" :style="{ backgroundColor: backgroundColor + ' !important' }">
     <div class="container-fluid">
       <router-link class="navbar-brand" to="/">
         <img :src="logoTransparentImage" alt="Logo" class="logo-image">
@@ -45,7 +45,7 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
   left: 0;
   right: 0;
   z-index: 1030;
-  background-color: backgroundColor; /* props로 색상 설정 */
+  background-color: v-bind(backgroundColor) !important;
   padding: 10px 15px; /* 패딩 조정 */
   border-bottom: 1px solid rgba(240, 240, 240, 0.4); /* 연한 회색 */  
   height: 60px; /* 고정 높이 설정 */

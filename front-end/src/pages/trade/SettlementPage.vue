@@ -44,7 +44,7 @@
 
 <script>
 import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vue';
-import TradeService from '@/services/TradeService'; // TradeService import 추가
+import TradeService from '@/services/tradeService'; // TradeService import 추가
 import { ref, onMounted } from 'vue';
 
 export default {
@@ -108,10 +108,13 @@ export default {
   flex: 1;
   margin-left: 250px;
   padding: 20px;
+  background-color: #f9f9f9; /* 배경색 추가 */
+  border-radius: 8px; /* 모서리 둥글게 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
 }
 
 .page-title {
-  font-size: 1.8rem;
+  font-size: 2rem; /* 제목 크기 증가 */
   font-weight: bold;
   color: #333;
   text-align: left;
@@ -124,25 +127,28 @@ export default {
   width: 100%; /* 테이블 너비 100% */
   border-collapse: collapse; /* 테두리 겹침 제거 */
   margin-top: 20px; /* 상단 여백 추가 */
+  border-radius: 8px; /* 테이블 모서리 둥글게 */
+  overflow: hidden; /* 모서리 둥글게 하기 위해 overflow hidden */
 }
 
 .trade-history-table th,
 .trade-history-table td {
   border: 1px solid #ddd; /* 테두리 추가 */
-  padding: 10px; /* 패딩 추가 */
+  padding: 12px; /* 패딩 증가 */
   text-align: left; /* 텍스트 왼쪽 정렬 */
 }
 
 .trade-history-table th {
-  background-color: #f2f2f2; /* 헤더 배경색 */
+  background-color: #2e78e0; /* 헤더 배경색 */
+  color: white; /* 헤더 글씨 색상 */
   font-weight: bold; /* 헤더 글씨 두껍게 */
 }
 
 .trade-history-table tr:nth-child(even) {
-  background-color: #f9f9f9; /* 짝수 행 배경색 */
+  background-color: #f2f2f2; /* 짝수 행 배경색 */
 }
 
 .trade-history-table tr:hover {
-  background-color: #f1f1f1; /* 호버 시 배경색 */
+  background-color: #e0e0e0; /* 호버 시 배경색 */
 }
 </style>
