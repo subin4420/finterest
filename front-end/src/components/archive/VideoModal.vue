@@ -21,7 +21,7 @@
         <img :src="imageUrl" alt="학습 자료 이미지" />
       </div>
       <div class="content-info">
-        <h2>{{ cardData.title }}</h2>
+        <h4>{{ cardData.title }}</h4>
         <p><i class="fas fa-folder"></i> {{ cardData.categoryName }}</p>
         <div v-html="cardData.content"></div>
       </div>
