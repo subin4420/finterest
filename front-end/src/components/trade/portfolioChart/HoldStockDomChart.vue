@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="chart-container" style="margin-bottom: 50px">
     <div id="main" style="width: 100%; height: 400px"></div>
   </div>
 </template>
@@ -63,7 +63,7 @@ export default {
 
         const option = {
           title: {
-            text: '주식 포트폴리오',
+            text: '보유 주식 현황',
 
             left: 'center',
           },
@@ -116,6 +116,15 @@ export default {
 };
 </script>
 
-<style>
-/* 필요에 따라 CSS 스타일 추가 */
+<style scoped>
+/* 스타일 추가 */
+.chart-container {
+  width: 500px;
+  height: 470px;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 </style>

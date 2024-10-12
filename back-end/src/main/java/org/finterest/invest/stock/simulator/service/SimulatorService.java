@@ -22,6 +22,7 @@ public class SimulatorService {
     private final SimulatorMapper mapper;
 
     public void buyStock(SimulatorVO vo) {
+        log.info("authToken");
         // Long 변환 대신 BigDecimal 그대로 사용
         BigDecimal price = vo.getPrice();
         Long quantity = vo.getQuantity();

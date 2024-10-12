@@ -38,6 +38,7 @@ public class SimulatorController {
 
     @PostMapping("/stock/buy")
     public ResponseEntity<String> buyStock(@RequestHeader("Authorization") String authToken, @RequestBody SimulatorVO vo) {
+        log.info(authToken);
         Integer userId = tokenUtil.getUserIdFromToken(authToken);
         vo.setUserId(userId);
         service.buyStock(vo);
