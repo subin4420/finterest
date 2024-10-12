@@ -14,10 +14,38 @@
         WHERE t.user_id = #{VALUE}
         ORDER BY t.created_at DESC
     </select>
+
     <select id="getPreviousDayClosePrice"
-            parameterType="java.lang.String"
             resultType="java.lang.String">
         SELECT clpr FROM kospi_stock_list
-        WHERE srtnCd = #{VALUE}
+        WHERE srtnCd = #{srtnCd}
+          AND basDt = #{date}
+    </select>
+
+    <select id="getPreviousDayTotalPrice"
+            resultType="BigDecimal">
+        SELECT total_price FROM trade
+        WHERE srtnCd = #{srtnCd}
+          AND basDt = #{date}
+          AND user_id = #{userId}
+    </select>
+    <select id="getUserMoney"
+            resultType="java.math.BigDecimal">
+        SELECT money FROM users
+        WHERE user_id = #{userId}
+    </select>
+    <select id="viewStockHeld"
+            parameterType="Integer"
+            resultType="org.finterest.invest.portfolio.domain.PortfolioDTO">
+        SELECT t.stock_code, t.stock_name, t.total_price, t.total_stock_holdings
+        FROM trade t
+                 INNER JOIN (
+            SELECT stock_name, MAX(created_at) as latest
+            FROM trade
+            WHERE user_id = #{VALUE}
+            GROUP BY stock_name
+        ) latest_trade
+                            ON t.stock_name = latest_trade.stock_name AND t.created_at = latest_trade.latest
+        WHERE t.user_id = #{VALUE}
     </select>
 </mapper>

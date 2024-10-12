@@ -6,6 +6,7 @@
         v-model="searchQuery"
         placeholder="검색어를 입력하세요"
         @input="filterData"
+        class="search-input"
       />
     </div>
 
@@ -20,11 +21,9 @@
         >
           <img :src="getLogoPath(stock.srtnCd)" class="thumbnail" />
           <div class="stock-info">
-            <div class="stock-info-header">
-              <div class="stock-name">{{ stock.itmsNm }}</div>
-              <div class="stock-end-price">
-                {{ formatCurrency(stock.clpr) }} 원
-              </div>
+            <div class="stock-name">{{ stock.itmsNm }}</div>
+            <div class="stock-end-price">
+              {{ formatCurrency(stock.clpr) }} 원
             </div>
             <span class="stock-code">({{ stock.srtnCd }})</span>
           </div>
@@ -164,6 +163,7 @@ li:hover {
   width: 40px;
   height: 40px;
   margin-right: 10px;
+  margin-left: 10px;
   border-radius: 70%;
   overflow: hidden;
 }

@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.finterest.invest.portfolio.domain.PortfolioDTO;
 import org.finterest.invest.portfolio.mapper.PortfolioMapper;
+import org.finterest.invest.stock.simulator.domain.SimulatorVO;
 import org.finterest.invest.stock.simulator.mapper.SimulatorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -46,7 +48,6 @@ public class PortfolioService {
                 viewData.put("stockName", vo.getStockName());
                 viewData.put("tradeType", vo.getTradeType());
                 viewData.put("price", vo.getTotalPrice());
-                viewData.put("money", vo.getMoney());
 
                 // 각 Map을 resultList에 추가
                 resultList.add(viewData);
@@ -55,7 +56,22 @@ public class PortfolioService {
         return resultList;
     }
 
-    public String getPreviousDayClosePrice(String stockCode) {
-        return mapper.getPreviousDayClosePrice(stockCode);
+    public Map<String, Object> viewTotalAssets(Integer userId) {
+        Map<String, Object> viewData = new HashMap<>();
+        BigDecimal userMoney = mapper.getUserMoney(userId);
+        viewData.put("money", userMoney);
+
+        List<PortfolioDTO> heldStockData = mapper.viewStockHeld(userId);
+        viewData.put("heldStockData", heldStockData);
+
+        return viewData;
+    }
+
+    public BigDecimal getPreviousDayTotalPrice(String srtnCd, Date date, Integer userId) {
+        return mapper.getPreviousDayTotalPrice(srtnCd, date, userId);
+    }
+
+    public String getPreviousDayClosePrice(String srtnCd, Date date) {
+        return mapper.getPreviousDayClosePrice(srtnCd, date);
     }
 }

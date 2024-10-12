@@ -1,27 +1,44 @@
 <template>
   <div>
-    <TradeImage />
-    <TradeNavigationBar />
-    <div class="community-page">
-      <ScenarioChart @loaded="onChartLoaded" :stockData="stockData" />
+    <div class="page-container">
+      <div class="trade-header"></div>
+      <div class="content-wrapper">
+        <SideTradeNavigationBar />
+        <div class="content">
+          <div class="community-page">
+            <ScenarioChart @loaded="onChartLoaded" :stockData="stockData" />
 
-      <!-- ScenarioChart가 완료된 후에 ScenarioOrder를 렌더링 -->
-      <ScenarioOrder
-        v-if="isChartLoaded"
-        @next-turn="handleNextTurn"
-        :stockData="stockData"
-      />
+            <!-- ScenarioChart가 완료된 후에 ScenarioOrder를 렌더링 -->
+            <ScenarioOrder
+              v-if="isChartLoaded"
+              @next-turn="handleNextTurn"
+              :stockData="stockData"
+            />
+
+            <!--모달 슈웃~  -->
+            <ScenarioModal
+              :isVisible="isModalVisible"
+              :data="modalData"
+              @close="isModalVisible = false"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import TradeImage from '@/components/trade/TradeImage.vue';
-import TradeNavigationBar from '@/components/trade/TradeNavigationBar.vue';
+import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vue';
+import ScenarioModal from '@/components/trade/scenario/ScenarioModal.vue';
 import ScenarioChart from '@/components/trade/scenario/ScenarioChart.vue';
 import ScenarioOrder from '@/components/trade/scenario/ScenarioOrder.vue';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+
+// 모달
+const isModalVisible = ref(false);
+const modalData = ref({});
 
 // ScenarioChart 로딩 상태 추적
 const isChartLoaded = ref(false);
@@ -55,6 +72,10 @@ const handleNextTurn = (newTurnValue) => {
       console.log('stck_lwpr:', result.stck_lwpr);
       console.log('stck_hgpr:', result.stck_hgpr);
       processData(result);
+
+      // 모달모달모달
+      modalData.value = result;
+      isModalVisible.value = true;
     })
     .catch((error) => {
       console.error('Error during next turn request:', error);
@@ -63,16 +84,56 @@ const handleNextTurn = (newTurnValue) => {
 </script>
 
 <style>
+.page-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.trade-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 1000;
+  background-color: #2e78e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content-wrapper {
+  display: flex;
+  margin-top: 20px;
+}
+
+.content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #b3b3b3;
+}
+
 .community-page {
   display: flex;
-  justify-content: space-between; /* 필요에 따라 컴포넌트들 사이 간격 조정 */
+  justify-content: left; /* 필요에 따라 컴포넌트들 사이 간격 조정 */
   align-items: flex-start; /* 필요에 따라 컴포넌트들 수직 정렬 */
-  gap: 10px; /* 컴포넌트들 사이에 간격을 줄 수 있음 */
+  margin: 0; /* 간격 제거 */
 }
+
 ScenarioChart,
 ScenarioOrder {
   flex-grow: 1; /* 모든 컴포넌트가 같은 너비를 차지하도록 */
+  margin: 0; /* 각 컴포넌트의 마진 제거 */
 }
+
 .content-grid {
   display: flex;
   flex-wrap: wrap;

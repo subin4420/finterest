@@ -109,7 +109,7 @@ watch(
 }
 
 .주식-검색 {
-  width: 250px;
+  width: 200px; /* 너비를 줄임 */
   min-width: 0;
 }
 
@@ -117,16 +117,26 @@ watch(
   display: flex;
   flex: 1;
   gap: 20px;
+  max-width: 100vw; /* 전체 화면을 넘어가지 않도록 설정 */
+  overflow: hidden; /* 넘치는 내용 숨기기 */
 }
 
 .주식-차트 {
   flex: 2;
-  height: 400px;
+  height: 600px;
+  max-height: 600px; /* 최대 높이 설정 */
+  border-radius: 8px; /* 차트에 둥근 모서리 추가 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 차트에 그림자 추가 */
 }
 
 .주문-주식 {
   flex: 1;
-  min-width: 300px;
+  min-width: 200px; /* 최소 너비 조정 */
+  max-width: 200px; /* 최대 너비 설정 */
+  height: 400px; /* 높이 설정 */
+  border-radius: 8px; /* 주문 컴포넌트에 둥근 모서리 추가 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 주문 컴포넌트에 그림자 추가 */
+  background-color: #f9f9f9; /* 배경색 추가 */
 }
 
 .page-title {

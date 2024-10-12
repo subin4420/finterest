@@ -7,20 +7,23 @@
         <h1 class="page-title">포트폴리오 페이지</h1>
         <p>여기는 포트폴리오 페이지입니다.</p>
         <HoldStockDomChart />
+        <!-- <HoldTotalAssets /> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vue';
-import HoldStockDomChart from '@/components/trade/portfolioChart/HoldStockDomChart.vue';
+import SideTradeNavigationBar from "@/components/trade/SideTradeNavigationBar.vue";
+import HoldStockDomChart from "@/components/trade/portfolioChart/HoldStockDomChart.vue";
+// import HoldTotalAssets from "@/components/trade/portfolioChart/HoldTotalAssets.vue";
 
 export default {
-  name: 'PortfolioPage',
+  name: "PortfolioPage",
   components: {
     SideTradeNavigationBar,
     HoldStockDomChart,
+    // HoldTotalAssets,
   },
 };
 </script>
