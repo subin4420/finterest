@@ -1,14 +1,15 @@
 <script setup>
-import ImageSlider from '@/components/layouts/ImageSlider.vue';
 import UpperContentRow from '@/components/home/UpperContentRow.vue';
+import MiddleContentRow from '@/components/home/MiddleContentRow.vue';
 import LowerContentRow from '@/components/home/LowerContentRow.vue';
+
 </script>
 
 
 <template>
   <div class="home-page">
-    <ImageSlider />
     <UpperContentRow />
+    <MiddleContentRow/>
     <LowerContentRow />
     <!-- 다른 섹션들을 여기에 추가할 수 있습니다 -->
   </div>

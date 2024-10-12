@@ -3,33 +3,57 @@
     <ArchiveImage />
     <ArchiveNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
 
-    <!-- 기존 콘텐츠 섹션 -->
-    <div class="content-section">
-      <h3>학습 자료</h3>
-      <div class="content-grid">
-        <ArchiveCard 
-          v-for="archive in sortedAndFilteredTextArchives" 
-          :key="archive.materialId" 
-          :cardData="archive"
-          @click="handleCardClick(archive)" 
-        />
+    <div class="content-container">
+      <!-- 탭 컴포넌트 추가 -->
+      <div class="tab-container">
+        <button 
+          :class="['tab-button', { active: activeTab === 'text' }]" 
+          @click="activeTab = 'text'"
+        >
+          학습 자료
+        </button>
+        <button 
+          :class="['tab-button', { active: activeTab === 'video' }]" 
+          @click="activeTab = 'video'"
+        >
+          영상 자료
+        </button>
       </div>
-    </div>
 
-    <div class="content-section">
-      <h3>영상 자료</h3>
-      <div class="content-grid">
-        <ArchiveCard 
-          v-for="archive in sortedVideoArchives" 
-          :key="archive.materialId" 
-          :cardData="archive" 
-          @click="handleCardClick(archive)" 
-        />
+      <!-- 학습 자료 탭 -->
+      <div v-if="activeTab === 'text'" class="content-section">
+        <div class="content-grid">
+          <ArchiveCard 
+            v-for="archive in sortedAndFilteredTextArchives" 
+            :key="archive.materialId" 
+            :cardData="archive"
+            @click="handleCardClick(archive)" 
+          />
+        </div>
+      </div>
+
+      <!-- 영상 자료 탭 -->
+      <div v-if="activeTab === 'video'" class="content-section">
+        <div class="content-grid">
+          <ArchiveCard 
+            v-for="archive in sortedVideoArchives" 
+            :key="archive.materialId" 
+            :cardData="archive" 
+            @click="handleCardClick(archive)" 
+          />
+        </div>
       </div>
     </div>
 
     <ArchiveModal 
-      v-if="selectedCard && isModalVisible"
+      v-if="selectedCard && isModalVisible && !isVideoContent(selectedCard)"
+      :isVisible="isModalVisible" 
+      :cardData="selectedCard" 
+      @update:isVisible="isModalVisible = $event" 
+    />
+
+    <VideoModal 
+      v-if="selectedCard && isModalVisible && isVideoContent(selectedCard)"
       :isVisible="isModalVisible" 
       :cardData="selectedCard" 
       @update:isVisible="isModalVisible = $event" 
@@ -52,6 +76,7 @@ import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
 import ProgressBar from '@/components/common/ProgressBar.vue';
 import RecentActivityList from '@/components/archive/RecentActivityList.vue';
 import RecommendedArchives from '@/components/archive/RecommendedArchives.vue';
+import VideoModal from '@/components/archive/VideoModal.vue';
 import { onMounted, ref, computed, watch } from "vue";
 import { useArchiveStore } from "@/stores/archiveStore";
 import { useAuthStore } from "@/stores/auth";
@@ -68,6 +93,7 @@ export default {
     ProgressBar,
     RecentActivityList,
     RecommendedArchives,
+    VideoModal,
   },
   setup() {
     const archiveStore = useArchiveStore();
@@ -167,6 +193,11 @@ export default {
         .slice(0, 4); // 최근 4개의 자료만 표시
     });
 
+    const isVideoContent = (archive) => {
+      // YouTube ID 형식 확인 (11자리 문자열)
+      return archive.materialImg && archive.materialImg.length === 11;
+    };
+
     function handleCardClick(archive) {
       console.log('Card clicked:', archive);
       console.log('Is user logged in?', authStore.isLogin);
@@ -182,6 +213,8 @@ export default {
     function goToLogin() {
       router.push({ name: 'login' });
     }
+
+    const activeTab = ref('text'); // 기본 탭을 '학습 자료'로 설정
 
     return { 
       sortedTextArchives, 
@@ -201,6 +234,8 @@ export default {
       recommendedArchives,
       sortedAndFilteredTextArchives,
       recentArchives,
+      activeTab,
+      isVideoContent,
     };
   }
 }
@@ -218,8 +253,8 @@ h3 {
 }
 .content-section {
   margin-bottom: 2rem; /* 섹션 간의 간격 */
-  width: 80%; /* 전체 화면의 80%만 차지 */
-  margin: 0 auto; /* 화면 중앙 정렬 */
+  width: 100%; /* 80%에서 100%로 변경 */
+  margin: 0 auto;
 }
 .content-section + .content-section {
   margin-top: 3rem; /* 텍스트 카드들과 영상 카드들 사이에 여백 추가 */
@@ -332,6 +367,43 @@ h3 {
   padding: 0.5rem;
   border: 1px solid #ced4da;
   border-radius: 4px;
+}
+
+.tab-container {
+  width: 100%; /* 탭 컨테이너의 너비를 100%로 설정 */
+  padding: 0 20px; /* 좌우 패딩 추가 */
+  box-sizing: border-box; /* 패딩을 너비에 포함 */
+}
+
+.tab-button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.tab-button.active {
+  color: #00D18B;
+  border-bottom: 2px solid #00D18B;
+}
+
+.tab-button:hover {
+  color: #00D18B;
+}
+
+.content-section {
+  margin-top: 20px;
+}
+
+.content-container {
+  width: 80%;
+  margin: 0 auto;
+  padding-top: 00px;
 }
 
 /* 추가 스타일 ... */

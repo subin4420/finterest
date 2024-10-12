@@ -23,21 +23,71 @@ onMounted(() => {
 
 <template>
   <section class="lower-content-row">
-    <h2>finterest 최고 인기 TOP 3</h2>
-    <div class="material-list">
-      <div v-for="material in topLearning_Materials.slice(0, 3)" :key="material.id" class="material-card">
-        <img :src="material.materialImg || defaultImage" alt="썸네일 이미지" class="material-image"/>
-
-        <h3>{{ material.title }}</h3>
-        <p class="material-category"> [{{ material.categoryName }}]</p>
-        <div class="material-stats">
-          <!-- 추가적인 통계 정보가 필요하다면 여기에 추가 -->
+    <!-- 아래 표 2개 -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">사용자 정보</h5>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>사용자 ID</th>
+                <th>이메일</th>
+                <th>실명</th>
+                <th>역할</th>
+                <th>계정 상태</th>
+                <th>보유 금액</th>
+                <th>누적 포인트</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>user01</td>
+                <td>user01@example.com</td>
+                <td>김유정</td>
+                <td>admin</td>
+                <td>active</td>
+                <td>10,000,000</td>
+                <td>100</td>
+                <td><button class="btn btn-sm btn-primary">수정</button> <button class="btn btn-sm btn-danger">삭제</button></td>
+              </tr>
+              <!-- 추가 행 -->
+            </tbody>
+          </table>
         </div>
-        <p class="material-tags">
-          <span v-for="tag in material.tags" :key="tag">{{ tag }}</span>
-        </p>
       </div>
     </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">포인트 정보</h5>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>포인트 ID</th>
+                <th>사용자 ID</th>
+                <th>포인트 획득 활동</th>
+                <th>획득 포인트</th>
+                <th>날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>123</td>
+                <td>회원가입</td>
+                <td>1000</td>
+                <td>2023-09-12</td>
+              </tr>
+              <!-- 추가 행 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
   </section>
 </template>
 
