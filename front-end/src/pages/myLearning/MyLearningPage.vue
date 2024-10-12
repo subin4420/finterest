@@ -255,7 +255,7 @@ h3{
 }
 
 .content {
-  width: 71%;
+  width: 75%;
   /* width: 75%; */
   margin-top: 30px;
   padding: 30px;

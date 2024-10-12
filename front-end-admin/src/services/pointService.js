@@ -63,3 +63,20 @@ export const getTotalMoney = async () => {
     throw error;
   }
 };
+
+// 포인트 획득 비율 조회
+export const getPointChart = async () => {
+  try{
+    const token = getToken();
+    const response = await api.get('/api/admin/chart/points', { // params 제거
+      headers: {
+        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+      },
+    });
+    console.log('Response data from getPointChartL', response.data);
+    return response.data;
+  }catch(error){
+    console.log('Error fetching point chart data', error);
+    throw error;
+  }
+};
