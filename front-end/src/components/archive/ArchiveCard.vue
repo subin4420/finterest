@@ -21,7 +21,7 @@
                 <div v-if="cardData.status" :class="['status', statusClass]">{{ statusText }}</div>
             </div>
             <div class="title" v-html="cardData.title"></div>
-            <div class="summary" v-html="truncateContent(cardData.content)"></div>
+            <div class="summary"></div>
         </div>
     </div>
 </template>
@@ -88,12 +88,6 @@ export default {
                 await archiveStore.removeFromFavorites(this.cardData.materialId);
                 this.cardData.favorite = false; // UI에 즉시 반영
             }
-        },
-        truncateContent(content) {
-            // HTML 태그를 제거하고 텍스트만 추출
-            const plainText = content.replace(/<[^>]*>/g, '');
-            // 100자로 제한하고 말줄임표 추가
-            return plainText.length > 100 ? plainText.slice(0, 100) + '...' : plainText;
         }
     }
 };

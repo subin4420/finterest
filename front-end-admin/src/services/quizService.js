@@ -39,43 +39,27 @@ export const getQuizQuestions = async (setId) => {
   return response.data;
 };
 
-// 퀴즈 답변 제출
-export const submitQuizAnswers = async (setId, answers) => {
-  const token = getToken();
-  
-  const response = await api.post(`/api/quiz-sets/${setId}/submit`, answers, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  console.log("Quiz submission response:", response.data);
-  return response.data;
+// 주별/월별 학습자료 조회수
+export const getQuizChart = async ({ period, year, month }) => {
+  try {
+    const token = getToken();
+    const url = `/api/admin/chart/quiz-completion/${period}`; // 경로 수정
+    const params = { year };
+    if (period === 'weekly') {
+      params.month = month; // 주별인 경우, 월을 추가
+    }
+
+    const response = await api.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+      },
+      params, // 쿼리 파라미터 추가
+    });
+    console.log('Response data from getQuizChart:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching quiz chart data:', error);
+    throw error;
+  }
 };
 
-// 퀴즈 결과 조회 API 호출
-export const fetchQuizResults = async (userId) => {
-  const token = getToken();
-  
-  const response = await api.get('/api/quiz-sets/results', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    params: { userId },  // userId를 쿼리 파라미터로 전달
-  });
-  
-  console.log("Quiz results response:", response.data);
-  return response.data;
-};
-
-// 퀴즈 결과 답변 가져오기
-export const getQuizAnswers = async (setId, resultId) => {
-  const token = getToken();
-  
-  const response = await api.get(`/api/quiz-sets/${setId}/results/${resultId}/answers`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  console.log("Quiz answers response:", response.data);
-  return response.data;
-};
