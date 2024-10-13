@@ -3,6 +3,7 @@ package org.finterest.archive.mapper;
 import org.apache.ibatis.annotations.Param;
 import org.finterest.archive.domain.ArchiveDetailVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 
@@ -46,4 +47,12 @@ public interface ArchiveMapper {
     // 학습 진행 상태 조회
     ProgressVO getProgressForUserAndMaterial(@Param("userId") int userId, @Param("materialId") int materialId);
     void insertProgress(@Param("userId") int userId, @Param("materialId") int materialId, @Param("status") String status, @Param("startedAt") String startedAt);
+
+
+    // 최근 업데이트된 텍스트 자료 8개 조회
+    List<ArchiveVO> selectRecentTextArchives();
+
+    // 완료 횟수가 많은 영상 자료 8개 조회
+    List<ArchiveVO> selectMostCompletedVideoArchives();
+
 }

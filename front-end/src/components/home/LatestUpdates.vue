@@ -1,22 +1,35 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useArchiveStore } from '@/stores/archiveStore'; // ArchiveStore 가져오기
+import ArchiveCard from '@/components/archive/ArchiveCard.vue'; // ArchiveCard 컴포넌트 임포트
 
-const latestUpdates = ref([
-  { id: 1, title: '최신 학습자료 1', category: '카테고리1', thumbnail: '/src/assets/images/가로예시1.jpg' },
-  { id: 2, title: '최신 학습자료 2', category: '카테고리2', thumbnail: '/src/assets/images/가로예시2.jpg' },
-  { id: 3, title: '최신 학습자료 3', category: '카테고리3', thumbnail: '/src/assets/images/가로예시3.jpg' },
-  { id: 4, title: '최신 학습자료 4', category: '카테고리4', thumbnail: '/src/assets/images/가로예시1.jpg' },
-]);
+// fetchRecentTextArchives를 사용하기 위해 ArchiveStore 가져오기
+const { fetchRecentTextArchives, recentText } = useArchiveStore();
 
+const latestUpdates = ref([]); // 빈 배열로 초기화
 const currentIndex = ref(0);
 
+// 슬라이드 이동 함수
 const nextSlide = () => {
-  currentIndex.value = (currentIndex.value + 2) % latestUpdates.value.length;
+  const totalSlides = Math.ceil(latestUpdates.value.length / 2);
+  currentIndex.value = (currentIndex.value + 1) % totalSlides;
 };
 
 const prevSlide = () => {
-  currentIndex.value = (currentIndex.value - 2 + latestUpdates.value.length) % latestUpdates.value.length;
+  const totalSlides = Math.ceil(latestUpdates.value.length / 2);
+  currentIndex.value = (currentIndex.value - 1 + totalSlides) % totalSlides;
 };
+
+// 컴포넌트가 마운트될 때 최신 텍스트 학습 자료 가져오기
+onMounted(async () => {
+  await fetchRecentTextArchives(); // API 호출로 최신 자료 가져오기
+  latestUpdates.value = recentText.value.map(item => ({
+    id: item.materialId,
+    title: item.title,
+    categoryName: item.categoryName,
+    materialImg: item.materialImg,
+  }));
+});
 </script>
 
 <template>
@@ -28,14 +41,19 @@ const prevSlide = () => {
         <button @click="nextSlide" class="slider-button next">&gt;</button>
       </div>
     </div>
+
     <div class="content-body">
       <div class="update-slider">
-        <div class="update-list" :style="{ transform: `translateX(-${currentIndex * 50}%)` }">
-          <div v-for="update in latestUpdates" :key="update.id" class="update-item">
-            <img :src="update.thumbnail" alt="학습자료 썸네일" class="update-thumbnail">
-            <div class="update-info">
-              <div class="update-title">{{ update.title }}</div>
-              <div class="update-category">{{ update.category }}</div>
+        <div class="update-list" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+          <!-- 2개씩 한 슬라이드에 표시 -->
+          <div v-for="i in Math.ceil(latestUpdates.length / 2)" :key="i" class="slide">
+            <div class="card-row">
+              <ArchiveCard
+                v-for="update in latestUpdates.slice((i - 1) * 2, i * 2)"
+                :key="update.id"
+                :cardData="update"
+                :showFavoriteButton="false"
+              />
             </div>
           </div>
         </div>
@@ -73,33 +91,29 @@ const prevSlide = () => {
 
 .update-list {
   display: flex;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
+  width: 100%; /* 각 슬라이드의 너비는 화면의 100%로 설정 */
 }
 
-.update-item {
-  flex: 0 0 50%;
-  padding: 0 0.5rem;
-  box-sizing: border-box;
+.slide {
+  display: flex;
+  justify-content: space-between; /* 카드가 가로로 배치되도록 설정 */
+  min-width: 100%; /* 슬라이드가 화면의 100%를 차지 */
 }
 
-.update-thumbnail {
+.card-row {
+  display: flex;
+  justify-content: space-between; /* 카드들이 가로로 나란히 배치되도록 설정 */
+  gap: 20px; /* 카드 간격 설정 */
   width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
 }
 
-.update-info {
-  padding: 1rem;
+.content-body {
+  overflow: hidden;
+  height: 400px; /* 슬라이더 높이 설정 */
 }
 
-.update-title {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.update-category {
-  font-size: 0.9rem;
-  color: #666;
+.update-slider .card-row > * {
+  flex: 1; /* 모든 카드를 같은 높이로 설정 */
 }
 </style>

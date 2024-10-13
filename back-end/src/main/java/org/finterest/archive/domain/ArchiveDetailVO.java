@@ -1,6 +1,7 @@
 package org.finterest.archive.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)  // null인 필드는 직렬화하지 않음
 public class ArchiveDetailVO {
     private int materialId;       // 학습 자료 ID
     //private int categoryId;     // 카테고리 ID (FK)

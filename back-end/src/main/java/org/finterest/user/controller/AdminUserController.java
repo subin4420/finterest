@@ -1,7 +1,6 @@
 package org.finterest.user.controller;
 
 import org.finterest.security.util.TokenUtil;
-import org.finterest.user.dto.UserDTO;
 import org.finterest.user.dto.UserJoinDTO;
 import org.finterest.user.service.AdminUserService;
 import org.finterest.user.service.UserService;

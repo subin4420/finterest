@@ -2,6 +2,7 @@ package org.finterest.archive.controller;
 
 import org.finterest.archive.domain.ArchiveDetailVO;
 
+import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.service.ArchiveService;
@@ -235,6 +236,25 @@ public class ArchiveController {
         } else {
             response.put("message", "업데이트에 실패했습니다.");
         }
+        return response;
+    }
+
+    // 최근 업데이트된 텍스트 자료 8개 조회
+    @GetMapping("/recentText")
+    public Map<String,List<ArchiveVO>> getRecentTextArchives(){
+        List<ArchiveVO> textList = archiveService.getRecentTextArchives();
+        Map<String,List<ArchiveVO>> response = new HashMap<>();
+        response.put("texts", textList);
+        return response;
+    }
+
+
+    // 완료 횟수가 많은 영상 자료 8개 조회
+    @GetMapping("/popularVideo")
+    public Map<String, List<ArchiveVO>> getMostCompletedVideos() {
+        List<ArchiveVO> videoList = archiveService.getMostCompletedVideoArchives();
+        Map<String, List<ArchiveVO>> response = new HashMap<>();
+        response.put("videos", videoList);
         return response;
     }
 
