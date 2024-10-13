@@ -59,4 +59,5 @@ import PopularVideos from './PopularVideos.vue';
   flex-grow: 1;
   overflow-y: auto; /* 필요 시 스크롤 적용 */
 }
+
 </style>

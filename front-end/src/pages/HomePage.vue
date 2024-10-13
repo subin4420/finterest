@@ -23,4 +23,5 @@ import LowerContentRow from '@/components/home/LowerContentRow.vue';
   background-color: #f5f5f5;
 }
 }
+
 </style>
