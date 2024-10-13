@@ -50,16 +50,6 @@ public class QuizSetsController {
         return ResponseEntity.ok(response);
     }
 
-
-//    // 카테고리별 퀴즈 세트 조회 (category_id가 있는 경우)
-//    @GetMapping(params = "category_id")
-//    public Map<String, List<QuizSetsVO>> selectQuizSets(@RequestParam("category_id") int categoryId) {
-//        List<QuizSetsVO> quizSetsVOList = quizSetsService.selectQuizSetsByCategory(categoryId);
-//        Map<String, List<QuizSetsVO>> response = new HashMap<>();
-//        response.put("quiz_sets", quizSetsVOList);
-//        return response;
-//    }
-
     // 카테고리별 또는 전체 퀴즈 세트 조회
     @GetMapping
     //http://localhost:8080/api/quiz-sets?categoryId=1
@@ -188,6 +178,18 @@ public class QuizSetsController {
         response.put("answers", answers);
 
         return ResponseEntity.ok(response);
+    }
+
+    // 완료 횟수가 높은 퀴즈 세트 상위 3개 조회 API
+    @GetMapping("/top-completed")
+    public ResponseEntity<List<QuizSetsVO>> getTopCompletedQuizSets() {
+        List<QuizSetsVO> topCompletedQuizSets = quizSetsService.getTopCompletedQuizSets();
+
+        if (topCompletedQuizSets == null || topCompletedQuizSets.isEmpty()) {
+            return ResponseEntity.notFound().build();  // 조회 결과가 없으면 404 반환
+        }
+
+        return ResponseEntity.ok(topCompletedQuizSets);  // 상위 3개의 퀴즈 세트를 반환
     }
 
 }

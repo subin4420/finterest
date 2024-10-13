@@ -2,8 +2,8 @@
 import { ref } from 'vue';
 
 const popularCategories = ref([
-  '카테고리1', '카테고리1', '카테고리1', 
-  '카테고리1', '카테고리1', '카테고리1'
+  '경제상식', '투자', '세금', 
+  '재무관리', '기타', '카테고리1'
 ]);
 </script>
 
@@ -30,6 +30,7 @@ h2 {
 }
 
 .category-grid {
+  margin-top: 16px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
