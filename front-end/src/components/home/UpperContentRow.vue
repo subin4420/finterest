@@ -10,7 +10,6 @@ import RankingTable from './RankingTable.vue';
     <LatestUpdates class="content-column latest-updates" />
     <!-- <PopularCategories class="content-column popular-categories" /> -->
     <PopularVideos class="content-column popular-videos" />
-    <RankingTable class="content-column popular-categories"/>
 
   </section>
 </template>

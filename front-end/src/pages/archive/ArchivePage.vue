@@ -83,6 +83,7 @@ import { onMounted, ref, computed, watch } from "vue";
 import { useArchiveStore } from "@/stores/archiveStore";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 
 export default {
   name: 'ArchivePage',
@@ -112,6 +113,7 @@ export default {
     const isVideoModalVisible = ref(false);
     const selectedVideoId = ref('');
     const selectedVideoTitle = ref('');
+    const { isLogin } = storeToRefs(authStore);
 
     const recommendedArchives = ref([
       { id: 1, title: '주식 시장의 이해', description: '주식 시장의 기본 개념을 배웁니다.', image: '/path/to/image1.jpg' },
@@ -199,14 +201,18 @@ export default {
     });
 
     const handleCardClick = (card) => {
-      console.log('Clicked card:', card);
-      selectedCard.value = card;
-      if (card.type === 'video' || (card.materialImg && card.materialImg.match(/^[a-zA-Z0-9_-]{11}$/))) {
-        console.log('Video card clicked');
-        isVideoModalVisible.value = true;
+      if (isLogin.value) {
+        console.log('Clicked card:', card);
+        selectedCard.value = card;
+        if (card.type === 'video' || (card.materialImg && card.materialImg.match(/^[a-zA-Z0-9_-]{11}$/))) {
+          console.log('Video card clicked');
+          isVideoModalVisible.value = true;
+        } else {
+          console.log('Text card clicked');
+          isModalVisible.value = true;
+        }
       } else {
-        console.log('Text card clicked');
-        isModalVisible.value = true;
+        showLoginModal.value = true;
       }
     };
 
@@ -215,9 +221,14 @@ export default {
       selectedCard.value = null;
     };
 
-    function goToLogin() {
-      router.push({ name: 'login' });
-    }
+    const goToLogin = () => {
+      showLoginModal.value = false;
+      const currentPath = router.currentRoute.value.fullPath;
+      router.push({ 
+        path: '/auth/login', 
+        query: { redirect: currentPath } 
+      });
+    };
 
     const activeTab = ref('text'); // 기본 탭을 '학습 자료'로 설정
 
@@ -253,6 +264,7 @@ export default {
       selectedVideoTitle,
       closeVideoModal,
       handleStatusUpdate,
+      isLogin,
     };
   }
 }
@@ -423,5 +435,4 @@ h3 {
   padding-top: 00px;
 }
 
-/* 추가 스타일 ... */
 </style>

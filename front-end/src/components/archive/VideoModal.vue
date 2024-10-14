@@ -170,6 +170,8 @@ export default {
   font-weight: bold;
   padding: 5px 10px;
   border-radius: 15px;
+  white-space: nowrap; /* 줄바꿈 방지 */
+  display: inline-block; /* 인라인 블록으로 설정 */
 }
 
 .status-completed {
@@ -242,7 +244,7 @@ export default {
 }
 
 .complete-button.completed {
-  background-color: #2ecc71;
+  background-color: #969696;
 }
 
 /* 반응형 스타일 */
@@ -264,6 +266,14 @@ export default {
     font-size: 14px;
     padding: 8px 16px;
   }
+
+  .modal-header {
+    flex-direction: column; /* 모바일에서는 세로로 배치 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+  }
+
+  .learning-status {
+    margin-top: 10px; /* 상단 여백 추가 */
+  }
 }
 </style>
-
