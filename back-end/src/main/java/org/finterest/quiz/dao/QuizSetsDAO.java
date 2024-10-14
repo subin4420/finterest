@@ -73,4 +73,9 @@ public class QuizSetsDAO {
     public List<UserAnswerVO> selectUserAnswers(int resultId, int userId){
         return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectUserAnswers(resultId, userId);
     }
+
+    // 7. 완료 횟수가 높은 퀴즈 세트 상위 3개 조회
+    public List<QuizSetsVO> selectTopCompletedQuizSets(){
+        return sqlSessionTemplate.getMapper(QuizSetsMapper.class).selectTopCompletedQuizSets();
+    }
 }

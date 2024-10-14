@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
 public class UserController {
     private final UserService userService;
 
-    @Value("${avatar.path}")  // application.properties에서 경로 주입
+    @Value("${avatar.path.unix}")  // application.properties에서 경로 주입
     private String avatarPath;
 
     @Autowired
@@ -68,8 +68,8 @@ public class UserController {
     }
     @GetMapping("/{username}/avatar")
     public void getAvatar(@PathVariable String username, HttpServletResponse response) {
-        //String aP = "/Users/park/Desktop/upload/avatar";
-        String filePath = avatarPath + "/" + username + ".png";
+        String aP = "/Users/park/Desktop/upload/avatar";
+        String filePath = aP + "/" + username + ".png";
         log.info("avatar Path :  " + filePath);
         System.out.println("UserController-> getAvatar:->"+avatarPath);
         File file = new File(filePath);

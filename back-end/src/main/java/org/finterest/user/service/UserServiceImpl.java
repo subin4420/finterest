@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    @Value("${avatar.path}")
+    @Value("${avatar.path.unix}")
     String avatarPath;
 
     //중복체크

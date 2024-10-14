@@ -22,6 +22,7 @@ public class SimulatorService {
     private final SimulatorMapper mapper;
 
     public void buyStock(SimulatorVO vo) {
+
         // User money 데이터 호출
         BigDecimal userMoney = mapper.getUserMoney(vo.getUserId());
 

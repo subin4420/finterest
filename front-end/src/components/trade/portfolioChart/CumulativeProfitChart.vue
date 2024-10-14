@@ -1,5 +1,5 @@
 <template>
-  <div id="main" ref="chartRef" style="width: 100%; height: 400px"></div>
+  <div id="main" ref="chartRef" style="width: 628px; height: 418px"></div>
 </template>
 
 <script setup>
@@ -49,7 +49,11 @@ onMounted(() => {
   const renderChart = (cumulativeData, dates) => {
     const option = {
       title: {
-        text: "누적 수익률 차트",
+        text: "누적 수익률 차트", // 제목 텍스트
+        left: "center", // 제목을 중앙으로 정렬
+        style: {
+          textAlign: "center", // 추가적으로 텍스트 정렬을 중앙으로 설정 (필요시)
+        },
       },
       tooltip: {
         trigger: "axis",

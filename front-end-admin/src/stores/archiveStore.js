@@ -1,5 +1,5 @@
 import { reactive, toRefs } from 'vue';
-import { getArchive, getArchiveProgress, addFavorite, removeFavorite, updateArchiveStatus, insertArchiveStatus } from '@/services/archiveService';
+import { getArchive, getArchiveProgress, getArchiveChart } from '@/services/archiveService';
 
 const state = reactive({
   archives: [], // 초기값 설정
@@ -8,164 +8,41 @@ const state = reactive({
 
   textArchives: [], // 텍스트 자료
   videoArchives: [], // 비디오 자료
+
+  weeklyLearningCounts: [], // 주별 학습 자료 조회수
+  monthlyLearningCounts: [], // 월별 학습 자료 조회수
 });
 
-// text 자료 조회
-const fetchTextArchive = async () => {
+
+// 주별 학습 자료 조회수 가져오기
+const fetchWeeklyLearningCounts = async (year, month) => {
   try {
-    const data = await getArchive({ type: 'text' }); // type을 'text'로 설정
-    state.textArchives  = data.archives || [];
+    const data = await getArchiveChart({ period: 'weekly', year, month });
+    state.weeklyLearningCounts = data.learningCounts || []; // 주별 학습 자료 조회수 할당
   } catch (error) {
-    console.error('Error fetching text Archive:', error);
+    console.error('Error fetching weekly learning counts:', error);
   }
 };
 
-// video 자료 조회
-const fetchVideoArchive = async () => {
+// 월별 학습 자료 조회수 가져오기
+const fetchMonthlyLearningCounts = async (year) => {
   try {
-    const data = await getArchive({ type: 'video' }); // type을 'video'로 설정
-    state.videoArchives = data.archives || []; // 배열 체크
+    const data = await getArchiveChart({ period: 'monthly', year });
+    state.monthlyLearningCounts = data.learningCounts || []; // 월별 학습 자료 조회수 할당
   } catch (error) {
-    console.error('Error fetching video Archive:', error);
-  }
-};
-
-// 특정 카테고리 조회
-const fetchArchivesByCategory = async (categoryId) => {
-  try {
-    const data = await getArchive({ categoryId }); // 카테고리 ID를 전달
-    state.archives = data.archives;
-  } catch (error) {
-    console.error('Error fetching Archives by category:', error);
-  }
-};
-
-// 즐겨찾기한 자료만 조회
-const fetchFavoriteArchives = async () => {
-  try {
-    const data = await getArchive({ favorites: true }); // 즐겨찾기 자료 조회
-    state.archives = data.archives;
-  } catch (error) {
-    console.error('Error fetching favorite Archives:', error);
-  }
-};
-
-// 모든 자료 조회 (type, categoryId, favorites를 사용하여 필터링)
-const fetchAllArchives = async (type, categoryId, favorites) => {
-  try {
-    const params = {}; // 파라미터 객체 생성
-
-    if (type) params.type = type; // type이 있으면 추가
-    if (categoryId) params.categoryId = categoryId; // categoryId가 있으면 추가
-    if (favorites) params.favorites = favorites; // favorites가 있으면 추가
-
-    const data = await getArchive(params); // getArchive 호출
-    state.archives = data.archives.map(archive => ({
-      ...archive,
-    }));
-  } catch (error) {
-    console.error('Error fetching all Archives:', error);
+    console.error('Error fetching monthly learning counts:', error);
   }
 };
 
 
 
-
-// 완료된 자료만 조회
-const fetchCompletedArchives = async () => {
-  try {
-    const data = await getArchiveProgress({ status: 'completed' }); // 완료된 자료만 조회
-    state.completedArchives   = data.progress; // data.archives 대신 data.progress로 수정
-  } catch (error) {
-    console.error('Error fetching completed Archives:', error);
-  }
-};
-
-// 미완료된 자료만 조회
-const fetchInProgressArchives = async () => {
-  try {
-    const data = await getArchiveProgress({ status: 'incomplete' }); // 미완료된 자료만 조회
-    state.inProgressArchives  = data.progress; // data.archives 대신 data.progress로 수정
-  } catch (error) {
-    console.error('Error fetching in-progress Archives:', error);
-  }
-};
-
-
-// 즐겨찾기 추가
-const addToFavorites = async (materialId) => {
-  try {
-    const response = await addFavorite(materialId);
-    console.log(response.message); // 성공 메시지
-    // 로컬 상태 업데이트
-    const archive = state.archives.find(a => a.materialId === materialId);
-    if (archive) {
-      archive.favorite = true; // 즐겨찾기 상태로 변경
-    }
-    // filterByCategory(selectedCategory.value); // 필터링 다시 적용
-  } catch (error) {
-    console.error('Error adding favorite:', error);
-  }
-};
-
-// 즐겨찾기 삭제
-const removeFromFavorites = async (materialId) => {
-  try {
-    const response = await removeFavorite(materialId);
-    console.log(response.message); // 성공 메시지
-    // 로컬 상태 업데이트
-    const archive = state.archives.find(a => a.materialId === materialId);
-    if (archive) {
-      archive.favorite = false; // 즐겨찾기 상태 제거
-    }
-    // filterByCategory(selectedCategory.value); // 필터링 다시 적용
-  } catch (error) {
-    console.error('Error removing favorite:', error);
-  }
-};
-
-// 학습 상태(incomplet) 추가
-const addArchiveStatus = async(materialId, status) => {
-  try {
-        const response = await insertArchiveStatus(materialId, { status });
-        console.log('Server response:', response.data); // 서버 응답 로그
-        const archive = state.archives.find(archive => archive.materialId == materialId);
-        if (archive) {
-            archive.status = status;
-        }
-    } catch (error) {
-        console.log('Error adding archive status:', error);
-    }
-};
-
-// 학습 상태(completed) 업데이트
-const changeArchiveStatus = async (materialId, status) => {
-  try {
-        const response = await updateArchiveStatus(materialId, { status });
-        console.log('Server response:', response.data); // 서버 응답 로그
-        const archive = state.archives.find(archive => archive.materialId === materialId);
-        if (archive) {
-            archive.status = status;
-        }
-    } catch (error) {
-        console.error('Error changing archive status:', error);
-    }
-};
 
 export const useArchiveStore = () => {
   return {
     ...toRefs(state),
-    fetchAllArchives,
-    fetchArchivesByCategory,
-    fetchCompletedArchives,
-    fetchInProgressArchives,
-    fetchFavoriteArchives,
-    addToFavorites,
-    removeFromFavorites,
-    addArchiveStatus,
-    changeArchiveStatus, // 추가된 메서드
+  
 
-    fetchTextArchive,  // 텍스트 자료 조회 함수 내보내기
-    fetchVideoArchive, // 비디오 자료 조회 함수 내보내기
+    fetchWeeklyLearningCounts, // 주별 학습 자료 조회수 함수 내보내기
+    fetchMonthlyLearningCounts, // 월별 학습 자료 조회수 함수 내보내기
   };
 };

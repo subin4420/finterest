@@ -5,6 +5,7 @@ import org.finterest.quiz.domain.dto.QuizSubmissionDTO;
 import org.finterest.quiz.domain.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ public class QuizSetsService {
 
 
     // 퀴즈 제출 처리
+    @Transactional
     public QuizResultDetailVO submitQuiz(int setId, int userId, QuizSubmissionDTO submission) {
         // "퀴즈"에 해당하는 points_awarded 값 가져오기
         int pointsPerQuestion = quizSetsDAO.selectPointsForQuiz();  // 각 문제당 포인트
@@ -118,10 +120,13 @@ public class QuizSetsService {
 
     }
 
-
-
     public List<UserAnswerVO> getUserAnswers(int resultId, int userId) {
         return quizSetsDAO.selectUserAnswers(resultId, userId);
+    }
+
+    // 7. 완료 횟수가 높은 퀴즈 세트 상위 3개 조회
+    public List<QuizSetsVO> getTopCompletedQuizSets(){
+        return quizSetsDAO.selectTopCompletedQuizSets();
     }
 
 }

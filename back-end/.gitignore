@@ -16,7 +16,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 /
-application.properties
 WebConfig.java
 ### Eclipse ###
 .apt_generated
@@ -29,6 +28,7 @@ WebConfig.java
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+
 
 ### NetBeans ###
 /nbproject/private/

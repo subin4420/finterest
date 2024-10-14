@@ -1,6 +1,7 @@
 package org.finterest.archive.dao;
 
 import org.finterest.archive.domain.ArchiveDetailVO;
+import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.finterest.archive.mapper.ArchiveMapper;
@@ -96,6 +97,16 @@ public class ArchiveDAO {
     public void insertProgress(int userId, int materialId, String status, String startedAt) {
         sqlSessionTemplate.getMapper(ArchiveMapper.class)
                 .insertProgress(userId, materialId, status, startedAt);
+    }
+
+    // 최근 업데이트된 텍스트 자료 8개 조회
+    public List<ArchiveVO> selectRecentTextArchives(){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectRecentTextArchives();
+    }
+
+    // 완료 횟수가 많은 영상 자료 8개 조회
+    public List<ArchiveVO> selectMostCompletedVideoArchives(){
+        return sqlSessionTemplate.getMapper(ArchiveMapper.class).selectMostCompletedVideoArchives();
     }
 
 }

@@ -141,7 +141,7 @@ load(pageRequest22);
 
 .콘텐츠-래퍼 {
   display: flex;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .콘텐츠 {
@@ -162,9 +162,9 @@ load(pageRequest22);
 }
 
 .게시판-목록-컨테이너 {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0rem;
 }
 
 .총-개수 {

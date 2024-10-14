@@ -5,8 +5,10 @@
       <SideTradeNavigationBar />
       <div class="content">
         <h1 class="page-title">환전 페이지</h1>
-        <!-- 현재 잔액과 환전율을 가로로 나열 -->
-        <div v-if="authStore.isLogin" class="user-info">
+        <div
+          v-if="authStore.isLogin"
+          :class="['user-info', { highlight: currentModal === 2 }]"
+        >
           <div class="balance-container">
             <div class="balance-item">
               <i class="fas fa-coins"></i>
@@ -36,7 +38,10 @@
         </div>
 
         <div class="main-content">
-          <div class="conversion-section">
+          <div
+            class="conversion-section"
+            :class="{ highlight: currentModal === 3 }"
+          >
             <div v-if="authStore.isLogin" class="conversion-container">
               <div class="conversion-card">
                 <h2 class="conversion-title">
@@ -107,7 +112,11 @@
             </p>
           </div>
 
-          <div v-if="authStore.isLogin" class="transaction-history">
+          <div
+            v-if="authStore.isLogin"
+            class="transaction-history"
+            :class="{ highlight: currentModal === 4 }"
+          >
             <table>
               <thead>
                 <tr>
@@ -149,6 +158,23 @@
         </div>
       </div>
     </div>
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal-content" :class="{ 'narrow-modal': true }">
+        <h2 v-if="currentModal === 1" class="modal-title">
+          출석과 퀴즈를 통해 얻은 포인트를 모의투자금으로 전환해보세요.
+        </h2>
+        <h2 v-if="currentModal === 2" class="modal-title">
+          회원의 보유 포인트와 모의투자금을 확인하세요.
+        </h2>
+        <h2 v-if="currentModal === 3" class="modal-title">
+          포인트를 모의투자금으로 전환할 수 있는 영역입니다.
+        </h2>
+        <h2 v-if="currentModal === 4" class="modal-title">
+          포인트와 모의투자금 전환 내역을 확인하세요.
+        </h2>
+        <button @click="nextModal" class="modal-button">다음</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -172,6 +198,8 @@ export default {
     const conversionAmount = ref('');
     const conversionMessage = ref('');
     const conversionInputError = ref('');
+    const showModal = ref(true); // 모달을 표시하기 위한 상태
+    const currentModal = ref(1); // 현재 모달 상태
 
     onMounted(async () => {
       if (authStore.isLogin) {
@@ -340,6 +368,19 @@ export default {
       showAllTransactions.value = !showAllTransactions.value;
     };
 
+    const nextModal = () => {
+      if (currentModal.value < 4) {
+        currentModal.value++;
+      } else {
+        closeModal(); // 마지막 모달에서 닫기
+      }
+    };
+
+    const closeModal = () => {
+      showModal.value = false; // 모달 닫기
+      currentModal.value = 1; // 모달 상태 초기화
+    };
+
     return {
       authStore,
       conversionStore,
@@ -360,6 +401,10 @@ export default {
       transactionsPerPage,
       validateInput,
       executeConversion,
+      showModal,
+      closeModal,
+      currentModal,
+      nextModal,
     };
   },
 };
@@ -645,5 +690,56 @@ button:hover {
 
 .toggle-mode-button:hover {
   background-color: #e0e0e0;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* 어두운 배경 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+.narrow-modal {
+  width: 70%; /* 모달의 가로 크기 조정 */
+  max-width: 500px; /* 최대 가로 크기 설정 */
+  position: absolute; /* 모달 위치를 절대 위치로 설정 */
+  z-index: 1001; /* 모달이 다른 요소 위에 표시되도록 설정 */
+  background-color: #ffffff; /* 모달 배경색을 하얗게 설정 */
+  border-radius: 10px; /* 모달의 모서리 둥글게 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  padding: 20px; /* 내부 여백 */
+}
+
+.modal-title {
+  font-size: 1.2rem; /* 폰트 크기 조정 */
+  color: #333; /* 텍스트 색상 */
+  margin-bottom: 15px; /* 아래 여백 */
+  text-align: center; /* 중앙 정렬 */
+}
+
+.modal-button {
+  background-color: #7b57ff; /* 버튼 배경색 */
+  color: white; /* 버튼 텍스트 색상 */
+  padding: 10px 15px; /* 버튼 내부 여백 */
+  border: none; /* 테두리 제거 */
+  border-radius: 5px; /* 버튼 모서리 둥글게 */
+  cursor: pointer; /* 커서 포인터로 변경 */
+  transition: background-color 0.3s; /* 배경색 전환 효과 */
+  width: 100%; /* 버튼 너비 100% */
+}
+
+.modal-button:hover {
+  background-color: #9173ff; /* 버튼 호버 시 색상 변경 */
+}
+
+.highlight {
+  background-color: #ffffff; /* 강조 효과를 위한 배경색 */
+  border: 2px solid #7b57ff; /* 강조 효과를 위한 테두리 */
 }
 </style>

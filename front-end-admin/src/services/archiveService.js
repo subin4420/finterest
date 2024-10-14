@@ -80,58 +80,28 @@ export const postArchive = async () => {
   return response.data;
 };
 
-// 즐겨찾기 추가
-export const addFavorite = async (materialId) => {
-  const token = getToken();
-  const response = await api.post(`/api/archive/${materialId}/favorite`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-};
-
-// 즐겨찾기 삭제
-export const removeFavorite = async (materialId) => {
-  const token = getToken();
-  const response = await api.delete(`/api/archive/${materialId}/favorite`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-};
-
-// 학습 상태(incomplete) 추가
-export const insertArchiveStatus = async(materialId, statusData) => {
-  const token = getToken();
+// 주별/월별 학습자료 조회수
+export const getArchiveChart = async ({ period, year, month }) => {
   try {
-    const response = await api.post(`/api/archive/${materialId}/progress`, statusData,{
+    const token = getToken();
+    const url = `/api/admin/chart/archive-completion/${period}`; // 경로 수정
+    const params = { year };
+    if (period === 'weekly') {
+      params.month = month; // 주별인 경우, 월을 추가
+    }
+
+    const response = await api.get(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
       },
+      params, // 쿼리 파라미터 추가
     });
-    console.log('Server response:', response.data);
+    console.log('Response data from getArchiveChart:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error in insertArchiveStatus:', error.response?.data || error.message);
-    throw error; // 에러 발생 시 다시 throw
+    console.error('Error fetching archive chart data:', error);
+    throw error;
   }
 };
 
-// 학습 상태(completed) 업데이트 함수
-export const updateArchiveStatus = async (materialId, statusData) => {
-  const token = getToken();
-  try {
-    const response = await api.put(`/api/archive/${materialId}/progress`, statusData,{
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log('Server response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error in updateArchiveStatus:', error.response?.data || error.message);
-    throw error; // 에러 발생 시 다시 throw
-  }
-};
+

@@ -9,10 +9,22 @@
     </div>
     <div class="asset-chart">
       <div class="bar">
-        <div class="bar-segment segment-1"></div>
-        <div class="bar-segment segment-2"></div>
-        <div class="bar-segment segment-3"></div>
-        <div class="bar-segment segment-4"></div>
+        <div
+          class="bar-segment segment-1"
+          :style="{ width: segment1Width }"
+        ></div>
+        <div
+          class="bar-segment segment-2"
+          :style="{ width: segment2Width }"
+        ></div>
+        <div
+          class="bar-segment segment-3"
+          :style="{ width: segment3Width }"
+        ></div>
+        <div
+          class="bar-segment segment-4"
+          :style="{ width: segment4Width }"
+        ></div>
       </div>
     </div>
     <div class="asset-list">
@@ -30,8 +42,8 @@
 </template>
 
 <script>
-import { reactive, onMounted, watch } from "vue";
-import axios from "axios";
+import { reactive, onMounted, watch, computed } from 'vue';
+import axios from 'axios';
 
 export default {
   setup() {
@@ -42,30 +54,36 @@ export default {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/portfolio/assets"); // 백엔드에서 받아올 엔드포인트
-        // console.log(response.data.heldStockData[0].stockName);
+        const response = await axios.get('/api/trade/held', {
+          headers: {
+            'Content-Type': 'application/json', // Content-Type을 명시적으로 설정
+            Authorization: 'Bearer YOUR_TOKEN_HERE', // 필요한 경우 Authorization 헤더 추가
+          },
+        });
         data.money = response.data.money;
         data.heldStockData = response.data.heldStockData;
-        // console.log(data.money);
-        // console.log(data.heldStockData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     };
 
     onMounted(() => {
-      fetchData(); // 컴포넌트가 마운트될 때 데이터 가져오기
+      fetchData();
     });
 
-    // data.heldStockData가 변경될 때마다 실행
-    watch(
-      () => data.heldStockData,
-      (newValue) => {
-        newValue.forEach((item) => {
-          item.formattedTotalPrice = formatAmount(item.totalPrice);
-        });
-      }
-    );
+    // 차트 세그먼트 너비 계산
+    const segment1Width = computed(() => {
+      return (data.heldStockData[0]?.totalPrice / data.money) * 100 + '%';
+    });
+    const segment2Width = computed(() => {
+      return (data.heldStockData[1]?.totalPrice / data.money) * 100 + '%';
+    });
+    const segment3Width = computed(() => {
+      return (data.heldStockData[2]?.totalPrice / data.money) * 100 + '%';
+    });
+    const segment4Width = computed(() => {
+      return (data.heldStockData[3]?.totalPrice / data.money) * 100 + '%';
+    });
 
     const formatAmount = (value) => {
       return new Intl.NumberFormat().format(value);
@@ -74,6 +92,10 @@ export default {
     return {
       ...data,
       formatAmount,
+      segment1Width,
+      segment2Width,
+      segment3Width,
+      segment4Width,
     };
   },
 };

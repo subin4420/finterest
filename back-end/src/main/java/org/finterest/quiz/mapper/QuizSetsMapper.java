@@ -52,4 +52,6 @@ public interface QuizSetsMapper {
     // 특정 resultId와 userId에 대한 사용자 답변 목록 조회
     List<UserAnswerVO> selectUserAnswers(@Param("resultId") int resultId, @Param("userId") int userId);
 
+    // 7. 완료 횟수가 높은 퀴즈 세트 상위 3개 조회
+    List<QuizSetsVO> selectTopCompletedQuizSets();
 }

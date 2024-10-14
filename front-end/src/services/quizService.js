@@ -79,3 +79,14 @@ export const getQuizAnswers = async (setId, resultId) => {
   console.log("Quiz answers response:", response.data);
   return response.data;
 };
+
+// 완료 횟수가 높은 퀴즈 세트 가져오기
+export const getTopQuizSets = async () => {
+  try {
+    const response = await api.get('/api/quiz-sets/top-completed');
+    return response.data.completedQuizSets;  // completedQuizSets 데이터 반환
+  } catch (error) {
+    console.error('Failed to fetch all rankings:', error);
+    throw error;  // 에러 발생 시 throw
+  }
+};
