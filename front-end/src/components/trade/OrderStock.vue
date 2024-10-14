@@ -197,6 +197,7 @@ const handleOrder = async () => {
       console.error("응답 데이터:", error.response.data); // 응답 데이터 출력
     }
   }
+  viewStockHeld();
 };
 
 onMounted(() => {

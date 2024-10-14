@@ -8,6 +8,8 @@
         <p>여기는 포트폴리오 페이지입니다.</p>
         <HoldStockDomChart />
         <!-- <HoldTotalAssets /> -->
+        <DaliyProfitChart />
+        <CumulativeProfitChart />
       </div>
     </div>
   </div>
@@ -17,6 +19,8 @@
 import SideTradeNavigationBar from "@/components/trade/SideTradeNavigationBar.vue";
 import HoldStockDomChart from "@/components/trade/portfolioChart/HoldStockDomChart.vue";
 // import HoldTotalAssets from "@/components/trade/portfolioChart/HoldTotalAssets.vue";
+import DaliyProfitChart from "@/components/trade/portfolioChart/DaliyProfitChart.vue";
+import CumulativeProfitChart from "@/components/trade/portfolioChart/CumulativeProfitChart.vue";
 
 export default {
   name: "PortfolioPage",
@@ -24,6 +28,8 @@ export default {
     SideTradeNavigationBar,
     HoldStockDomChart,
     // HoldTotalAssets,
+    DaliyProfitChart,
+    CumulativeProfitChart,
   },
 };
 </script>

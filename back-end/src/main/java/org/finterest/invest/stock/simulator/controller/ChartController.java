@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping("/api/chart")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
 public class ChartController {
 
     private final ChartService service;
