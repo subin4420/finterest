@@ -9,11 +9,13 @@ const state = reactive({
 // 전체 랭킹 조회 함수
 const fetchAllRankings = async () => {
   try {
-    const data = await getAllRankings();
-    state.rankings = data; // API에서 가져온 데이터를 직접 저장
-    console.log('전체 사용자 랭킹:', state.rankings); // 콘솔로 데이터 확인
+    const rankings = await getAllRankings();
+    state.rankings = rankings;
+    console.log('전체 사용자 랭킹:', state.rankings);
+    return rankings; // 랭킹 데이터 반환
   } catch (error) {
     console.error('전체 사용자 랭킹 조회 실패:', error);
+    throw error; // 에러를 다시 던져서 컴포넌트에서 처리할 수 있게 함
   }
 };
 

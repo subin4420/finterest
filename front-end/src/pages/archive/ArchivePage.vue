@@ -57,6 +57,15 @@
       @close="showLoginModal = false"
       @login="goToLogin"
     />
+
+    <!-- 비디오 모달 수정 -->
+    <VideoModal 
+      v-if="isVideoModalVisible"
+      :isVisible="isVideoModalVisible" 
+      :cardData="selectedCard"
+      @close="closeVideoModal"
+      @status-updated="handleStatusUpdate"
+    />
   </div>
 </template>
 
@@ -69,6 +78,7 @@ import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
 import ProgressBar from '@/components/common/ProgressBar.vue';
 import RecentActivityList from '@/components/archive/RecentActivityList.vue';
 import RecommendedArchives from '@/components/archive/RecommendedArchives.vue';
+import VideoModal from '@/components/archive/VideoModal.vue';
 import { onMounted, ref, computed, watch } from "vue";
 import { useArchiveStore } from "@/stores/archiveStore";
 import { useAuthStore } from "@/stores/auth";
@@ -85,19 +95,23 @@ export default {
     ProgressBar,
     RecentActivityList,
     RecommendedArchives,
+    VideoModal,
   },
   setup() {
     const archiveStore = useArchiveStore();
     const authStore = useAuthStore();
     const router = useRouter();
     const isModalVisible = ref(false);
-    const selectedCard = ref({});
+    const selectedCard = ref(null);
     const selectedCategory = ref(null);
     const showLoginModal = ref(false);
     const searchQuery = ref('');
     const sortOption = ref('date');
     const overallProgress = ref(0);
     const recentActivities = ref([]);
+    const isVideoModalVisible = ref(false);
+    const selectedVideoId = ref('');
+    const selectedVideoTitle = ref('');
 
     const recommendedArchives = ref([
       { id: 1, title: '주식 시장의 이해', description: '주식 시장의 기본 개념을 배웁니다.', image: '/path/to/image1.jpg' },
@@ -184,23 +198,36 @@ export default {
         .slice(0, 4); // 최근 4개의 자료만 표시
     });
 
-    function handleCardClick(archive) {
-      console.log('Card clicked:', archive);
-      console.log('Is user logged in?', authStore.isLogin);
-      if (!authStore.isLogin) {
-        showLoginModal.value = true;
+    const handleCardClick = (card) => {
+      console.log('Clicked card:', card);
+      selectedCard.value = card;
+      if (card.type === 'video' || (card.materialImg && card.materialImg.match(/^[a-zA-Z0-9_-]{11}$/))) {
+        console.log('Video card clicked');
+        isVideoModalVisible.value = true;
       } else {
-        selectedCard.value = archive;
+        console.log('Text card clicked');
         isModalVisible.value = true;
       }
-      console.log('Modal visibility:', isModalVisible.value);
-    }
+    };
+
+    const closeVideoModal = () => {
+      isVideoModalVisible.value = false;
+      selectedCard.value = null;
+    };
 
     function goToLogin() {
       router.push({ name: 'login' });
     }
 
     const activeTab = ref('text'); // 기본 탭을 '학습 자료'로 설정
+
+    const handleStatusUpdate = (updatedCard) => {
+      // 상태가 업데이트된 카드를 찾아 업데이트
+      const index = sortedVideoArchives.value.findIndex(card => card.materialId === updatedCard.materialId);
+      if (index !== -1) {
+        sortedVideoArchives.value[index] = { ...sortedVideoArchives.value[index], ...updatedCard };
+      }
+    };
 
     return { 
       sortedTextArchives, 
@@ -212,7 +239,7 @@ export default {
       selectedCategory,
       showLoginModal,
       goToLogin,
-      authStore, // authStore를 템플릿에서 사용할 수 있도록 추가
+      authStore, // authStore를 템플릿에서 용할 수 있도록 추가
       searchQuery,
       sortOption,
       overallProgress,
@@ -221,6 +248,11 @@ export default {
       sortedAndFilteredTextArchives,
       recentArchives,
       activeTab,
+      isVideoModalVisible,
+      selectedVideoId,
+      selectedVideoTitle,
+      closeVideoModal,
+      handleStatusUpdate,
     };
   }
 }
