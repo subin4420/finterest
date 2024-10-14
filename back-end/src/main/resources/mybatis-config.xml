@@ -32,6 +32,8 @@
         <mapper resource="org/finterest/quiz/mapper/adminQuizMapper.xml"/>
         <mapper resource="org/finterest/adminChart/mapper/adminChartMapper.xml"/>
         <mapper resource="org/finterest/user/mapper/adminUserMapper.xml"/>
+        <mapper resource="org/finterest/ranking/mapper/RankingMapper.xml"/>
+
 
     </mappers>
 </configuration>

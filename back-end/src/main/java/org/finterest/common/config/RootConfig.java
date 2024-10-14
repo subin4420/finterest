@@ -29,6 +29,8 @@ import javax.sql.DataSource;
         "org.finterest.point.mapper",
         "org.finterest.notice.mapper",
         "org.finterest.adminChart.mapper",
+        "org.finterest.ranking.mapper",
+
         //A팀
         "org.finterest.invest.stock.overall.mapper",
         "org.finterest.invest.conversion.mapper",
@@ -48,6 +50,8 @@ import javax.sql.DataSource;
         "org.finterest.point",
         "org.finterest.notice",
         "org.finterest.adminChart",
+        "org.finterest.ranking",
+
 
         "org.finterest.invest.stock.overall.service",
         "org.finterest.invest.stock.simulator.service",
