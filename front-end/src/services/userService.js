@@ -18,12 +18,14 @@ const getToken = () => {
 export const getAllRankings = async () => {
   try {
     const response = await api.get('/api/rankings');  // GET 요청으로 랭킹 목록 조회
-    return response.data.rankings;  // rankings 데이터 반환
+    console.log('API 응답 데이터:', response.data);  // 응답 데이터를 확인
+    return response.data;  // rankings 데이터가 있는지 확인
   } catch (error) {
     console.error('Failed to fetch all rankings:', error);
     throw error;  // 에러 발생 시 throw
   }
 };
+
 
 
 // 특정 사용자의 랭킹 정보 조회 API 호출 함수 (토큰 포함)

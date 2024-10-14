@@ -2,12 +2,14 @@
 import LatestUpdates from './LatestUpdates.vue';
 import PopularCategories from './PopularCategories.vue';
 import PopularVideos from './PopularVideos.vue';
+import RankingTable from './RankingTable.vue';
 </script>
 
 <template>
   <section class="content-row">
     <LatestUpdates class="content-column latest-updates" />
-    <PopularCategories class="content-column popular-categories" />
+    <!-- <PopularCategories class="content-column popular-categories" /> -->
+     <RankingTable class="content-column popular-categories"/>
     <PopularVideos class="content-column popular-videos" />
   </section>
 </template>
