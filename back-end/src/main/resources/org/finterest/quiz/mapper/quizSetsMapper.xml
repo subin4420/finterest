@@ -178,4 +178,17 @@
         AND ua.user_id = #{userId}
     </select>
 
+    <!-- 7. 완료 횟수가 높은 퀴즈 세트 상위 3개 조회 -->
+    <select id="selectTopCompletedQuizSets" resultType="org.finterest.quiz.domain.vo.QuizSetsVO">
+        SELECT
+        <include refid="QuizSetFields" />,  -- 공통 필드 사용
+        COUNT(qsr.set_id) AS participationCount  -- 완료 횟수 추가
+        <include refid="QuizSetFromJoin" />      -- 공통 FROM 및 JOIN 사용
+        JOIN Quiz_Sets_Results qsr ON qs.set_id = qsr.set_id
+        GROUP BY qs.set_id                      -- 퀴즈 세트별로 그룹화
+        ORDER BY participationCount DESC           -- 완료 횟수 내림차순으로 정렬
+        LIMIT 3                                 -- 상위 3개만 조회
+    </select>
+
+
 </mapper>

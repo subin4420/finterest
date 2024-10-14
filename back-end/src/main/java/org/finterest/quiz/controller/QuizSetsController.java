@@ -1,5 +1,6 @@
 package org.finterest.quiz.controller;
 
+import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.quiz.domain.dto.QuizSubmissionDTO;
 import org.finterest.quiz.domain.vo.*;
 import org.finterest.quiz.service.QuizSetsService;
@@ -49,16 +50,6 @@ public class QuizSetsController {
 
         return ResponseEntity.ok(response);
     }
-
-
-//    // 카테고리별 퀴즈 세트 조회 (category_id가 있는 경우)
-//    @GetMapping(params = "category_id")
-//    public Map<String, List<QuizSetsVO>> selectQuizSets(@RequestParam("category_id") int categoryId) {
-//        List<QuizSetsVO> quizSetsVOList = quizSetsService.selectQuizSetsByCategory(categoryId);
-//        Map<String, List<QuizSetsVO>> response = new HashMap<>();
-//        response.put("quiz_sets", quizSetsVOList);
-//        return response;
-//    }
 
     // 카테고리별 또는 전체 퀴즈 세트 조회
     @GetMapping
@@ -190,4 +181,12 @@ public class QuizSetsController {
         return ResponseEntity.ok(response);
     }
 
+    // 완료 횟수가 높은 퀴즈 세트 상위 3개 조회 API
+    @GetMapping("/top-completed")
+    public Map<String, List<QuizSetsVO>> getTopCompletedQuizSets() {
+        List<QuizSetsVO> topCompletedQuizSets = quizSetsService.getTopCompletedQuizSets();
+        Map<String, List<QuizSetsVO>> response = new HashMap<>();
+        response.put("completedQuizSets", topCompletedQuizSets);
+        return response;
+    }
 }

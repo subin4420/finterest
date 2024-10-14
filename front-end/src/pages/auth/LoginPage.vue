@@ -1,7 +1,7 @@
 <template>
   <div class="login-page container d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
     <h1 class="mb-5 fw-bold logo" @click="goToHome">finterest</h1>
-    <form @submit.prevent="login" class="w-100" style="max-width: 400px;">
+    <form @submit.prevent="handleLogin" class="w-100" style="max-width: 400px;">
       
       <!-- 아이디 입력 필드 -->
       <div class="mb-4">
@@ -25,6 +25,7 @@
         <router-link :to="{ name: 'join' }" class="text-primary no-underline">회원가입</router-link>
       </div>
     </form>
+    <WelcomeModal v-if="showWelcomeModal" @close="closeWelcomeModal" />
   </div>
 </template>
 
@@ -32,8 +33,9 @@
 import { computed, reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRoute, useRouter } from 'vue-router';
+import WelcomeModal from '@/components/WelcomeModal.vue';
 
-const cr = useRoute();
+const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
@@ -42,27 +44,38 @@ const user = reactive({
   password: '',
 });
 
-const error = ref(''); // 에러 메시지를 저장할 변수
+const error = ref('');
+const showWelcomeModal = ref(false);
 
 const disableSubmit = computed(() => !(user.username && user.password));
 
-// 로그인 함수
-const login = async () => {
-  console.log(user);
+const handleLogin = async () => {
   try {
     await auth.login(user);
-    if (cr.query.next) {
-      router.push({ name: cr.query.next });
+    if (auth.isFirstLogin) {
+      showWelcomeModal.value = true;
     } else {
-      router.push('/');
+      redirectAfterLogin();
     }
   } catch (e) {
     console.log('에러=======', e);
-    error.value = e.response?.data?.message || '아이디 또는 비밀번호가 일치하지 않습니다.'; // 서버로부터 받은 에러 메시지를 사용
+    error.value = e.response?.data?.message || '아이디 또는 비밀번호가 일치하지 않습니다.';
   }
 };
 
-// 홈으로 이동 함수
+const closeWelcomeModal = () => {
+  showWelcomeModal.value = false;
+  redirectAfterLogin();
+};
+
+const redirectAfterLogin = () => {
+  if (route.query.next) {
+    router.push({ name: route.query.next });
+  } else {
+    router.push('/');
+  }
+};
+
 const goToHome = () => {
   router.push('/');
 };

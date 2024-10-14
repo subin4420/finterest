@@ -27,4 +27,10 @@ public class QuizSetsVO {
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)  // null 또는 빈 리스트일 경우 직렬화하지 않음
     private List<QuizVO> questions;  // 세트에 포함된 퀴즈 목록
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // null 또는 빈 리스트일 경우 직렬화하지 않음
+    private Integer participationCount;  // 참여 횟수
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)  // null 또는 빈 리스트일 경우 직렬화하지 않음
+    private Double averageScore;  // 평균 점수
 }

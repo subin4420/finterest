@@ -13,7 +13,16 @@
             <div class="title-wrapper">
                 <div class="title">{{ cardData.setName }}</div>
                 <div :class="['completion-status', { 'completed': cardData.completedAt, 'incomplete': !cardData.completedAt }]">
-                    {{ cardData.completedAt ? `완료: ${formatDate(cardData.completedAt)}` : '미완료' }}
+                    <!-- 완료된 경우 완료 날짜 표시, 미완료일 경우 completedCount 표시 -->
+                    <template v-if="cardData.completedAt">
+                        완료: {{ formatDate(cardData.completedAt) }}
+                    </template>
+                    <template v-else-if="cardData.participationCount !== undefined && cardData.participationCount !== null">
+                        완료 횟수: {{ cardData.participationCount }}회
+                    </template>
+                    <template v-else>
+                        미완료
+                    </template>
                 </div>
             </div>
             <p class="summary">{{ cardData.description }}</p>
@@ -49,6 +58,7 @@ export default {
     }
 }
 </script>
+
 
 <style scoped>
 .content-card {
@@ -142,7 +152,7 @@ export default {
     color: #666;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    /* -webkit-line-clamp: 2; */
     -webkit-box-orient: vertical;
     margin: 0;
 }

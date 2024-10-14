@@ -1,5 +1,5 @@
 import { reactive, toRefs } from 'vue';
-import { getArchive, getArchiveProgress, addFavorite, removeFavorite, updateArchiveStatus, insertArchiveStatus } from '@/services/archiveService';
+import { getArchive, getArchiveProgress, addFavorite, removeFavorite, updateArchiveStatus, insertArchiveStatus, getRecentTextArchives, getPopularVideoArchives } from '@/services/archiveService';
 
 const state = reactive({
   archives: [], // 초기값 설정
@@ -9,6 +9,9 @@ const state = reactive({
   textArchives: [], // 텍스트 자료
   videoArchives: [], // 비디오 자료
   recentActivities: [], // 빈 배열로 초기화
+
+  recentText: [],
+  popularVideo: [],
 });
 
 // text 자료 조회
@@ -201,6 +204,28 @@ const changeArchiveStatus = async (materialId, status) => {
     }
 };
 
+// 최근 업데이트된 텍스트 자료 8개 조회
+const fetchRecentTextArchives = async () => {
+  try {
+    const data = await getRecentTextArchives(); // 최근 업데이트된 텍스트 자료 조회
+    state.recentText = data.texts || [];  // 데이터가 있으면 설정, 없으면 빈 배열
+    console.log('Fetched recent text archives:', state.textArchives);
+  } catch (error) {
+    console.error('Error fetching recent text archives:', error);
+  }
+};
+
+// 완료 횟수가 많은 영상 자료 8개 조회
+const fetchPopularVideoArchives = async () => {
+  try {
+    const data = await getPopularVideoArchives(); // 완료 횟수가 많은 영상 자료 조회
+    state.popularVideo = data.videos || [];  // 데이터가 있으면 설정, 없으면 빈 배열
+    console.log('Fetched popular video archives:', state.videoArchives);
+  } catch (error) {
+    console.error('Error fetching popular video archives:', error);
+  }
+};
+
 export const useArchiveStore = () => {
   return {
     ...toRefs(state),
@@ -218,5 +243,8 @@ export const useArchiveStore = () => {
     fetchVideoArchive, // 비디오 자료 조회 함수 내보내기
     fetchRecentActivities, // 새로운 함수 추가
     calculateOverallProgress, // 새로운 함수 추가
+
+    fetchRecentTextArchives,
+    fetchPopularVideoArchives,
   };
 };
