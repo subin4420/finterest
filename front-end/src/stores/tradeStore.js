@@ -79,5 +79,15 @@ export const useTradeStore = defineStore('trade', {
         console.error('주식 매도 중 오류 발생:', error.message);
       }
     },
+    // 사용자 자산 정보를 가져오는 액션
+    async fetchUserFunds() {
+      try {
+        const funds = await TradeService.getUserFunds(); // 자산 정보 가져오기
+        // 필요한 경우 상태에 자산 정보를 저장하는 로직 추가 가능
+        console.log('사용자 자산 정보:', funds); // 자산 정보 출력
+      } catch (error) {
+        console.error('자산 정보를 가져오는 데 실패했습니다:', error.message);
+      }
+    },
   },
 });
