@@ -177,34 +177,36 @@ export default {
     const detailedAnswers = ref(null);
 
     const submitQuiz = async () => {
-      if (!allQuestionsAnswered.value) return;
+  if (!allQuestionsAnswered.value) return;
 
-      console.log("Questions before submission:", JSON.stringify(questions.value, null, 2));
-
-      const answers = questions.value.map((question, index) => {
-        console.log("Processing question:", question);
-        return {
-          quizId: question.id || question.quizId, // id나 quizId 중 존재하는 것을 사용
-          selectedChoice: userAnswers.value[index]
-        };
-      });
-
-      const submitData = {
-        answers: answers
-      };
-
-      console.log("Final submit data:", JSON.stringify(submitData, null, 2));
-
-      try {
-        const result = await quizStore.submitQuizAnswers(props.quizSet.setId, submitData);
-        console.log("Quiz submission result:", result);
-        quizResult.value = result;
-        showResultModal.value = true;
-        emit('quizSubmitted', result);
-      } catch (error) {
-        console.error('퀴즈 제출 실패:', error);
-      }
+  const answers = questions.value.map((question, index) => {
+    return {
+      quizId: question.id || question.quizId, // id나 quizId 중 존재하는 것을 사용
+      selectedChoice: userAnswers.value[index]
     };
+  });
+
+  const submitData = {
+    answers: answers
+  };
+
+  try {
+    const result = await quizStore.submitQuizAnswers(props.quizSet.setId, submitData);
+    console.log("Quiz submission result:", result);
+
+    // 퀴즈 결과 모달을 열고 점수를 반영
+    quizResult.value = result;
+    showResultModal.value = true;
+
+    // 점수 반영
+    score.value = result.score || 0; // 서버에서 받은 점수를 반영
+    emit('quizSubmitted', result); // 제출된 퀴즈 결과를 전달
+
+  } catch (error) {
+    console.error('퀴즈 제출 실패:', error);
+  }
+};
+
 
     const closeResultModal = () => {
       showResultModal.value = false;

@@ -145,11 +145,13 @@ export default {
       // 힌트 기능 구현
     };
 
-    const handleQuizSubmitted = () => {
-      // 퀴즈 제출 후 처리 (예: 결과 페이지로 이동)
-      console.log('퀴즈가 성공적으로 제출되었습니다.');
-      // 여기에 추가 로직을 구현할 수 있습니다.
-    };
+    const handleQuizSubmitted = (result) => {
+  console.log('퀴즈가 성공적으로 제출되었습니다.');
+
+  // 점수 업데이트
+  score.value = result.score || 0; // 서버에서 받은 점수를 업데이트
+};
+
 
     const updateQuizProgress = (progress) => {
       currentQuestionIndex.value = progress.currentQuestionIndex;

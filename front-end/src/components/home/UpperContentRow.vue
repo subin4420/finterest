@@ -1,8 +1,6 @@
 <script setup>
 import LatestUpdates from './LatestUpdates.vue';
-import PopularCategories from './PopularCategories.vue';
 import PopularVideos from './PopularVideos.vue';
-import RankingTable from './RankingTable.vue';
 </script>
 
 <template>
