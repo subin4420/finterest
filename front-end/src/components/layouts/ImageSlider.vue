@@ -38,7 +38,7 @@ const slides = ref([
   {
     image: IMAGE_PATHS.CHATBOT,
     title: '저에게 모르는 걸 물어보세요.',
-    subtitle: '쳇봇 서비스',
+    subtitle: '챗봇 서비스',
     description: '학습 중 모르는 것이 있으면 질문할 수 있어요.',
     page: '/myLearning/MyLearningPage' // 아직 없음 일단
   },

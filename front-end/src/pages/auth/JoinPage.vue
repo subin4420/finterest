@@ -10,11 +10,11 @@ const checkError = ref('');
 const passwordError = ref('');  // 이 줄을 추가합니다.
 
 const member = reactive({
-  username: 'hong',
+  username: '',
   fullName: '',  // 추가된 부분
-  email: 'hong@gmail.com',
-  password: '12',
-  password2: '12',
+  email: '',
+  password: '',
+  password2: '',
   avatar: null,
 });
 

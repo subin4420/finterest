@@ -19,7 +19,7 @@ export const getAllRankings = async () => {
   try {
     const response = await api.get('/api/rankings');
     console.log('API 응답 데이터:', response.data);
-    return response.data.rankings; // rankings 배열만 반환
+    return response.data; // rankings 배열만 반환
   } catch (error) {
     console.error('Failed to fetch all rankings:', error);
     throw error;
