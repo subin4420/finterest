@@ -103,17 +103,20 @@ onMounted(async () => {
 
 .card-row {
   display: flex;
-  justify-content: space-between; /* 카드들이 가로로 나란히 배치되도록 설정 */
-  gap: 20px; /* 카드 간격 설정 */
+  justify-content: space-between;
+  gap: 20px;
   width: 100%;
+  height: 100%; /* 높이를 100%로 설정하여 카드가 전체 높이를 차지하도록 함 */
 }
 
 .content-body {
   overflow: hidden;
-  height: 400px; /* 슬라이더 높이 설정 */
+  height: auto; /* 고정 높이 제거 */
+  max-height: 400px; /* 최대 높이 설정 */
 }
 
 .update-slider .card-row > * {
-  flex: 1; /* 모든 카드를 같은 높이로 설정 */
+  flex: 1;
+  max-width: calc(50% - 10px); /* 2개의 카드가 나란히 들어갈 수 있도록 최대 너비 설정 */
 }
 </style>
