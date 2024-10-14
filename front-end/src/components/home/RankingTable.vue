@@ -1,6 +1,6 @@
 <template>
   <div class="ranking-table">
-    <h2>상위 5명의 랭킹</h2>
+    <h2>랭킹</h2>
     <table>
       <thead>
         <tr>
@@ -11,7 +11,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(rank, index) in topRankings" :key="rank.userId">
+        <tr 
+          v-for="(rank, index) in topRankings" 
+          :key="rank.userId"
+          :class="{ 'highlight': isUserInRankings(rank.userId) }"
+        >
           <td>{{ rank.rankPosition }}</td> <!-- 올바른 필드명 사용 -->
           <td>{{ rank.username }}</td>
           <td>{{ rank.totalPoints }}</td>
@@ -20,8 +24,8 @@
       </tbody>
     </table>
 
-    <!-- 로그인한 사용자 랭킹 정보 -->
-    <div v-if="userRanking">
+    <!-- 로그인한 사용자가 rankings에 포함되지 않은 경우에만 사용자 랭킹 정보 표시 -->
+    <div v-if="userRanking && !isUserInTopRankings">
       <h3>내 랭킹</h3>
       <table>
         <tbody>
@@ -38,7 +42,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useUserStore } from '@/stores/userStore'; // userStore 사용
 import { useAuthStore } from '@/stores/auth'; // 인증 스토어 사용
 
@@ -47,27 +51,37 @@ export default {
     const topRankings = ref([]); // 상위 5명의 랭킹 정보
     const userRanking = ref(null); // 로그인한 사용자의 랭킹 정보
     const authStore = useAuthStore(); // 인증 스토어 사용
-    const { fetchAllRankings, fetchUserRanking } = useUserStore(); // userStore에서 함수 가져오기
+    const { rankings, rank, fetchAllRankings, fetchUserRanking } = useUserStore(); // userStore에서 함수 가져오기
+
+    // 로그인한 사용자가 rankings에 포함되었는지 확인하는 함수
+    const isUserInRankings = (userId) => {
+      return userRanking.value && userRanking.value.userId === userId;
+    };
+
+    // rankings에 로그인한 사용자가 포함되었는지 여부 확인
+    const isUserInTopRankings = computed(() => {
+      return topRankings.value.some(r => isUserInRankings(r.userId));
+    });
 
     // 전체 랭킹 및 사용자 랭킹 가져오기
     const fetchAndSetRankings = async () => {
       try {
         // 전체 및 사용자 랭킹 가져오기
-        const response = await fetchAllRankings();
-        console.log('API 응답 데이터:', response);
+        await fetchAllRankings(); // rankings 상태를 갱신
 
-        if (response) {
-          topRankings.value = response.rankings; // 전체 랭킹 정보 저장
+        if (rankings.value) {
+          topRankings.value = rankings.value; // 상태에 저장된 rankings 값 사용
         } else {
           console.error('랭킹 데이터를 가져올 수 없습니다.');
         }
 
-        // 로그인한 사용자의 정보가 있으면 사용자 랭킹 가져오기
+        // 로그인한 사용자 정보가 있으면 사용자 랭킹 가져오기
         const token = authStore.getToken();
         if (token) {
-          const userId = authStore.getUserId();
-          const userRankData = await fetchUserRanking(userId);
-          userRanking.value = userRankData; // 로그인한 사용자 랭킹 정보 설정
+          await fetchUserRanking(); // 토큰을 이용하여 사용자 랭킹 조회
+          if (rank.value) {
+            userRanking.value = rank.value; // 상태에 저장된 사용자 랭킹 값 사용
+          }
         }
       } catch (error) {
         console.error('랭킹 데이터를 가져오는 중 오류 발생:', error);
@@ -82,6 +96,8 @@ export default {
     return {
       topRankings,
       userRanking,
+      isUserInRankings,
+      isUserInTopRankings,
     };
   },
 };
@@ -106,5 +122,9 @@ th, td {
 
 h2, h3 {
   margin-bottom: 15px;
+}
+
+.highlight {
+  background-color: #e0f7fa; /* 로그인한 사용자 행의 배경색 변경 */
 }
 </style>
