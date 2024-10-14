@@ -29,17 +29,18 @@ export const getAllRankings = async () => {
 
 
 // 특정 사용자의 랭킹 정보 조회 API 호출 함수 (토큰 포함)
-export const getUserRanking = async (userId) => {
+export const getUserRanking = async () => {
   try {
     const token = getToken();  // 토큰 가져오기
-    const response = await api.get(`/api/rankings/${userId}`, {
+    const response = await api.get(`/api/rankings/me`, {
       headers: {
         Authorization: `Bearer ${token}`,  // Authorization 헤더에 토큰 추가
       },
     });
+    console.log("getUserRanking data:", response.data);
     return response.data;  // 사용자 랭킹 데이터 반환
   } catch (error) {
-    console.error(`Failed to fetch ranking for user with ID: ${userId}`, error);
+    console.error(`Failed to fetch ranking for user with ID: `, error);
     throw error;  // 에러 발생 시 throw
   }
 };

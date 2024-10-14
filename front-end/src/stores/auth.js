@@ -92,6 +92,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout, 
     getToken,
     avatarUpdated,
-    updateAvatar
+    updateAvatar,
   };
 });
