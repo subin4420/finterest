@@ -2,13 +2,15 @@
 import LatestUpdates from './LatestUpdates.vue';
 import PopularCategories from './PopularCategories.vue';
 import PopularVideos from './PopularVideos.vue';
+import RankingTable from './RankingTable.vue';
 </script>
 
 <template>
   <section class="content-row">
     <LatestUpdates class="content-column latest-updates" />
-    <PopularCategories class="content-column popular-categories" />
+    <!-- <PopularCategories class="content-column popular-categories" /> -->
     <PopularVideos class="content-column popular-videos" />
+
   </section>
 </template>
 
@@ -29,20 +31,24 @@ import PopularVideos from './PopularVideos.vue';
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* 내용이 넘치면 숨김 */
 }
 
 .latest-updates {
   flex: 5;
   margin-right: 1rem;
+  min-width: 0; /* 최소 너비를 설정해 비율을 유지 */
 }
 
 .popular-categories {
   flex: 2;
   margin-right: 1rem;
+  min-width: 0; /* 최소 너비를 설정해 비율을 유지 */
 }
 
 .popular-videos {
   flex: 3;
+  min-width: 0; /* 최소 너비를 설정해 비율을 유지 */
 }
 
 :deep(h2) {
@@ -53,6 +59,7 @@ import PopularVideos from './PopularVideos.vue';
 
 :deep(.content-body) {
   flex-grow: 1;
-  overflow-y: auto;
+  overflow-y: auto; /* 필요 시 스크롤 적용 */
 }
+
 </style>

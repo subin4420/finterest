@@ -1,10 +1,11 @@
 import { reactive, toRefs } from 'vue';
-import { getQuizSets, getQuizQuestions, submitQuizAnswers as submitQuizAnswersService, getQuizAnswers, fetchQuizResults as fetchQuizResultsService } from '../services/quizService';
+import { getQuizSets, getQuizQuestions, submitQuizAnswers as submitQuizAnswersService, getQuizAnswers, fetchQuizResults as fetchQuizResultsService, getTopQuizSets } from '../services/quizService';
 
 const state = reactive({
   quizSets: [], // 퀴즈 세트를 저장할 상태
   currentQuizQuestions: null,
   quizResults: [],  // 퀴즈 결과를 저장할 상태
+  completedQuizSets: [],
 });
 
 // 퀴즈 세트 가져오기
@@ -67,6 +68,20 @@ const fetchQuizAnswers = async (setId, resultId) => {
   }
 };
 
+// 완료 횟수가 높은 퀴즈 목록 조회
+const fetchCompletedQuizSets = async () => {
+  try {
+    const completedQuizSets = await getTopQuizSets(); // API 호출하여 데이터 가져오기
+    console.log("Fetched completed quizSets:", completedQuizSets); // 전체 응답을 출력하여 구조 확인
+    state.completedQuizSets = completedQuizSets; // API에서 받은 데이터를 상태에 저장
+  } catch (error) {
+    console.error("Failed to fetch completed quizSets", error); // 에러 처리
+    throw error;
+  }
+};
+
+
+
 export const useQuizStore = () => {
   return {
     ...toRefs(state), // state를 toRefs로 반환하여 반응성 유지
@@ -74,6 +89,7 @@ export const useQuizStore = () => {
     fetchQuizQuestions,
     submitQuizAnswers,
     fetchQuizAnswers,
-    fetchQuizResults
+    fetchQuizResults,
+    fetchCompletedQuizSets
   };
 };

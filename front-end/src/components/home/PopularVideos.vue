@@ -1,12 +1,22 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useArchiveStore } from '@/stores/archiveStore';
 
-const popularVideos = ref([
-  { id: 1, title: '인기 영상 1', category: '웹 개발', youtubeId: 'dQw4w9WgXcQ' },
-  { id: 2, title: '인기 영상 2', category: '모바일 앱', youtubeId: 'WnTCZola7Nc' },
-  { id: 3, title: '인기 영상 3', category: '데이터 사이언스', youtubeId: 'eAt72E0N8ro' },
-  { id: 4, title: '인기 영상 4', category: '인공지능', youtubeId: 'CSjTlB6uQT0' },
-]);
+const { videoArchives, fetchVideoArchive } = useArchiveStore();
+
+const popularVideos = ref([]);
+
+onMounted(async () => {
+  await fetchVideoArchive();
+  popularVideos.value = videoArchives.value.slice(0, 4);
+  console.log('인기 비디오:', popularVideos.value);
+  
+  // 각 비디오의 youtubeId 확인
+  popularVideos.value.forEach(video => {
+    console.log('Video ID:', video.materialImg);
+    console.log('Thumbnail URL:', getYoutubeThumbnail(video.materialImg));
+  });
+});
 
 const currentIndex = ref(0);
 
@@ -19,7 +29,7 @@ const prevSlide = () => {
 };
 
 const getYoutubeThumbnail = (youtubeId) => {
-  return `https://img.youtube.com/vi/${youtubeId}/0.jpg`;
+  return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
 };
 </script>
 
@@ -35,9 +45,9 @@ const getYoutubeThumbnail = (youtubeId) => {
     <div class="content-body">
       <div class="video-slider">
         <div class="video-list" :style="{ transform: `translateX(-${currentIndex * 50}%)` }">
-          <div v-for="video in popularVideos" :key="video.id" class="video-item">
+          <div v-for="video in popularVideos" :key="video.materialId" class="video-item">
             <div class="video-thumbnail-container">
-              <img :src="getYoutubeThumbnail(video.youtubeId)" :alt="video.title" class="video-thumbnail">
+              <img :src="getYoutubeThumbnail(video.materialImg)" :alt="video.title" class="video-thumbnail" @error="console.error('이미지 로딩 실패:', video.youtubeId)">
             </div>
             <div class="video-info">
               <div class="video-title">{{ video.title }}</div>
@@ -75,6 +85,7 @@ const getYoutubeThumbnail = (youtubeId) => {
 .video-slider {
   position: relative;
   overflow: hidden;
+  margin-top: 1rem; /* 상단 여백 추가 */
 }
 
 .video-list {
@@ -86,31 +97,57 @@ const getYoutubeThumbnail = (youtubeId) => {
   flex: 0 0 50%;
   padding: 0 0.5rem;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
-.video-thumbnail {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
+.video-thumbnail-container {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 비율 유지 */
+  overflow: hidden;
   border-radius: 8px;
 }
 
+.video-thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .video-info {
-  padding: 1rem;
+  padding: 0.5rem 0; /* 상하 패딩만 적용 */
+  flex-grow: 1; /* 남은 공간 채우기 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .video-title {
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  /* -webkit-line-clamp: 2; */
+  -webkit-box-orient: vertical;
+  line-height: 1.2em;
+  max-height: 2.4em;
 }
 
 .video-category {
-  font-size: 0.9rem;
+  font-size: 0.8rem; /* 글자 크기 약간 축소 */
   color: #666;
   background-color: #f0f0f0;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
   display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-self: flex-start; /* 왼쪽 정렬 */
 }
-
 </style>

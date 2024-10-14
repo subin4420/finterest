@@ -2,6 +2,7 @@
 import ImageSlider from '@/components/layouts/ImageSlider.vue';
 import UpperContentRow from '@/components/home/UpperContentRow.vue';
 import LowerContentRow from '@/components/home/LowerContentRow.vue';
+import RankingTable from '@/components/home/RankingTable.vue';
 </script>
 
 
@@ -10,6 +11,8 @@ import LowerContentRow from '@/components/home/LowerContentRow.vue';
     <ImageSlider />
     <UpperContentRow />
     <LowerContentRow />
+    <RankingTable class="content-column popular-categories"/>
+
     <!-- 다른 섹션들을 여기에 추가할 수 있습니다 -->
   </div>
 </template>
@@ -23,4 +26,5 @@ import LowerContentRow from '@/components/home/LowerContentRow.vue';
   background-color: #f5f5f5;
 }
 }
+
 </style>

@@ -13,7 +13,7 @@ const initState = {
 };
 
 export const useAuthStore = defineStore('auth', () => {
-  const state = ref({ ...initState });
+  const state = ref({ ...initState, isFirstLogin: false });
 
   const isLogin = computed(() => !!state.value.user.username);
   const username = computed(() => state.value.user.username);
@@ -52,6 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
       console.log("loginData", loginData);
       const { data } = await axios.post('/api/auth/login', loginData);
       state.value = { ...data };
+      state.value.isFirstLogin = data.isFirstLogin; // 서버에서 첫 로그인 여부를 받아옴
       localStorage.setItem('auth', JSON.stringify(state.value));
       return true;
     } catch (error) {
@@ -92,6 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout, 
     getToken,
     avatarUpdated,
-    updateAvatar
+    updateAvatar,
+    isFirstLogin: computed(() => state.value.isFirstLogin),
   };
 });

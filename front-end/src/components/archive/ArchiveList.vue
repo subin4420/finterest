@@ -11,10 +11,17 @@
       />
     </div>
     <ArchiveModal 
-      v-if="selectedCard"
-      :isVisible="isModalVisible" 
+      v-if="selectedCard && !isVideoContent(selectedCard)"
+      :isVisible="isArchiveModalVisible" 
       :cardData="selectedCard" 
-      @update:isVisible="isModalVisible = $event" 
+      @update:isVisible="isArchiveModalVisible = $event" 
+    />
+    <VideoModal 
+      v-if="selectedCard && isVideoContent(selectedCard)"
+      :isVisible="isVideoModalVisible" 
+      :cardData="selectedCard" 
+      @close="closeVideoModal"
+      @status-updated="handleStatusUpdate"
     />
   </div>
 </template>
@@ -22,6 +29,7 @@
 <script>
 import ArchiveCard from '@/components/archive/ArchiveCard.vue';
 import ArchiveModal from '@/components/archive/ArchiveModal.vue';
+import VideoModal from '@/components/archive/VideoModal.vue';
 import { ref, watch, onMounted, computed } from 'vue';
 import { useArchiveStore } from '@/stores/archiveStore';
 
@@ -35,11 +43,13 @@ export default {
   },
   components: {
     ArchiveCard,
-    ArchiveModal
+    ArchiveModal,
+    VideoModal
   },
   setup(props) {
     const archiveStore = useArchiveStore();
-    const isModalVisible = ref(false);
+    const isArchiveModalVisible = ref(false);
+    const isVideoModalVisible = ref(false);
     const selectedCard = ref(null);
 
     // 현재 학습 상태에 따라 필터링된 아카이브 목록을 설정
@@ -52,9 +62,27 @@ export default {
       return [];
     });
 
+    const isVideoContent = (card) => {
+      return card.type === 'video' || (card.materialImg && card.materialImg.match(/^[a-zA-Z0-9_-]{11}$/));
+    };
+
     const openModal = (card) => {
       selectedCard.value = card;
-      isModalVisible.value = true;
+      if (isVideoContent(card)) {
+        isVideoModalVisible.value = true;
+      } else {
+        isArchiveModalVisible.value = true;
+      }
+    };
+
+    const closeVideoModal = () => {
+      isVideoModalVisible.value = false;
+      selectedCard.value = null;
+    };
+
+    const handleStatusUpdate = (updatedCard) => {
+      console.log('Status updated:', updatedCard);
+      // 여기에 상태 업데이트 로직을 추가하세요
     };
 
     onMounted(async () => {
@@ -82,9 +110,13 @@ export default {
 
     return {
       filteredArchives,
-      isModalVisible,
+      isArchiveModalVisible,
+      isVideoModalVisible,
       selectedCard,
-      openModal
+      openModal,
+      closeVideoModal,
+      handleStatusUpdate,
+      isVideoContent
     };
   }
 };

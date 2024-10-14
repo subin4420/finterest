@@ -23,7 +23,13 @@
         qs.set_img AS setImg,
         c.category_name AS categoryName,
         qs.created_at AS createdAt,
-        qs.updated_at AS updatedAt
+        qs.updated_at AS updatedAt,
+        (SELECT COUNT(*)  -- 참여 횟수
+        FROM Quiz_Sets_Results qr
+        WHERE qr.set_id = qs.set_id) AS participationCount,
+        (SELECT COALESCE(AVG(qr.total_score), 0)  -- 평균 점수
+        FROM Quiz_Sets_Results qr
+        WHERE qr.set_id = qs.set_id) AS averageScore
         FROM Quiz_Sets qs
         JOIN Categories c ON qs.category_id = c.category_id
         WHERE 1=1
@@ -32,6 +38,7 @@
         </if>
         ORDER BY qs.created_at DESC
     </select>
+
 
 
     <!-- 3. 퀴즈 세트 업데이트 -->

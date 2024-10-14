@@ -9,21 +9,20 @@
           <i :class="statusIcon"></i> {{ statusText }}
         </span>
       </div>
-      <div v-if="isYouTubeVideo" class="video-container">
-        <iframe
-          :src="'https://www.youtube.com/embed/' + videoId"
-          frameborder="0"
-          allow="autoplay; encrypted-media"
-          allowfullscreen
-        ></iframe>
-      </div>
-      <div v-else class="image-container">
-        <img :src="imageUrl" alt="학습 자료 이미지" />
-      </div>
-      <div class="content-info">
-        <h4>{{ cardData.title }}</h4>
-        <p><i class="fas fa-folder"></i> {{ cardData.categoryName }}</p>
-        <div v-html="cardData.content"></div>
+      <div class="content-section">
+        <div class="title-section">
+          <h2>{{ cardData.title }}</h2>
+          <p><i class="fas fa-folder"></i> {{ cardData.categoryName }}</p>
+        </div>
+        <div class="video-container">
+          <iframe
+            :src="'https://www.youtube.com/embed/' + cardData.materialImg"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="archive-content" v-html="cardData.content"></div>
       </div>
       <button 
         class="complete-button" 
@@ -31,121 +30,93 @@
         :disabled="cardData.status === 'completed'"
         :class="{ 'completed': cardData.status === 'completed' }"
       >
-        <i class="fas fa-check"></i> <span style="margin-left: 5px;">학습완료</span>
+        <i class="fas fa-check"></i> 학습완료
       </button>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { IMAGE_PATHS } from '@/constants/imagePaths';
 import { useArchiveStore } from '@/stores/archiveStore';
 
 export default {
-  name: 'VideoModal',
   props: {
     isVisible: Boolean,
-    cardData: Object,
+    cardData: {
+      type: Object,
+      required: true
+    }
   },
-  setup(props, { emit }) {
-    const archiveStore = useArchiveStore();
+  computed: {
+    statusText() {
+      return this.cardData.status === 'completed' ? '완료된 학습' :
+             this.cardData.status === 'incomplete' ? '진행중인 학습' :
+             this.cardData.status || 'N/A';
+    },
+    statusClass() {
+      return {
+        'status-completed': this.cardData.status === 'completed',
+        'status-incomplete': this.cardData.status === 'incomplete'
+      };
+    },
+    statusIcon() {
+      return this.cardData.status === 'completed' ? 'fas fa-check-circle' : 'fas fa-clock';
+    }
+  },
+  mounted() {
+    if (!this.cardData || !this.cardData.materialId) {
+      console.error('Material ID is undefined or cardData is missing.');
+      return;
+    }
 
-    const isYouTubeVideo = computed(() => {
-      return props.cardData.materialImg && props.cardData.materialImg.length === 11;
-    });
+    console.log('Video Modal mounted with cardData:', this.cardData);
+    console.log('Material ID:', this.cardData.materialId);
 
-    const videoId = computed(() => {
-      return isYouTubeVideo.value ? props.cardData.materialImg : null;
-    });
+    if (this.cardData.status == 'N/A' || !this.cardData.status) {
+      this.cardData.status = null;
+      console.log('Setting status to null.');
+    }
 
-    const imageUrl = computed(() => {
-      if (!isYouTubeVideo.value && props.cardData.materialImg) {
-        return IMAGE_PATHS.ARCHIVE_IMG + props.cardData.materialImg;
-      }
-      return null;
-    });
-
-    const statusText = computed(() => {
-      return props.cardData.status === 'completed' ? '완료된 학습' : 
-             props.cardData.status === 'incomplete' ? '진행중인 학습' : 
-             props.cardData.status || 'N/A';
-    });
-
-    const statusClass = computed(() => ({
-      'status-completed': props.cardData.status === 'completed',
-      'status-incomplete': props.cardData.status === 'incomplete'
-    }));
-
-    const statusIcon = computed(() => 
-      props.cardData.status === 'completed' ? 'fas fa-check-circle' : 'fas fa-clock'
-    );
-
-    const closeModal = () => {
-      emit('update:isVisible', false);
-    };
-
-    const markComplete = async () => {
-      if (props.cardData.status !== 'completed') {
-        try {
-          await archiveStore.changeArchiveStatus(props.cardData.materialId, 'completed');
-          props.cardData.status = 'completed'; // 로컬 상태 업데이트
-          closeModal(); // 모달 닫기
-        } catch (error) {
-          console.error('Error updating archive status:', error);
-        }
-      }
-    };
-
-    onMounted(() => {
-      if (!props.cardData || !props.cardData.materialId) {
-        console.error('Material ID is undefined or cardData is missing.');
-        return;
-      }
-
-      console.log('Modal mounted with cardData:', props.cardData);
-      console.log('Material ID:', props.cardData.materialId);
-
-      if (props.cardData.status == 'N/A' || !props.cardData.status) {
-        props.cardData.status = null;
-        console.log('Setting status to null.');
-      }
-
-      checkAndAddStatus();
-    });
-
-    const checkAndAddStatus = async () => {
-      console.log('Checking status in checkAndAddStatus function:', props.cardData.status);
-      if (!props.cardData.status || props.cardData.status === null) {
+    this.checkAndAddStatus();
+  },
+  methods: {
+    async checkAndAddStatus() {
+      console.log('Checking status in checkAndAddStatus function:', this.cardData.status);
+      if (!this.cardData.status || this.cardData.status === null) {
         try {
           console.log('Status is null, adding archive status.');
-          await archiveStore.addArchiveStatus(props.cardData.materialId, 'incomplete');
+          const archiveStore = useArchiveStore();
+          await archiveStore.addArchiveStatus(this.cardData.materialId, 'incomplete');
           console.log('Successfully added archive status.');
-          props.cardData.status = 'incomplete'; // 로컬 상태 업데이트
+          this.cardData.status = 'incomplete';
         } catch (error) {
           console.error('Error adding archive status:', error);
         }
       } else {
         console.log('Status is not null, skipping status addition.');
       }
-    };
-
-    return {
-      isYouTubeVideo,
-      videoId,
-      imageUrl,
-      closeModal,
-      statusText,
-      statusClass,
-      statusIcon,
-      markComplete,
-    };
-  },
-};
+    },
+    closeModal() {
+      this.$emit('close');
+    },
+    async markComplete() {
+      if (this.cardData.status !== 'completed') {
+        try {
+          const archiveStore = useArchiveStore();
+          await archiveStore.changeArchiveStatus(this.cardData.materialId, 'completed');
+          this.cardData.status = 'completed';
+          this.$emit('status-updated', this.cardData);
+          this.closeModal();
+        } catch (error) {
+          console.error('Error updating archive status:', error);
+        }
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>
-/* ArchiveModal.vue의 스타일을 그대로 가져와서 사용합니다 */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -199,6 +170,8 @@ export default {
   font-weight: bold;
   padding: 5px 10px;
   border-radius: 15px;
+  white-space: nowrap; /* 줄바꿈 방지 */
+  display: inline-block; /* 인라인 블록으로 설정 */
 }
 
 .status-completed {
@@ -211,8 +184,18 @@ export default {
   color: white;
 }
 
-.video-container, .image-container {
+.title-section {
   margin-bottom: 20px;
+}
+
+.title-section h2 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+}
+
+.title-section p {
+  margin: 0;
+  color: #7f8c8d;
 }
 
 .video-container {
@@ -220,6 +203,7 @@ export default {
   padding-bottom: 56.25%; /* 16:9 비율 */
   height: 0;
   overflow: hidden;
+  margin-bottom: 20px;
 }
 
 .video-container iframe {
@@ -230,13 +214,14 @@ export default {
   height: 100%;
 }
 
-.image-container img {
-  max-width: 100%;
-  height: auto;
-}
-
-.content-info {
+.archive-content {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
   margin-bottom: 20px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .complete-button {
@@ -259,6 +244,36 @@ export default {
 }
 
 .complete-button.completed {
-  background-color: #2ecc71;
+  background-color: #969696;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 95%;
+    padding: 15px;
+  }
+
+  .title-section h2 {
+    font-size: 18px;
+  }
+
+  .title-section p {
+    font-size: 14px;
+  }
+
+  .complete-button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  .modal-header {
+    flex-direction: column; /* 모바일에서는 세로로 배치 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+  }
+
+  .learning-status {
+    margin-top: 10px; /* 상단 여백 추가 */
+  }
 }
 </style>

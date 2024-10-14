@@ -14,19 +14,6 @@ const getToken = () => {
 };
 
 // Authorization 헤더 추가 및 에러 핸들링 추가
-// export const getArchive = async (params = {}) => {
-//   const token = getToken();
-//   const response = await api.get('/api/archive', { 
-//     params,
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-//   console.log("in service response.data: ", response.data);
-//   return response.data;
-// };
-
-// Authorization 헤더 추가 및 에러 핸들링 추가
 export const getArchive = async (params = {}) => {
   const token = getToken();
   
@@ -133,5 +120,29 @@ export const updateArchiveStatus = async (materialId, statusData) => {
   } catch (error) {
     console.error('Error in updateArchiveStatus:', error.response?.data || error.message);
     throw error; // 에러 발생 시 다시 throw
+  }
+};
+
+// 최근 업데이트된 텍스트 자료 8개 가져오기
+export const getRecentTextArchives = async () => {
+  try {
+    const response = await api.get('/api/archive/recentText'); // JWT 토큰 없이 호출
+    console.log('Fetched recent text archives:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching recent text archives:', error.response?.data || error.message);
+    throw error; // 에러 발생 시 throw
+  }
+};
+
+// 완료 횟수가 많은 영상 자료 8개 가져오기
+export const getPopularVideoArchives = async () => {
+  try {
+    const response = await api.get('/api/archive/popularVideo'); // JWT 토큰 없이 호출
+    console.log('Fetched popular video archives:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching popular video archives:', error.response?.data || error.message);
+    throw error; // 에러 발생 시 throw
   }
 };
