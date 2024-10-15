@@ -43,7 +43,7 @@ public class SimulatorService {
         }
 
         // BigDecimal과 Long 연산
-        vo.setTradeType("buy");
+        vo.setTradeType("매수");
         vo.setTotalPrice(totalPrice.add(currentTotalPrice));  // 가격 * 수량
         vo.setTotalStockHoldings(currentQuantity + quantity);  // 총 보유량 갱신
         vo.setCreatedAt(new Date());
@@ -82,7 +82,7 @@ public class SimulatorService {
         }
 
         // BigDecimal과 Long 연산
-        vo.setTradeType("sell");
+        vo.setTradeType("매도");
         vo.setTotalPrice(totalPrice.subtract(currentTotalPrice));  // 가격 * 수량
         vo.setTotalStockHoldings(currentQuantity - quantity);  // 총 보유량 갱신
         vo.setCreatedAt(new Date());
