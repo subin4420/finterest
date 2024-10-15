@@ -7,15 +7,11 @@
         <div class="content">
           <div class="community-page">
             <ScenarioChart @loaded="onChartLoaded" :stockData="stockData" />
-
-            <!-- ScenarioChart가 완료된 후에 ScenarioOrder를 렌더링 -->
             <ScenarioOrder
               v-if="isChartLoaded"
               @next-turn="handleNextTurn"
               :stockData="stockData"
             />
-
-            <!--모달 슈웃~  -->
             <ScenarioModal
               :isVisible="isModalVisible"
               :data="modalData"
@@ -33,7 +29,7 @@ import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vu
 import ScenarioModal from '@/components/trade/scenario/ScenarioModal.vue';
 import ScenarioChart from '@/components/trade/scenario/ScenarioChart.vue';
 import ScenarioOrder from '@/components/trade/scenario/ScenarioOrder.vue';
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import axios from 'axios';
 
 // 모달
@@ -42,7 +38,6 @@ const modalData = ref({});
 
 // ScenarioChart 로딩 상태 추적
 const isChartLoaded = ref(false);
-// 컴포넌트에 보낼 데이터 반응형으로 선언
 const stockData = ref([]);
 const processData = (result) => {
   stockData.value = [
@@ -63,17 +58,8 @@ const handleNextTurn = (newTurnValue) => {
   axios
     .post(`/api/scenario/next/${newTurnValue}`)
     .then((response) => {
-      // 응답 데이터를 로그로 출력
       const result = response.data;
-      console.log('description:', result.description);
-      console.log('stck_bsop_date:', result.stck_bsop_date);
-      console.log('stck_oprc:', result.stck_oprc);
-      console.log('stck_clpr:', result.stck_clpr);
-      console.log('stck_lwpr:', result.stck_lwpr);
-      console.log('stck_hgpr:', result.stck_hgpr);
       processData(result);
-
-      // 모달모달모달
       modalData.value = result;
       isModalVisible.value = true;
     })
@@ -111,16 +97,6 @@ const handleNextTurn = (newTurnValue) => {
   padding: 20px;
 }
 
-.page-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #333;
-  text-align: left;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #b3b3b3;
-}
-
 .community-page {
   display: flex;
   justify-content: left; /* 필요에 따라 컴포넌트들 사이 간격 조정 */
@@ -132,29 +108,5 @@ ScenarioChart,
 ScenarioOrder {
   flex-grow: 1; /* 모든 컴포넌트가 같은 너비를 차지하도록 */
   margin: 0; /* 각 컴포넌트의 마진 제거 */
-}
-
-.content-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.conversion-container {
-  margin-top: 20px;
-}
-
-h2 {
-  margin-bottom: 10px;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  padding: 5px;
 }
 </style>

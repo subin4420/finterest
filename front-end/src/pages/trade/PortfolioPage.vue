@@ -38,7 +38,7 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(record, index) in tradeHistory"
+                  v-for="(record, index) in tradeHistory.slice(0, 5)"
                   :key="index"
                   class="trade-record"
                 >
@@ -50,7 +50,7 @@
                     {{
                       isValidDate(record.createdAt)
                         ? new Date(record.createdAt).toLocaleDateString()
-                        : "유효하지 않은 날짜"
+                        : '유효하지 않은 날짜'
                     }}
                   </td>
                   <td>{{ record.tradeType }}</td>
@@ -65,17 +65,17 @@
 </template>
 
 <script>
-import SideTradeNavigationBar from "@/components/trade/SideTradeNavigationBar.vue";
-import HoldStockDomChart from "@/components/trade/portfolioChart/HoldStockDomChart.vue";
-import SellandBuyChart from "@/components/trade/portfolioChart/SellandBuyChart.vue";
-import DaliyProfitChart from "@/components/trade/portfolioChart/DaliyProfitChart.vue";
-import CumulativeProfitChart from "@/components/trade/portfolioChart/CumulativeProfitChart.vue";
-import { reactive, onMounted, ref } from "vue";
-import axios from "axios";
-import TradeService from "@/services/tradeService";
+import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vue';
+import HoldStockDomChart from '@/components/trade/portfolioChart/HoldStockDomChart.vue';
+import SellandBuyChart from '@/components/trade/portfolioChart/SellandBuyChart.vue';
+import DaliyProfitChart from '@/components/trade/portfolioChart/DaliyProfitChart.vue';
+import CumulativeProfitChart from '@/components/trade/portfolioChart/CumulativeProfitChart.vue';
+import { reactive, onMounted, ref } from 'vue';
+import axios from 'axios';
+import TradeService from '@/services/tradeService';
 
 export default {
-  name: "PortfolioPage",
+  name: 'PortfolioPage',
   components: {
     SideTradeNavigationBar,
     HoldStockDomChart,
@@ -93,11 +93,11 @@ export default {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/portfolio/assets");
+        const response = await axios.get('/api/portfolio/assets');
         state.money = response.data.money;
         state.heldStockData = response.data.heldStockData;
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       }
     };
 
@@ -109,8 +109,9 @@ export default {
     const fetchUserTradeHistory = async () => {
       try {
         tradeHistory.value = await TradeService.getUserTradeHistory(); // 거래 기록 가져오기
+        tradeHistory.value = tradeHistory.value.slice(0, 5); // 최근 5개 내역만 저장
       } catch (error) {
-        console.error("거래 기록을 가져오는 데 실패했습니다:", error.message);
+        console.error('거래 기록을 가져오는 데 실패했습니다:', error.message);
       }
     };
 
