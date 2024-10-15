@@ -71,25 +71,27 @@
 </template>
 
 <script>
-import TradeImage from '@/components/trade/TradeImage.vue';
-import TradeNavigationBar from '@/components/trade/TradeNavigationBar.vue';
-import DefaultLayout from '@/components/layouts/DefaultLayout.vue';
-import { onMounted, ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import { useConversionStore } from '@/stores/conversionStore';
-import HoldTotalAssets from '@/components/trade/portfolioChart/HoldTotalAssets.vue';
-import { useRouter } from 'vue-router'; // 추가: 라우터 사용
-import GuideModal from '@/components/trade/GuideModal.vue';
-import { useTradeStore } from '@/stores/tradeStore'; // 추가: tradeStore 가져오기
+import TradeImage from "@/components/trade/TradeImage.vue";
+import TradeNavigationBar from "@/components/trade/TradeNavigationBar.vue";
+import DefaultLayout from "@/components/layouts/DefaultLayout.vue";
+import HoldTotalAssets from "@/components/trade/portfolioChart/HoldTotalAssets.vue";
+import GuideModal from "@/components/trade/GuideModal.vue";
+import HomeChart from "@/components/trade/HomeChart.vue";
+import { onMounted, ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { useConversionStore } from "@/stores/conversionStore";
+import { useRouter } from "vue-router"; // 추가: 라우터 사용
+import { useTradeStore } from "@/stores/tradeStore"; // 추가: tradeStore 가져오기
 
 export default {
-  name: 'TradePage',
+  name: "TradePage",
   components: {
     TradeImage,
     DefaultLayout,
     TradeNavigationBar,
     HoldTotalAssets,
     GuideModal,
+    HomeChart,
   },
   setup() {
     const authStore = useAuthStore();
@@ -111,19 +113,19 @@ export default {
     const fetchUserFunds = async () => {
       try {
         const userFunds = await tradeStore.fetchUserFunds(); // 사용자 자산 정보 가져오기
-        console.log('사용자 자산 정보:', userFunds); // 콘솔에 출력
+        console.log("사용자 자산 정보:", userFunds); // 콘솔에 출력
       } catch (error) {
-        console.error('자산 정보를 가져오는 데 실패했습니다:', error.message);
+        console.error("자산 정보를 가져오는 데 실패했습니다:", error.message);
       }
     };
 
     function formatCurrency(value) {
-      return new Intl.NumberFormat('ko-KR').format(value);
+      return new Intl.NumberFormat("ko-KR").format(value);
     }
 
     // 추가: 포인트 변환 페이지로 이동하는 함수
     function navigateToPointConversion() {
-      router.push({ name: 'pointconversion' }); // 라우터를 사용하여 페이지 이동
+      router.push({ name: "pointconversion" }); // 라우터를 사용하여 페이지 이동
     }
 
     // 가장 많이 보유한 주식 찾기
