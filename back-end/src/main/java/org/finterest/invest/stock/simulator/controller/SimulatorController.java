@@ -16,7 +16,6 @@ import java.util.Map;
 @RequestMapping("/api/trade")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
 public class SimulatorController {
 
     private final SimulatorService service;

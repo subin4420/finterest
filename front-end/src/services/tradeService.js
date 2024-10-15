@@ -93,6 +93,18 @@ class TradeService {
       throw new Error('자산 정보를 가져오는 데 실패했습니다: ' + error.message);
     }
   }
+
+  // 포트폴리오 일별 수익률을 가져오는 메서드
+  async fetchDailyPortfolioData() {
+    try {
+      const response = await api.get("/portfolio/daily"); // 기존 api 객체 사용
+      const data = response.data; // 데이터 받아오기
+      console.log(data);
+      return { data }; // 데이터를 반환
+    } catch (error) {
+      throw new Error("포트폴리오 데이터를 가져오는 데 실패했습니다.");
+    }
+  }
 }
 
 export default new TradeService();

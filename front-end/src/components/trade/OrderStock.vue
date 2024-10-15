@@ -1,7 +1,7 @@
 <template>
   <form class="order-form" @submit.prevent="handleOrder">
     <h4>주문하기</h4>
-    <div class="order-form__togglebox">
+    <div class="order-form__togglebox" style="margin-top: 10px">
       <div class="order-form__togglebox--section">
         <div
           class="order-form__togglebox--purchase"
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <label for="purchase-price">거래 가격</label>
+    <label for="purchase-price" style="margin-top: 15px">거래 가격</label>
     <input
       class="order-form__price"
       :value="isNaN(Number(price)) ? '0' : Number(price).toLocaleString()"
@@ -27,7 +27,7 @@
     />
     <!-- 현재가를 표시 -->
 
-    <label for="purchase-amount">거래 수량</label>
+    <label for="purchase-amount" style="margin-top: 15px">거래 수량</label>
     <div class="order-form__input">
       <input class="no-border no-arrow" v-model.number="amount" type="number" />
       <span> 주 </span>
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div class="order-form__buttonbox">
+    <div class="order-form__buttonbox" style="margin-bottom: 15px">
       <input
         class="order-form__button"
         type="button"
@@ -67,19 +67,18 @@
     </div>
 
     <div class="order-form__state">
-      <div class="order-form__state--line">
+      <div class="order-form__state--line" style="margin-top: 10px">
         <p>거래가능 금액</p>
         <p>
           {{ isNaN(availableFunds) ? 0 : availableFunds.toLocaleString() }} 원
         </p>
       </div>
-      <div class="order-form__state--line">
+      <div class="order-form__state--line" style="margin-top: 10px">
         <p>총 금액</p>
         <p>{{ isNaN(totalAmount) ? 0 : totalAmount.toLocaleString() }} 원</p>
       </div>
+      <button type="submit" style="margin-top: 30px">거래하기</button>
     </div>
-
-    <button type="submit">거래하기</button>
   </form>
 </template>
 
@@ -209,6 +208,7 @@ const handleOrder = async () => {
       toast.error("판매 요청 중 오류가 발생했습니다."); // 오류 메시지 추가
     }
   }
+  viewStockHeld();
 };
 
 onMounted(() => {

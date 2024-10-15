@@ -13,7 +13,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PortfolioDTO {
 
     private Long tradeId;             // 거래 ID (PK)
@@ -27,5 +26,4 @@ public class PortfolioDTO {
     private Integer userId;           // 사용자 ID
     private Date createdAt;           // 거래 생성일
     private Date updatedAt;           // 거래 수정일
-    private BigDecimal money;         // 사용자 보유 가상 자산
 }
