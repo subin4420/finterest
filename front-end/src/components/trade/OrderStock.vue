@@ -87,8 +87,10 @@
 import { ref, computed, onMounted } from "vue";
 import { useTradeStore } from "@/stores/tradeStore";
 import TradeService from "@/services/tradeService"; // TradeService import
-import auth from "@/router/auth";
 import { useAuthStore } from "@/stores/auth";
+import { useToast } from "vue-toastification"; // vue-toastification import
+
+const toast = useToast(); // toast 초기화
 
 const authStore = useAuthStore();
 
@@ -170,9 +172,11 @@ const handleOrder = async () => {
     try {
       const response = await TradeService.buyStock(requestData); // TradeService를 사용하여 요청
       console.log("서버 응답:", response.data);
+      toast.success("구매가 완료되었습니다."); // 구매 성공 메시지
     } catch (error) {
       console.error("구매 요청 중 오류 발생:", error);
       console.error("응답 데이터:", error.response.data); // 응답 데이터 출력
+      toast.error("구매 요청 중 오류가 발생했습니다."); // 오류 메시지 추가
     }
   } else {
     console.log(`종목 코드: ${selectStockcode.value}`);
@@ -192,9 +196,17 @@ const handleOrder = async () => {
     try {
       const response = await TradeService.sellStock(requestData); // TradeService를 사용하여 요청
       console.log("서버 응답:", response.data);
+      toast.success("판매가 완료되었습니다.", { 
+        // 추가된 옵션: 빨간색 계열로 설정
+        timeout: 5000,
+        closeOnClick: true,
+        position: "top-right",
+        type: "error" // 오류 타입으로 설정하여 빨간색으로 표시
+      }); 
     } catch (error) {
       console.error("판매 요청 중 오류 발생:", error);
       console.error("응답 데이터:", error.response.data); // 응답 데이터 출력
+      toast.error("판매 요청 중 오류가 발생했습니다."); // 오류 메시지 추가
     }
   }
 };

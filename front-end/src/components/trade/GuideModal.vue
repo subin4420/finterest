@@ -21,6 +21,11 @@
 <script>
 import News from '@/assets/images/trade/news.png';
 import Comment from '@/assets/images/trade/comment.png';
+import Board from '@/assets/images/trade/board.png';
+import Turn from '@/assets/images/trade/turn.png';
+import Conversion from '@/assets/images/trade/conversion.png';
+import Invest from '@/assets/images/trade/invest.png';
+import Main from '@/assets/images/trade/main.png';
 
 export default {
   props: {
@@ -35,13 +40,14 @@ export default {
       steps: [
         {
           text: '여기는 실전 모의투자를 경험할 수 있는 페이지입니다.<br>출석과 퀴즈를 통해 얻은 포인트를 모의투자금으로 전환하여 투자해보세요!',
+          image: Main, // 수정된 부분: 이미지 경로를 올바르게 설정
         },
         {
-          text: '실시간 주식 데이터를 바탕으로 한 모의 투자를 할 수 있습니다.',
-          image: 'url_to_image_2.jpg',
+          text: '실시간 주식 데이터를 바탕으로 한 모의 투자를 할 수 있는 모의투자 페이지입니다.',
+          image: Invest, // 수정된 부분: 이미지 경로를 올바르게 설정
         },
         {
-          text: '투자 현황과 수익률을 한 눈에 볼 수 있습니다.',
+          text: '투자 현황과 수익률을 한 눈에 볼 수 있는 포트폴리오 페이지입니다.',
           image: 'url_to_image_3.jpg',
         },
         {
@@ -50,7 +56,7 @@ export default {
         },
         {
           text: '다양한 투자 정보를 공유할 수 있는 커뮤니티 페이지입니다.',
-          image: 'url_to_image_3.jpg',
+          image: Board, // 수정된 부분: 이미지 경로를 올바르게 설정
         },
         {
           text: '게시글에 대해서 자유롭게 댓글을 남기고 의견을 나눠보세요!',
@@ -58,12 +64,12 @@ export default {
         },
         {
           text: '출석과 퀴즈를 통해 얻은 포인트를 모의투자금으로 전환해보세요!<br>투자를 통해 얻은 모의투자금을 포인트로 변경해 랭킹을 올려보세요!.',
-          image: 'url_to_image_3.jpg',
+          image: Conversion,
         },
 
         {
           text: '투자 시장 마감 시,<br>투자 경험을 쌓을 수 있는 턴제 모의투자 페이지입니다.',
-          image: 'url_to_image_3.jpg',
+          image: Turn,
         },
       ],
     };
@@ -200,7 +206,8 @@ export default {
 
 .stepImage {
   width: 100%;
-  height: auto;
+  height: 200px; /* 추가된 부분: 이미지 높이를 고정 */
+  object-fit: cover; /* 추가된 부분: 이미지 비율 유지 */
   margin-top: 10px;
 }
 </style>

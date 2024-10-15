@@ -4,10 +4,10 @@
     <div class="content-wrapper">
       <SideTradeNavigationBar />
       <div class="content">
-        <h1 class="page-title">결산 페이지</h1>
+        <h1 class="page-title">거래내역</h1>
 
         <div>
-          <h2>매매 기록</h2>
+          <h2></h2>
           <table class="trade-history-table">
             <thead>
               <tr>
@@ -101,7 +101,7 @@ export default {
 
 .content-wrapper {
   display: flex;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .content {
