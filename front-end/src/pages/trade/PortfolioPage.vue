@@ -8,16 +8,18 @@
         <!-- SellandBuyChart와 HoldStockDomChart를 따로 배치 -->
         <div class="charts-container">
           <div class="chart-row">
-            <SellandBuyChart :tradeData="heldStockData" class="chart" />
+            <DaliyProfitChart class="chart" />
           </div>
           <div class="chart-row" style="margin-left: 20px">
             <HoldStockDomChart class="chart" />
           </div>
         </div>
-        <div>
-          <div>
-            <DaliyProfitChart class="chart" />
+        <div class="charts-container">
+          <div class="chart-row">
             <CumulativeProfitChart class="chart" />
+          </div>
+          <div class="chart-row" style="margin-left: 20px">
+            <SellandBuyChart :tradeData="heldStockData" class="chart" />
           </div>
         </div>
 

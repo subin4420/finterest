@@ -1,5 +1,7 @@
 <template>
-  <div id="main" ref="chartRef" style="width: 628px; height: 418px"></div>
+  <div class="chart-container" style="margin-bottom: 50px">
+    <canvas ref="chartRef" width="600" height="400"></canvas>
+  </div>
 </template>
 
 <script setup>
@@ -89,8 +91,21 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#main {
-  width: 100%;
-  height: 400px;
+.chart-container {
+  width: 650px; /* 너비 증가 */
+  height: 470px; /* 높이 증가 */
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 10px;
 }
 </style>
