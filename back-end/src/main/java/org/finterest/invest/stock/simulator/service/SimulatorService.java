@@ -22,6 +22,10 @@ public class SimulatorService {
     private final SimulatorMapper mapper;
 
     public void buyStock(SimulatorVO vo) {
+
+        // User money 데이터 호출
+        BigDecimal userMoney = mapper.getUserMoney(vo.getUserId());
+
         // Long 변환 대신 BigDecimal 그대로 사용
         BigDecimal price = vo.getPrice();
         Long quantity = vo.getQuantity();
@@ -39,23 +43,36 @@ public class SimulatorService {
         }
 
         // BigDecimal과 Long 연산
-        vo.setTradeType("매수");
+        vo.setTradeType("buy");
         vo.setTotalPrice(totalPrice.add(currentTotalPrice));  // 가격 * 수량
         vo.setTotalStockHoldings(currentQuantity + quantity);  // 총 보유량 갱신
         vo.setCreatedAt(new Date());
         vo.setUpdatedAt(new Date());
 
+        // User 테이블에 업데이트
+        userMoney = userMoney.subtract(currentTotalPrice);
+        int result = mapper.updateUserMoney(vo.getUserId(), userMoney);
+
+        if (result > 0) {
+            log.info("Success: " + result + " row updated.");
+        } else {
+            log.info("Failure: No rows were updated.");
+        }
+
         mapper.tradeStock(vo);
     }
 
     public void sellStock(SimulatorVO vo) {
+        // User money 데이터 호출
+        BigDecimal userMoney = mapper.getUserMoney(vo.getUserId());
+
         // Long 변환 대신 BigDecimal 그대로 사용
         BigDecimal price = vo.getPrice();
         Long quantity = vo.getQuantity();
 
         // 현재 총 거래 금액 계산
         BigDecimal totalPrice = selectTotalPrice(vo.getStockCode(), vo.getUserId());
-        BigDecimal currentTotalPrice = price.multiply(BigDecimal.valueOf(quantity));
+        BigDecimal currentTotalPrice = price.multiply(BigDecimal.valueOf(quantity)); // 가격 * 수량
 
         // 현재 보유 수량 계산
         Long currentQuantity = selectTotalQuantity(vo.getStockCode(), vo.getUserId());
@@ -65,11 +82,21 @@ public class SimulatorService {
         }
 
         // BigDecimal과 Long 연산
-        vo.setTradeType("매도");
+        vo.setTradeType("sell");
         vo.setTotalPrice(totalPrice.subtract(currentTotalPrice));  // 가격 * 수량
         vo.setTotalStockHoldings(currentQuantity - quantity);  // 총 보유량 갱신
         vo.setCreatedAt(new Date());
         vo.setUpdatedAt(new Date());
+
+        // User 테이블에 업데이트
+        userMoney = userMoney.add(currentTotalPrice);
+        int result = mapper.updateUserMoney(vo.getUserId(), userMoney);
+
+        if (result > 0) {
+            log.info("Success: " + result + " row updated.");
+        } else {
+            log.info("Failure: No rows were updated.");
+        }
 
         mapper.tradeStock(vo);
     }

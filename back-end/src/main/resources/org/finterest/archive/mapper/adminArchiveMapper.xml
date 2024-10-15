@@ -36,7 +36,11 @@
     <!-- 전체 학습 자료 목록 조회 -->
     <select id="selectAllArchive" resultType="org.finterest.archive.domain.ArchiveVO">
         SELECT
-        <include refid="ArchiveColumns" />
+        <include refid="ArchiveColumns" />,
+        (SELECT COALESCE(COUNT(*), 0)  -- 만약 COUNT가 NULL이면 0을 반환
+        FROM Learning_Progress lp
+        WHERE lp.material_id = lm.material_id
+        AND lp.status = 'completed') AS completionCount
         <include refid="BaseQuery" />
         ORDER BY lm.created_at, c.category_id
     </select>

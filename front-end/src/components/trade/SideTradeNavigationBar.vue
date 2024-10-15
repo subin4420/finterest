@@ -1,4 +1,3 @@
-
 <template>
   <div class="sidebar-container">
     <ul class="list-group">
@@ -39,7 +38,11 @@ export default {
         icon: 'fas fa-briefcase',
       },
       { title: '뉴스', path: '/trade/news', icon: 'fas fa-newspaper' },
-      { title: '결산', path: '/trade/settlement', icon: 'fas fa-calculator' },
+      {
+        title: '거래 내역',
+        path: '/trade/settlement',
+        icon: 'fas fa-calculator',
+      },
       {
         title: '포인트 전환',
         path: '/trade/pointconversion',

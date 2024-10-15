@@ -22,7 +22,6 @@
             <div class="points-title">포인트</div>
             <div class="points-value">
               <span class="icon">P</span>
-              <!-- totalPoints가 undefined가 아니면 toLocaleString 호출 -->
               {{ totalPoints !== undefined ? totalPoints.toLocaleString() : '0' }}
             </div>
           </div>
@@ -34,7 +33,6 @@
             <div class="money-title">가상 자금</div>
             <div class="money-value">
               <span class="icon">₩</span>
-              <!-- totalMoney가 undefined가 아니면 toLocaleString 호출 -->
               {{ totalMoney !== undefined ? totalMoney.toLocaleString() : '0' }}
             </div>
           </div>
@@ -63,11 +61,20 @@
           :is="currentComponent" 
           :learningStatus="learningStatus" 
           :pointStatus="pointStatus"
-          @openModal="openModal"
+          @openModal="handleCardClick"
         />
       </div>
     </div>
   </div>
+  
+  <!-- VideoModal 추가 -->
+  <VideoModal 
+    v-if="isVideoModalVisible && selectedCard" 
+    :isVisible="isVideoModalVisible" 
+    :cardData="selectedCard"
+    @close="closeVideoModal"
+    @status-updated="handleStatusUpdate"
+  />
 </template>
 
 <script>
@@ -76,7 +83,9 @@ import ArchiveList from '@/components/archive/ArchiveList.vue';
 import QuizSetList from '@/components/quiz/QuizSetList.vue';
 import InvestmentList from '@/components/invest/InvestmentList.vue';
 import PointHistoryList from '@/components/point/PointList.vue';
-import { usePointStore } from '@/stores/pointStore'; // fetchTotalPoints 함수 import
+import VideoModal from '@/components/archive/VideoModal.vue'; // VideoModal import 추가
+import { usePointStore } from '@/stores/pointStore';
+import { useUserStore } from '@/stores/userStore';
 
 export default {
   name: 'MyLearningPage',
@@ -84,14 +93,15 @@ export default {
     ArchiveList,
     QuizSetList,
     InvestmentList,
-    PointHistoryList
+    PointHistoryList,
+    VideoModal // VideoModal 컴포넌트 등록
   },
   setup() {
     const activeTab = ref('archive');
     const learningStatus = ref('incomplete');
     const pointStatus = ref('all');
-    const isModalVisible = ref(false); // 모달 표시 여부
     const selectedCard = ref(null); // 선택된 카드 데이터
+    const isVideoModalVisible = ref(false); // VideoModal의 상태
     const pointStore = usePointStore();
     const totalPoints = ref(); // 총 포인트 값
     const totalMoney = ref(); // 총 가상 자금 값
@@ -107,7 +117,7 @@ export default {
       { value: 'deducted', label: '차감' },
     ]);
 
-    // 현재 탭에 맞는 상 목록 반환
+    // 현재 탭에 맞는 상태 목록 반환
     const currentStatuses = computed(() => {
       if (activeTab.value === 'archive') {
         return learningStatuses.value;
@@ -133,6 +143,7 @@ export default {
       }
     });
 
+    // 학습 상태 변경
     const setLearningStatus = (status) => {
       if (activeTab.value === 'archive') {
         learningStatus.value = status;
@@ -141,6 +152,7 @@ export default {
       }
     };
 
+    // 탭 변경
     const setTab = (tab) => {
       activeTab.value = tab;
       if (tab === 'archive') {
@@ -150,7 +162,7 @@ export default {
       }
     };
 
-    // 총 포인트 가져오는 함수 실행
+    // 총 포인트와 가상 자금 가져오기
     onMounted(async () => {
       try {
         await pointStore.fetchTotalPoints(); // fetchTotalPoints 호출
@@ -163,10 +175,26 @@ export default {
       }
     });
 
-    // 모달 열기 함수
-    const openModal = (card) => {
+    // 모달 열기 (영상/텍스트 자료에 따라 VideoModal 또는 다른 모달)
+    const handleCardClick = (card) => {
       selectedCard.value = card;
-      isModalVisible.value = true;
+      if (card.type === 'video' || (card.materialImg && card.materialImg.match(/^[a-zA-Z0-9_-]{11}$/))) {
+        isVideoModalVisible.value = true; // VideoModal 열기
+      } else {
+        // 다른 모달 처리
+      }
+    };
+
+    // VideoModal 닫기
+    const closeVideoModal = () => {
+      isVideoModalVisible.value = false;
+      selectedCard.value = null;
+    };
+
+    // 상태 업데이트 처리
+    const handleStatusUpdate = (updatedCard) => {
+      // 상태 업데이트 로직 구현
+      console.log('Status updated:', updatedCard);
     };
 
     return {
@@ -177,11 +205,13 @@ export default {
       pointStatus,
       setLearningStatus,
       setTab,
-      isModalVisible,
       selectedCard,
-      openModal,
-      totalPoints, // 총 포인트 상태 추가
-      totalMoney, // 총 가상 자금 상태 추가
+      handleCardClick,
+      totalPoints,
+      totalMoney,
+      isVideoModalVisible,
+      closeVideoModal,
+      handleStatusUpdate,
     };
   },
   data() {
@@ -212,7 +242,6 @@ export default {
   },
 };
 </script>
-
 
 
 
@@ -255,7 +284,7 @@ h3{
 }
 
 .content {
-  width: 71%;
+  width: 75%;
   /* width: 75%; */
   margin-top: 30px;
   padding: 30px;
@@ -320,17 +349,22 @@ h3{
   background-color: #f5f5f5;
   color: #00C4D1;
 }
+.tabs {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 30px;
+}
+
 .tabs button {
   background: none;
   border: none;
   font-size: 16px;
   margin-right: 20px;
   cursor: pointer;
-  padding: 10px 0;
+  padding: 10px 20px;
   color: #333;
   border-bottom: 2px solid transparent;
   transition: all 0.3s ease;
-  margin-bottom: 0rem; /* 제목 아래쪽에 간격 추가 */
 }
 
 .tabs button.active {
@@ -339,6 +373,16 @@ h3{
   border-bottom: 2px solid #00C4D1;
 }
 
+/* 반응형 디자인을 위한 미디어 쿼리 */
+@media (max-width: 768px) {
+  .tabs {
+    flex-wrap: wrap;
+  }
+
+  .tabs button {
+    margin-bottom: 10px;
+  }
+}
 
 /* 스타일은 기존과 동일하게 유지 */
 .points-summary, .money-summary {

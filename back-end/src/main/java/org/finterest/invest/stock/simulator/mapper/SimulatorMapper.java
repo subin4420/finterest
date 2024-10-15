@@ -23,6 +23,8 @@ public interface SimulatorMapper {
 
     String getOauthToken();
 
+    int updateUserMoney(@Param("userId") Integer userId, @Param("money") BigDecimal money);
+
     // @Param을 추가하여 메서드 정의
     List<SimulatorVO> getUserTradeHistory(@Param("userId") Integer userId);
 }

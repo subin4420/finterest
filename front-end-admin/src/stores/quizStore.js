@@ -1,10 +1,13 @@
 import { reactive, toRefs } from 'vue';
-import { getQuizSets, getQuizQuestions, submitQuizAnswers as submitQuizAnswersService, getQuizAnswers, fetchQuizResults as fetchQuizResultsService } from '../services/quizService';
+import { getQuizSets, getQuizQuestions, getQuizChart } from '../services/quizService';
 
 const state = reactive({
   quizSets: [], // 퀴즈 세트를 저장할 상태
   currentQuizQuestions: null,
   quizResults: [],  // 퀴즈 결과를 저장할 상태
+
+  weeklyQuizCounts: [], // 주별 학습 자료 조회수
+  monthlyQuizCounts: [], // 월별 학습 자료 조회수
 });
 
 // 퀴즈 세트 가져오기
@@ -34,46 +37,35 @@ const fetchQuizQuestions = async (setId) => {
   }
 };
 
-// 퀴즈 답변 제출
-const submitQuizAnswers = async (setId, answers) => {
+// 주별 퀴즈 조회수 가져오기
+const fetchWeeklyQuizCounts = async (year, month) => {
   try {
-    const response = await submitQuizAnswersService(setId, answers);
-    return response;
+    const data = await getQuizChart({ period: 'weekly', year, month });
+    state.weeklyQuizCounts = data.quizCompletionCounts || []; // 주별 퀴즈 조회수 할당
   } catch (error) {
-    console.error("Failed to submit quiz answers:", error);
-    throw error;
+    console.error('Error fetching weekly quiz counts:', error);
   }
 };
 
-// 퀴즈 결과 조회하기
-const fetchQuizResults = async (userId) => {
+// 월별 퀴즈 조회수 가져오기
+const fetchMonthlyQuizCounts = async (year) => {
   try {
-    const data = await fetchQuizResultsService(userId); // API 호출
-    state.quizResults = data.quizResults || []; // 퀴즈 결과 상태에 저장
-    console.log("Fetched quiz results:", state.quizResults);
+    const data = await getQuizChart({ period: 'monthly', year });
+    state.monthlyQuizCounts = data.quizCompletionCounts || []; // 월별 퀴즈 조회수 할당
   } catch (error) {
-    console.error("Failed to fetch quiz results:", error);
+    console.error('Error fetching monthly quiz counts:', error);
   }
 };
 
-// 퀴즈 답변 상세 결과 가져오기
-const fetchQuizAnswers = async (setId, resultId) => {
-  try {
-    const response = await getQuizAnswers(setId, resultId);
-    return response.answers;
-  } catch (error) {
-    console.error("Failed to fetch quiz answers:", error);
-    throw error;
-  }
-};
+
+
 
 export const useQuizStore = () => {
   return {
     ...toRefs(state), // state를 toRefs로 반환하여 반응성 유지
     fetchQuizSets,
     fetchQuizQuestions,
-    submitQuizAnswers,
-    fetchQuizAnswers,
-    fetchQuizResults
+    fetchWeeklyQuizCounts,
+    fetchMonthlyQuizCounts
   };
 };

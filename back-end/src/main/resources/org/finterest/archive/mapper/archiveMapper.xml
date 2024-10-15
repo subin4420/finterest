@@ -191,4 +191,37 @@
         INSERT INTO Learning_Progress (user_id, material_id, status, started_at)
         VALUES (#{userId}, #{materialId}, #{status}, #{startedAt})
     </insert>
+
+    <!-- 최근 업데이트된 텍스트 자료 8개 조회 (link가 NULL) -->
+    <select id="selectRecentTextArchives" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.link IS NULL
+        ORDER BY lm.updated_at DESC
+        LIMIT 8 <!-- 최근 업데이트된 텍스트 자료 8개 -->
+    </select>
+
+    <!-- 완료 횟수가 많은 영상 자료 8개 조회 (link가 NOT NULL) -->
+    <select id="selectMostCompletedVideoArchives" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+            lm.material_id AS materialId,
+            lm.title AS title,
+            lm.material_img AS materialImg,
+            lm.link AS link,
+            lm.description AS description,
+            lm.content AS content,
+            lm.created_at AS createdAt,
+            lm.updated_at AS updatedAt,
+            c.category_name AS categoryName,
+            COUNT(lp.material_id) AS completionCount
+        FROM learning_materials lm
+                 JOIN categories c ON lm.category_id = c.category_id
+                 LEFT JOIN learning_progress lp ON lm.material_id = lp.material_id AND lp.status = 'completed'
+        WHERE lm.link IS NOT NULL
+        GROUP BY lm.material_id, lm.title, lm.material_img, lm.link, lm.description, lm.content, lm.created_at, lm.updated_at, c.category_name
+        ORDER BY completionCount DESC
+            LIMIT 8
+    </select>
+
 </mapper>

@@ -6,7 +6,7 @@
         <div class="turn-info">
           <!-- 현재 턴과 전체 턴을 표시 -->
           <span class="current-turn">{{
-            String(currentTurn).padStart(2, "0")
+            String(currentTurn).padStart(2, '0')
           }}</span>
           /<span class="total-turn">{{ totalTurn }}턴</span>
         </div>
@@ -114,47 +114,16 @@
 
       <button type="submit">거래하기</button>
     </form>
-
-    <!-- 보유 주식 수와 수익률 표시 -->
-    <div class="order-summary">
-      <div class="summary-card">
-        <div class="summary-item">
-          <p>
-            보유 주식 수:
-            <span class="highlight">{{ holdingStockAcount }} 주</span>
-          </p>
-        </div>
-        <div class="summary-item">
-          <p>
-            수익률:
-            <span
-              :style="{ color: profitRate >= 0 ? 'red' : 'blue' }"
-              class="highlight"
-              >{{ profitRate }}%</span
-            >
-          </p>
-        </div>
-        <div class="summary-item">
-          <p>
-            총 평가 금액:
-            <span class="highlight"
-              >{{
-                isNaN(assessedAssets) ? 0 : assessedAssets.toLocaleString()
-              }}
-              원</span
-            >
-          </p>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, defineProps, watch } from "vue";
-import axios from "axios";
+import { ref, computed, onMounted, defineProps, watch } from 'vue';
+import axios from 'axios';
+import { useToast } from 'vue-toastification';
+import StockSummary from './StockSummary.vue'; // StockSummary 컴포넌트 import
 
-const emit = defineEmits(["next-turn"]);
+const emit = defineEmits(['next-turn', 'update-stock-data']);
 const turn = ref(0);
 const currentTurn = ref(1);
 const totalTurn = ref(50);
@@ -172,11 +141,11 @@ const props = defineProps({
 });
 
 const price = ref({
-  stck_bsop_date: "",
-  stck_oprc: "",
-  stck_clpr: "",
-  stck_lwpr: "",
-  stck_hgpr: "",
+  stck_bsop_date: '',
+  stck_oprc: '',
+  stck_clpr: '',
+  stck_lwpr: '',
+  stck_hgpr: '',
 });
 console.log(price.value.stck_oprc); // 시가를 출력
 
@@ -194,7 +163,7 @@ const assessedAssets = computed(() => {
 
 const currentData = async () => {
   try {
-    const response = await axios.get("/api/scenario/current");
+    const response = await axios.get('/api/scenario/current');
     const currentData = response.data;
     return {
       stck_bsop_date: currentData.stck_bsop_date,
@@ -204,13 +173,13 @@ const currentData = async () => {
       stck_hgpr: currentData.stck_hgpr,
     };
   } catch (error) {
-    console.error("Error fetching stock data:", error);
+    console.error('Error fetching stock data:', error);
     return {
-      stck_bsop_date: "Unknown Date",
-      stck_oprc: "Unknown Price",
-      stck_clpr: "Unknown Price",
-      stck_lwpr: "Unknown Price",
-      stck_hgpr: "Unknown Price",
+      stck_bsop_date: 'Unknown Date',
+      stck_oprc: 'Unknown Price',
+      stck_clpr: 'Unknown Price',
+      stck_lwpr: 'Unknown Price',
+      stck_hgpr: 'Unknown Price',
     };
   }
 };
@@ -268,38 +237,72 @@ const profitRate = computed(() => {
   return 0;
 });
 
+const toast = useToast(); // toast 인스턴스 생성
+
 // 주문 처리 수정
 const handleOrder = async () => {
   const total = totalAmount.value; // computed 속성은 .value로 접근
   if (isBuying.value) {
-    console.log("Buy");
+    console.log('Buy');
     if (availableFunds.value > total) {
       holdingAmount.value += total;
       availableFunds.value -= total;
       holdingStockAcount.value += amount.value;
+      // 구매 성공 메시지 추가
+      toast.success('구매가 완료되었습니다.', {
+        timeout: 5000,
+        closeOnClick: true,
+        position: 'top-right',
+      });
+    } else {
+      // 구매 실패 메시지 추가
+      toast.error('구매 가능 금액이 부족합니다.', {
+        timeout: 5000,
+        closeOnClick: true,
+        position: 'top-right',
+      });
     }
   } else {
-    console.log("sell");
+    console.log('sell');
     if (holdingStockAcount.value >= amount.value) {
       // 판매할 수 있는 주식 수 제한
       holdingAmount.value -= total;
       availableFunds.value += total;
       holdingStockAcount.value -= amount.value;
+      // 판매 성공 메시지 추가
+      toast.success('판매가 완료되었습니다.', {
+        timeout: 5000,
+        closeOnClick: true,
+        position: 'top-right',
+      });
     } else {
-      console.error("판매할 수 있는 주식 수가 부족합니다."); // 에러 메시지
+      console.error('판매할 수 있는 주식 수가 부족합니다.'); // 에러 메시지
+      // 판매 실패 메시지 추가
+      toast.error('판매할 수 있는 주식 수가 부족합니다.', {
+        timeout: 5000,
+        closeOnClick: true,
+        position: 'top-right',
+      });
     }
   }
+
+  // 주문 처리 후 데이터 업데이트
+  emit('update-stock-data', {
+    holdingStockAcount: holdingStockAcount.value,
+    profitRate: profitRate.value,
+    assessedAssets: assessedAssets.value,
+  });
 };
 const currentStockPrice = () => {
-  console.log("현재 시가:", price.value.stck_oprc); // 다른 메서드에서 접근 가능
+  console.log('현재 시가:', price.value.stck_oprc); // 다른 메서드에서 접근 가능
 };
 
 const nextTurn = () => {
-  console.log("다음 턴");
+  console.log('다음 턴');
   if (currentTurn.value < totalTurn.value) {
     currentTurn.value++;
     console.log(currentTurn.value);
-    emit("next-turn", currentTurn.value); // 부모에게 이벤트 전달
+    emit('next-turn', currentTurn.value); // 부모에게 이벤트 전달
   }
 };
 
@@ -316,7 +319,7 @@ watch(
   () => props.stockData,
   (newData) => {
     if (newData && newData.length >= 5) {
-      console.log("Received stockData:", newData);
+      console.log('Received stockData:', newData);
       price.value.stck_bsop_date = newData[0];
       price.value.stck_oprc = newData[1];
       price.value.stck_clpr = newData[2];
@@ -329,13 +332,13 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield; /* Firefox용 */
 }
 /* 테두리 제거 */
@@ -345,7 +348,7 @@ input.no-border {
   height: 14px;
 }
 .order-form {
-  width: 200px;
+  width: 100px;
   border-radius: 15px;
   background-color: lightblue;
   padding: 14px 8px;

@@ -16,7 +16,6 @@ import java.util.Map;
 @RequestMapping("/api/trade")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
 public class SimulatorController {
 
     private final SimulatorService service;
@@ -38,6 +37,7 @@ public class SimulatorController {
 
     @PostMapping("/stock/buy")
     public ResponseEntity<String> buyStock(@RequestHeader("Authorization") String authToken, @RequestBody SimulatorVO vo) {
+        log.info(authToken);
         Integer userId = tokenUtil.getUserIdFromToken(authToken);
         vo.setUserId(userId);
         service.buyStock(vo);

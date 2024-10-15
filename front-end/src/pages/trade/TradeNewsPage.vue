@@ -76,10 +76,10 @@ export default {
   },
   methods: {
     async fetchNews() {
-      const yesterday = this.getYesterdayDate(); // 어제 날짜 구하기
+      // const yesterday = this.getYesterdayDate(); // 어제 날짜 구하기
       try {
         const response = await axios.get(
-          `https://newsapi.org/v2/everything?q=${this.searchQuery}&from=${yesterday}&sortBy=popularity&apiKey=ab5fa71416bc4687a2c535d3606c3f91`
+          `https://newsapi.org/v2/everything?q=${this.searchQuery}&sortBy=popularity&apiKey=ab5fa71416bc4687a2c535d3606c3f91`
         );
         this.articles = response.data.articles;
       } catch (error) {

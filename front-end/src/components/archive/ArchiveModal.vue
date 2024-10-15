@@ -25,7 +25,7 @@
                 :disabled="cardData.status === 'completed'"
                 :class="{ 'completed': cardData.status === 'completed' }"
             >
-                <i class="fas fa-check"></i> 학습완료
+                <i class="fas fa-check"></i> <span style="margin-left: 5px;">학습완료</span>
             </button>
         </div>
     </div>

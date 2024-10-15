@@ -2,10 +2,12 @@ package org.finterest.archive.service;
 
 import org.finterest.archive.dao.ArchiveDAO;
 import org.finterest.archive.domain.ArchiveDetailVO;
+import org.finterest.archive.domain.ArchiveVO;
 import org.finterest.archive.domain.ProgressDetailVO;
 import org.finterest.archive.domain.ProgressVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -105,10 +107,19 @@ public class ArchiveService {
     }
 
     // 학습 진행 상태(completed) 업데이트 (반환값을 int로 설정)
+    @Transactional
     public int updateProgressStatus(int userId, int materialId, String status) {
         archiveDAO.insertPoint(userId);
         return archiveDAO.updateProgressStatus(userId, materialId, status);
     }
 
+    // 최근 업데이트된 텍스트 자료 8개 조회
+    public List<ArchiveVO> getRecentTextArchives() {
+        return archiveDAO.selectRecentTextArchives();
+    }
 
+    // 완료 횟수가 많은 영상 자료 8개 조회
+    public List<ArchiveVO> getMostCompletedVideoArchives() {
+        return archiveDAO.selectMostCompletedVideoArchives();
+    }
 }

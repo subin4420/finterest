@@ -1,16 +1,16 @@
 <template>
-  <div>
-    <div id="main" style="width: 100%; height: 400px"></div>
+  <div class="chart-container" style="margin-bottom: 50px">
+    <div id="main" style="width: 100%; height: 100%"></div>
   </div>
 </template>
 
 <script>
-import * as echarts from 'echarts';
-import { useTradeStore } from '@/stores/tradeStore'; // tradeStore import
-import { useAuthStore } from '@/stores/auth'; // authStore import
+import * as echarts from "echarts";
+import { useTradeStore } from "@/stores/tradeStore"; // tradeStore import
+import { useAuthStore } from "@/stores/auth"; // authStore import
 
 export default {
-  name: 'HoldStockDomChart',
+  name: "HoldStockDomChart",
   data() {
     return {
       chart: null, // 차트 인스턴스를 저장할 변수
@@ -24,7 +24,7 @@ export default {
   methods: {
     initChart() {
       // ECharts 차트 초기화
-      const chartDom = document.getElementById('main');
+      const chartDom = document.getElementById("main");
       this.chart = echarts.init(chartDom);
     },
     async fetchData() {
@@ -63,26 +63,26 @@ export default {
 
         const option = {
           title: {
-            text: '주식 포트폴리오',
+            text: "보유 주식 현황",
 
-            left: 'center',
+            left: "center",
           },
           tooltip: {
-            trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)',
+            trigger: "item",
+            formatter: "{a} <br/>{b} : {c} ({d}%)",
           },
           legend: {
-            left: 'center',
-            top: 'bottom',
+            left: "center",
+            top: "bottom",
             data: aggregatedData.map((item) => item.stockName),
           },
           series: [
             {
-              name: '주식',
-              type: 'pie',
+              name: "주식",
+              type: "pie",
               radius: [20, 140],
-              center: ['50%', '50%'],
-              roseType: 'radius',
+              center: ["50%", "50%"],
+              roseType: "radius",
               itemStyle: {
                 borderRadius: 5,
               },
@@ -102,7 +102,7 @@ export default {
         // 차트에 데이터 설정
         this.chart.setOption(option);
       } catch (error) {
-        console.error('거래 기록을 가져오는 중 오류 발생:', error);
+        console.error("거래 기록을 가져오는 중 오류 발생:", error);
       }
     },
   },
@@ -116,6 +116,15 @@ export default {
 };
 </script>
 
-<style>
-/* 필요에 따라 CSS 스타일 추가 */
+<style scoped>
+/* 스타일 추가 */
+.chart-container {
+  width: 500px;
+  height: 470px;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 </style>

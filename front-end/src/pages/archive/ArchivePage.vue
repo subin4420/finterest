@@ -3,28 +3,45 @@
     <ArchiveImage />
     <ArchiveNavigationBar @category-selected="filterByCategory" :selectedCategory="selectedCategory" />
 
-    <!-- 기존 콘텐츠 섹션 -->
-    <div class="content-section">
-      <h3>학습 자료</h3>
-      <div class="content-grid">
-        <ArchiveCard 
-          v-for="archive in sortedAndFilteredTextArchives" 
-          :key="archive.materialId" 
-          :cardData="archive"
-          @click="handleCardClick(archive)" 
-        />
+    <div class="content-container">
+      <!-- 탭 컴포넌트 추가 -->
+      <div class="tab-container">
+        <button 
+          :class="['tab-button', { active: activeTab === 'text' }]" 
+          @click="activeTab = 'text'"
+        >
+          학습 자료
+        </button>
+        <button 
+          :class="['tab-button', { active: activeTab === 'video' }]" 
+          @click="activeTab = 'video'"
+        >
+          영상 자료
+        </button>
       </div>
-    </div>
 
-    <div class="content-section">
-      <h3>영상 자료</h3>
-      <div class="content-grid">
-        <ArchiveCard 
-          v-for="archive in sortedVideoArchives" 
-          :key="archive.materialId" 
-          :cardData="archive" 
-          @click="handleCardClick(archive)" 
-        />
+      <!-- 학습 자료 탭 -->
+      <div v-if="activeTab === 'text'" class="content-section">
+        <div class="content-grid">
+          <ArchiveCard 
+            v-for="archive in sortedAndFilteredTextArchives" 
+            :key="archive.materialId" 
+            :cardData="archive"
+            @click="handleCardClick(archive)" 
+          />
+        </div>
+      </div>
+
+      <!-- 영상 자료 탭 -->
+      <div v-if="activeTab === 'video'" class="content-section">
+        <div class="content-grid">
+          <ArchiveCard 
+            v-for="archive in sortedVideoArchives" 
+            :key="archive.materialId" 
+            :cardData="archive" 
+            @click="handleCardClick(archive)" 
+          />
+        </div>
       </div>
     </div>
 
@@ -40,6 +57,15 @@
       @close="showLoginModal = false"
       @login="goToLogin"
     />
+
+    <!-- 비디오 모달 수정 -->
+    <VideoModal
+      v-if="isVideoModalVisible"
+      :isVisible="isVideoModalVisible"
+      :cardData="selectedCard"
+      @close="closeVideoModal"
+      @status-updated="handleStatusUpdate"
+    />
   </div>
 </template>
 
@@ -52,10 +78,12 @@ import LoginRequiredModal from '@/components/common/LoginRequiredModal.vue';
 import ProgressBar from '@/components/common/ProgressBar.vue';
 import RecentActivityList from '@/components/archive/RecentActivityList.vue';
 import RecommendedArchives from '@/components/archive/RecommendedArchives.vue';
+import VideoModal from '@/components/archive/VideoModal.vue';
 import { onMounted, ref, computed, watch } from "vue";
 import { useArchiveStore } from "@/stores/archiveStore";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 
 export default {
   name: 'ArchivePage',
@@ -68,19 +96,24 @@ export default {
     ProgressBar,
     RecentActivityList,
     RecommendedArchives,
+    VideoModal,
   },
   setup() {
     const archiveStore = useArchiveStore();
     const authStore = useAuthStore();
     const router = useRouter();
     const isModalVisible = ref(false);
-    const selectedCard = ref({});
+    const selectedCard = ref(null);
     const selectedCategory = ref(null);
     const showLoginModal = ref(false);
     const searchQuery = ref('');
     const sortOption = ref('date');
     const overallProgress = ref(0);
     const recentActivities = ref([]);
+    const isVideoModalVisible = ref(false);
+    const selectedVideoId = ref('');
+    const selectedVideoTitle = ref('');
+    const { isLogin } = storeToRefs(authStore);
 
     const recommendedArchives = ref([
       { id: 1, title: '주식 시장의 이해', description: '주식 시장의 기본 개념을 배웁니다.', image: '/path/to/image1.jpg' },
@@ -167,23 +200,47 @@ export default {
         .slice(0, 4); // 최근 4개의 자료만 표시
     });
 
-    function handleCardClick(archive) {
-      console.log('Card clicked:', archive);
-      console.log('Is user logged in?', authStore.isLogin);
-      if (!authStore.isLogin) {
-        showLoginModal.value = true;
+    const handleCardClick = (card) => {
+      if (isLogin.value) {
+        console.log('Clicked card:', card);
+        selectedCard.value = card;
+        if (card.type === 'video' || (card.materialImg && card.materialImg.match(/^[a-zA-Z0-9_-]{11}$/))) {
+          console.log('Video card clicked');
+          isVideoModalVisible.value = true;
+        } else {
+          console.log('Text card clicked');
+          isModalVisible.value = true;
+        }
       } else {
-        selectedCard.value = archive;
-        isModalVisible.value = true;
+        showLoginModal.value = true;
       }
-      console.log('Modal visibility:', isModalVisible.value);
-    }
+    };
 
-    function goToLogin() {
-      router.push({ name: 'login' });
-    }
+    const closeVideoModal = () => {
+      isVideoModalVisible.value = false;
+      selectedCard.value = null;
+    };
 
-    return { 
+    const goToLogin = () => {
+      showLoginModal.value = false;
+      const currentPath = router.currentRoute.value.fullPath;
+      router.push({
+        path: '/auth/login',
+        query: { redirect: currentPath }
+      });
+    };
+
+    const activeTab = ref('text'); // 기본 탭을 '학습 자료'로 설정
+
+    const handleStatusUpdate = (updatedCard) => {
+      // 상태가 업데이트된 카드를 찾아 업데이트
+      const index = sortedVideoArchives.value.findIndex(card => card.materialId === updatedCard.materialId);
+      if (index !== -1) {
+        sortedVideoArchives.value[index] = { ...sortedVideoArchives.value[index], ...updatedCard };
+      }
+    };
+
+    return {
       sortedTextArchives, 
       sortedVideoArchives, 
       isModalVisible, 
@@ -193,7 +250,7 @@ export default {
       selectedCategory,
       showLoginModal,
       goToLogin,
-      authStore, // authStore를 템플릿에서 사용할 수 있도록 추가
+      authStore, // authStore를 템플릿에서 용할 수 있도록 추가
       searchQuery,
       sortOption,
       overallProgress,
@@ -201,6 +258,13 @@ export default {
       recommendedArchives,
       sortedAndFilteredTextArchives,
       recentArchives,
+      activeTab,
+      isVideoModalVisible,
+      selectedVideoId,
+      selectedVideoTitle,
+      closeVideoModal,
+      handleStatusUpdate,
+      isLogin,
     };
   }
 }
@@ -218,8 +282,8 @@ h3 {
 }
 .content-section {
   margin-bottom: 2rem; /* 섹션 간의 간격 */
-  width: 80%; /* 전체 화면의 80%만 차지 */
-  margin: 0 auto; /* 화면 중앙 정렬 */
+  width: 100%; /* 80%에서 100%로 변경 */
+  margin: 0 auto;
 }
 .content-section + .content-section {
   margin-top: 3rem; /* 텍스트 카드들과 영상 카드들 사이에 여백 추가 */
@@ -332,6 +396,43 @@ h3 {
   padding: 0.5rem;
   border: 1px solid #ced4da;
   border-radius: 4px;
+}
+
+.tab-container {
+  width: 100%; /* 탭 컨테이너의 너비를 100%로 설정 */
+  padding: 0 20px; /* 좌우 패딩 추가 */
+  box-sizing: border-box; /* 패딩을 너비에 포함 */
+}
+
+.tab-button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.tab-button.active {
+  color: #00D18B;
+  border-bottom: 2px solid #00D18B;
+}
+
+.tab-button:hover {
+  color: #00D18B;
+}
+
+.content-section {
+  margin-top: 20px;
+}
+
+.content-container {
+  width: 80%;
+  margin: 0 auto;
+  padding-top: 00px;
 }
 
 /* 추가 스타일 ... */

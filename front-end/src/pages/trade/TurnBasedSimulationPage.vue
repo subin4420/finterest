@@ -4,23 +4,29 @@
       <div class="trade-header"></div>
       <div class="content-wrapper">
         <SideTradeNavigationBar />
+
         <div class="content">
+          <StockSummary
+            :holdingStockAcount="holdingStockAcount"
+            :profitRate="profitRate"
+            :assessedAssets="assessedAssets"
+          />
+
           <div class="community-page">
             <ScenarioChart @loaded="onChartLoaded" :stockData="stockData" />
-
-            <!-- ScenarioChart가 완료된 후에 ScenarioOrder를 렌더링 -->
             <ScenarioOrder
               v-if="isChartLoaded"
               @next-turn="handleNextTurn"
+              @update-stock-data="updateStockData"
               :stockData="stockData"
             />
-
-            <!--모달 슈웃~  -->
             <ScenarioModal
+              class="modal-background"
               :isVisible="isModalVisible"
               :data="modalData"
               @close="isModalVisible = false"
             />
+            <!-- StockSummary 컴포넌트 추가 -->
           </div>
         </div>
       </div>
@@ -33,7 +39,8 @@ import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vu
 import ScenarioModal from '@/components/trade/scenario/ScenarioModal.vue';
 import ScenarioChart from '@/components/trade/scenario/ScenarioChart.vue';
 import ScenarioOrder from '@/components/trade/scenario/ScenarioOrder.vue';
-import { ref, onMounted } from 'vue';
+import StockSummary from '@/components/trade/scenario/StockSummary.vue';
+import { ref } from 'vue';
 import axios from 'axios';
 
 // 모달
@@ -42,16 +49,18 @@ const modalData = ref({});
 
 // ScenarioChart 로딩 상태 추적
 const isChartLoaded = ref(false);
-// 컴포넌트에 보낼 데이터 반응형으로 선언
 const stockData = ref([]);
-const processData = (result) => {
-  stockData.value = [
-    result.stck_bsop_date,
-    result.stck_oprc,
-    result.stck_clpr,
-    result.stck_lwpr,
-    result.stck_hgpr,
-  ];
+
+// 필요한 데이터 정의
+const holdingStockAcount = ref(0);
+const profitRate = ref(0);
+const assessedAssets = ref(0);
+
+// 데이터 업데이트 함수
+const updateStockData = (data) => {
+  holdingStockAcount.value = data.holdingStockAcount;
+  profitRate.value = data.profitRate;
+  assessedAssets.value = data.assessedAssets;
 };
 
 // ScenarioChart 로딩 완료 후 호출될 메서드
@@ -63,17 +72,14 @@ const handleNextTurn = (newTurnValue) => {
   axios
     .post(`/api/scenario/next/${newTurnValue}`)
     .then((response) => {
-      // 응답 데이터를 로그로 출력
       const result = response.data;
-      console.log('description:', result.description);
-      console.log('stck_bsop_date:', result.stck_bsop_date);
-      console.log('stck_oprc:', result.stck_oprc);
-      console.log('stck_clpr:', result.stck_clpr);
-      console.log('stck_lwpr:', result.stck_lwpr);
-      console.log('stck_hgpr:', result.stck_hgpr);
-      processData(result);
-
-      // 모달모달모달
+      stockData.value = [
+        result.stck_bsop_date,
+        result.stck_oprc,
+        result.stck_clpr,
+        result.stck_lwpr,
+        result.stck_hgpr,
+      ];
       modalData.value = result;
       isModalVisible.value = true;
     })
@@ -111,16 +117,6 @@ const handleNextTurn = (newTurnValue) => {
   padding: 20px;
 }
 
-.page-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #333;
-  text-align: left;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #b3b3b3;
-}
-
 .community-page {
   display: flex;
   justify-content: left; /* 필요에 따라 컴포넌트들 사이 간격 조정 */
@@ -134,27 +130,12 @@ ScenarioOrder {
   margin: 0; /* 각 컴포넌트의 마진 제거 */
 }
 
-.content-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.conversion-container {
-  margin-top: 20px;
-}
-
-h2 {
-  margin-bottom: 10px;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  padding: 5px;
+.modal-background {
+  background: url('src/assets/images/quiz_img/newspaper.png') no-repeat center
+    center;
+  background-size: contain; /* 이미지 크기를 contain으로 설정 */
+  max-width: 80%; /* 최대 너비를 80%로 제한 */
+  max-height: 80%; /* 최대 높이를 80%로 제한 */
+  margin: 0 auto; /* 중앙 정렬 */
 }
 </style>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.ranking.mapper.RankingMapper">
+    <select id="getTopRankings" resultType="org.finterest.ranking.dto.RankingDto">
+        SELECT u.user_id, u.username, ur.total_points, ur.rank_position, ur.rank_title
+        FROM Users u
+                 JOIN user_ranking ur ON u.user_id = ur.user_id
+        ORDER BY ur.total_points DESC
+            LIMIT 5
+    </select>
+
+    <select id="getUserRanking" parameterType="int" resultType="org.finterest.ranking.dto.RankingDto">
+        SELECT u.user_id, u.username, ur.total_points, ur.rank_position, ur.rank_title
+        FROM Users u
+                 JOIN user_ranking ur ON u.user_id = ur.user_id
+        WHERE u.user_id = #{userId}
+    </select>
+
+
+</mapper>

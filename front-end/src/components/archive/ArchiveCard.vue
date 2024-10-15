@@ -2,7 +2,7 @@
     <div class="content-card">
         <!-- 이미지 섹션 -->
         <div class="image-wrapper">
-            <img :src="ARCHIVE_IMAGE_PATHS+cardData.materialImg || defaultImage" alt="썸네일 이미지" />
+            <img :src="getImageUrl" alt="썸네일 이미지" />
             <button 
              v-if="showFavoriteButton"
             class="favorite-button" 
@@ -21,7 +21,7 @@
                 <div v-if="cardData.status" :class="['status', statusClass]">{{ statusText }}</div>
             </div>
             <div class="title" v-html="cardData.title"></div>
-            <div class="summary" v-html="truncateContent(cardData.content)"></div>
+            <div class="summary"></div>
         </div>
     </div>
 </template>
@@ -29,6 +29,7 @@
 <script>
 import { useArchiveStore } from '@/stores/archiveStore';
 import { IMAGE_PATHS } from '@/constants/imagePaths';
+
 export default {
     name: 'ArchiveCard',
     props: {
@@ -49,6 +50,15 @@ export default {
         };
     },
     computed: {
+        getImageUrl() {
+            if (this.isYouTubeId(this.cardData.materialImg)) {
+                return `https://img.youtube.com/vi/${this.cardData.materialImg}/hqdefault.jpg`;
+            } else if (this.cardData.materialImg) {
+                return this.ARCHIVE_IMAGE_PATHS + this.cardData.materialImg;
+            } else {
+                return this.defaultImage;
+            }
+        },
         statusText() {
             console.log('cardData.status:', this.cardData.status); // 상태 값 로깅
             switch ('status: ',this.cardData.status) {
@@ -76,6 +86,10 @@ export default {
         console.log('ArchiveCard mounted. cardData:', this.cardData);
     },
     methods: {
+        isYouTubeId(str) {
+            // YouTube ID는 일반적으로 11자리의 문자열입니다.
+            return str && str.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(str);
+        },
         async toggleFavorite() {
             const archiveStore = useArchiveStore();
             this.isFavorite = !this.isFavorite; // 로컬 상태 업데이트
@@ -88,12 +102,6 @@ export default {
                 await archiveStore.removeFromFavorites(this.cardData.materialId);
                 this.cardData.favorite = false; // UI에 즉시 반영
             }
-        },
-        truncateContent(content) {
-            // HTML 태그를 제거하고 텍스트만 추출
-            const plainText = content.replace(/<[^>]*>/g, '');
-            // 100자로 제한하고 말줄임표 추가
-            return plainText.length > 100 ? plainText.slice(0, 100) + '...' : plainText;
         }
     }
 };
@@ -267,7 +275,7 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    /* -webkit-line-clamp: 3; */
     -webkit-box-orient: vertical;
 }
 </style>
