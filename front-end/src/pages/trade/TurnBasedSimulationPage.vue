@@ -131,7 +131,7 @@ ScenarioOrder {
 }
 
 .modal-background {
-  background: url('src/assets/images/quiz_img/newspaper.png') no-repeat center
+  background: url('/src/assets/images/quiz_img/newspaper.png') no-repeat center
     center;
   background-size: contain; /* 이미지 크기를 contain으로 설정 */
   max-width: 80%; /* 최대 너비를 80%로 제한 */
