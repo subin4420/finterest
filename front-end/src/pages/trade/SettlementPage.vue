@@ -10,14 +10,14 @@
           <!-- 필터 컨테이너 추가 -->
 
           <button
-            @click="filterType = '매수'"
-            :class="{ active: filterType === '매수' }"
+            @click="filterType = 'buy'"
+            :class="{ active: filterType === 'buy' }"
           >
             매수
           </button>
           <button
-            @click="filterType = '매도'"
-            :class="{ active: filterType === '매도' }"
+            @click="filterType = 'sell'"
+            :class="{ active: filterType === 'sell' }"
           >
             매도
           </button>
@@ -50,7 +50,7 @@
                     : '유효하지 않은 날짜'
                 }}
               </td>
-              <td :class="record.tradeType === '매수' ? 'buy' : 'sell'">
+              <td :class="record.tradeType === 'buy' ? 'buy' : 'sell'">
                 {{ record.tradeType }}
               </td>
             </tr>

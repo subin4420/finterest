@@ -66,11 +66,11 @@ public class QuizSetsService {
     // 퀴즈 제출 처리
     @Transactional
     public QuizResultDetailVO submitQuiz(int setId, int userId, QuizSubmissionDTO submission) {
-        // "퀴즈"에 해당하는 points_awarded 값 가져오기
-        int pointsPerQuestion = quizSetsDAO.selectPointsForQuiz();  // 각 문제당 포인트
+        // 각 문제당 점수를 10점으로 고정
+        int pointsPerQuestion = 10;
 
         int totalScore = 0;
-        int maxScore = submission.getAnswers().size() * pointsPerQuestion;  // 각 문제는 해당 포인트만큼 점수
+        int maxScore = submission.getAnswers().size() * pointsPerQuestion;  // 각 문제는 10점씩 계산되어 최대 점수 계산
         List<QuizResultDetailVO.CorrectAnswer> correctAnswers = new ArrayList<>();
         List<QuizResultDetailVO.WrongAnswer> wrongAnswers = new ArrayList<>();
 
@@ -80,7 +80,7 @@ public class QuizSetsService {
 
             // 정답 여부 확인 및 점수 계산
             if (correctChoice == answer.getSelectedChoice()) {
-                totalScore += pointsPerQuestion;
+                totalScore += pointsPerQuestion;  // 정답일 경우 문제당 10점씩 추가
                 correctAnswers.add(new QuizResultDetailVO.CorrectAnswer(answer.getQuizId(), correctChoice));
             } else {
                 wrongAnswers.add(new QuizResultDetailVO.WrongAnswer(answer.getQuizId(), answer.getSelectedChoice()));
@@ -90,8 +90,8 @@ public class QuizSetsService {
         // 퀴즈 결과를 데이터베이스에 저장하고 resultId 반환
         int resultId = quizSetsDAO.insertQuizResult(userId, setId, totalScore, maxScore);
 
-        // 포인트 이력에 추가
-        quizSetsDAO.insertPoint(userId, totalScore* quizSetsDAO.selectPointsForQuiz());
+        // 포인트 이력에 추가 (총 점수에 30을 곱하여 포인트 계산)
+        quizSetsDAO.insertPoint(userId, totalScore * quizSetsDAO.selectPointsForQuiz());  // 총 점수에 30을 곱한 값으로 포인트 기록
 
         // 각 사용자의 답변을 resultId와 함께 저장
         for (QuizSubmissionDTO.AnswerDTO answer : submission.getAnswers()) {
@@ -104,13 +104,14 @@ public class QuizSetsService {
         result.setResultId(resultId);  // 새로 생성된 resultId를 설정
         result.setSetId(setId);  // 퀴즈 세트 ID 설정
         result.setUserId(userId);  // JWT에서 추출된 userId 설정
-        result.setTotalScore(totalScore);
-        result.setMaxScore(maxScore);
+        result.setTotalScore(totalScore);  // 총 점수를 설정
+        result.setMaxScore(maxScore);  // 최대 점수를 설정
         result.setCorrectAnswers(correctAnswers);
         result.setWrongAnswers(wrongAnswers);
 
         return result;
     }
+
 
 
 

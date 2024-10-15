@@ -36,29 +36,20 @@
               </div>
             </div>
           </div>
-          <div class="spacer" style="flex-grow: 1">
-            <div class="guide-info">
-              <button @click="openModal" class="guide-button">
-                <i class="fas fa-book"></i> 모의투자 페이지 사용설명서
-              </button>
-              <GuideModal
-                :isVisible="showModal"
-                @update:isVisible="showModal = $event"
-              />
-            </div>
-            <div class="stock-info" v-if="userStocks && userStocks.length > 0">
-              <h3 class="stock-title">📈다다익선</h3>
-              <div class="stock-item">
-                <span class="stock-name">{{ getMaxStock().stockName }}</span>
-                <!-- 주식 이름 -->
-                <span class="stock-holdings"
-                  >{{ getMaxStock().totalStockHoldings }}주</span
-                >
-                <!-- 보유 주식 수 -->
-              </div>
-            </div>
+          <div class="spacer" style="flex-grow: 1; display: flex; justify-content: center;">
+            <HomeChart />
           </div>
-          <HoldTotalAssets />
+          <div class="guide-info">
+            <button @click="openModal" class="guide-button">
+              <i class="fas fa-book"></i> 모의투자 페이지 사용설명서
+            </button>
+            <GuideModal
+              :isVisible="showModal"
+              @update:isVisible="showModal = $event"
+            />
+
+            <HoldTotalAssets />
+          </div>
         </div>
       </div>
       <div class="content-grid">
@@ -73,20 +64,20 @@
 </template>
 
 <script>
-import TradeImage from "@/components/trade/TradeImage.vue";
-import TradeNavigationBar from "@/components/trade/TradeNavigationBar.vue";
-import DefaultLayout from "@/components/layouts/DefaultLayout.vue";
-import HoldTotalAssets from "@/components/trade/portfolioChart/HoldTotalAssets.vue";
-import GuideModal from "@/components/trade/GuideModal.vue";
-import HomeChart from "@/components/trade/HomeChart.vue";
-import { onMounted, ref } from "vue";
-import { useAuthStore } from "@/stores/auth";
-import { useConversionStore } from "@/stores/conversionStore";
-import { useRouter } from "vue-router"; // 추가: 라우터 사용
-import { useTradeStore } from "@/stores/tradeStore"; // 추가: tradeStore 가져오기
+import TradeImage from '@/components/trade/TradeImage.vue';
+import TradeNavigationBar from '@/components/trade/TradeNavigationBar.vue';
+import DefaultLayout from '@/components/layouts/DefaultLayout.vue';
+import HoldTotalAssets from '@/components/trade/portfolioChart/HoldTotalAssets.vue';
+import GuideModal from '@/components/trade/GuideModal.vue';
+import HomeChart from '@/components/trade/HomeChart.vue';
+import { onMounted, ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { useConversionStore } from '@/stores/conversionStore';
+import { useRouter } from 'vue-router'; // 추가: 라우터 사용
+import { useTradeStore } from '@/stores/tradeStore'; // 추가: tradeStore 가져오기
 
 export default {
-  name: "TradePage",
+  name: 'TradePage',
   components: {
     TradeImage,
     DefaultLayout,
@@ -115,19 +106,19 @@ export default {
     const fetchUserFunds = async () => {
       try {
         const userFunds = await tradeStore.fetchUserFunds(); // 사용자 자산 정보 가져오기
-        console.log("사용자 자산 정보:", userFunds); // 콘솔에 출력
+        console.log('사용자 자산 정보:', userFunds); // 콘솔에 출력
       } catch (error) {
-        console.error("자산 정보를 가져오는 데 실패했습니다:", error.message);
+        console.error('자산 정보를 가져오는 데 실패했습니다:', error.message);
       }
     };
 
     function formatCurrency(value) {
-      return new Intl.NumberFormat("ko-KR").format(value);
+      return new Intl.NumberFormat('ko-KR').format(value);
     }
 
     // 추가: 포인트 변환 페이지로 이동하는 함수
     function navigateToPointConversion() {
-      router.push({ name: "pointconversion" }); // 라우터를 사용하여 페이지 이동
+      router.push({ name: 'pointconversion' }); // 라우터를 사용하여 페이지 이동
     }
 
     // 가장 많이 보유한 주식 찾기
@@ -169,7 +160,7 @@ export default {
 .content-wrapper {
   min-height: calc(100vh - 60px);
   padding: 20px;
-  margin-top: 30px;
+  margin-top: 0px;
   display: flex; /* 추가: flexbox 사용 */
   flex-direction: column; /* 추가: 세로 방향으로 정렬 */
   align-items: center; /* 추가: 중앙 정렬 */
@@ -267,7 +258,7 @@ export default {
   display: absolute; /* 플렉스 박스 사용 */
   flex-direction: column; /* 세로 방향으로 정렬 */
   align-items: center; /* 중앙 정렬 */
-  margin: 20px 0; /* 위아래 여백 추가 */
+  margin: 0px; /* 위아래 여백 추가 */
 }
 
 .guide-button {

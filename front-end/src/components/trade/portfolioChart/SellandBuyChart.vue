@@ -6,14 +6,14 @@
 </template>
 
 <script>
-import { Chart, registerables } from "chart.js";
-import { onMounted } from "vue";
-import { useTradeStore } from "@/stores/tradeStore"; // TradeStore import
+import { Chart, registerables } from 'chart.js';
+import { onMounted } from 'vue';
+import { useTradeStore } from '@/stores/tradeStore'; // TradeStore import
 
 Chart.register(...registerables);
 
 export default {
-  name: "SellandBuyChart",
+  name: 'SellandBuyChart',
   setup() {
     const tradeStore = useTradeStore(); // TradeStore 사용
 
@@ -27,9 +27,9 @@ export default {
           tradeSummary[date] = { buy: 0, sell: 0 }; // 날짜별 초기화
         }
 
-        if (trade.tradeType === "매수") {
+        if (trade.tradeType === 'buy') {
           tradeSummary[date].buy += trade.quantity;
-        } else if (trade.tradeType === "매도") {
+        } else if (trade.tradeType === 'sell') {
           tradeSummary[date].sell += trade.quantity;
         }
       });
@@ -42,24 +42,24 @@ export default {
       const buyData = labels.map((date) => tradeSummary[date].buy); // 매수 수량 배열
       const sellData = labels.map((date) => tradeSummary[date].sell); // 매도 수량 배열
 
-      const ctx = document.getElementById("sellAndBuyChart").getContext("2d");
+      const ctx = document.getElementById('sellAndBuyChart').getContext('2d');
       new Chart(ctx, {
-        type: "bar",
+        type: 'bar',
         data: {
           labels: labels,
           datasets: [
             {
-              label: "매수 수량",
+              label: '매수 수량',
               data: buyData,
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
               borderWidth: 1,
             },
             {
-              label: "매도 수량",
+              label: '매도 수량',
               data: sellData,
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              borderColor: "rgba(255, 99, 132, 1)",
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1,
             },
           ],
@@ -93,10 +93,11 @@ export default {
   width: 500px;
   height: 470px;
   margin: 20px 0;
-  border: 1px solid #ddd;
+  border: 1px solid #ffffff;
   border-radius: 10px;
   padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgb(254, 254, 254);
+  padding-bottom: 10px;
 }
 
 .chart-title {
