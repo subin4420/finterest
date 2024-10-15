@@ -153,6 +153,7 @@
 <script setup>
 import { ref, computed, onMounted, defineProps, watch } from 'vue';
 import axios from 'axios';
+import { useToast } from 'vue-toastification';
 
 const emit = defineEmits(['next-turn']);
 const turn = ref(0);
@@ -268,6 +269,8 @@ const profitRate = computed(() => {
   return 0;
 });
 
+const toast = useToast(); // toast 인스턴스 생성
+
 // 주문 처리 수정
 const handleOrder = async () => {
   const total = totalAmount.value; // computed 속성은 .value로 접근
@@ -277,6 +280,19 @@ const handleOrder = async () => {
       holdingAmount.value += total;
       availableFunds.value -= total;
       holdingStockAcount.value += amount.value;
+      // 구매 성공 메시지 추가
+      toast.success("구매가 완료되었습니다.", {
+        timeout: 5000,
+        closeOnClick: true,
+        position: "top-right"
+      });
+    } else {
+      // 구매 실패 메시지 추가
+      toast.error("구매 가능 금액이 부족합니다.", {
+        timeout: 5000,
+        closeOnClick: true,
+        position: "top-right"
+      });
     }
   } else {
     console.log('sell');
@@ -285,8 +301,20 @@ const handleOrder = async () => {
       holdingAmount.value -= total;
       availableFunds.value += total;
       holdingStockAcount.value -= amount.value;
+      // 판매 성공 메시지 추가
+      toast.success("판매가 완료되었습니다.", {
+        timeout: 5000,
+        closeOnClick: true,
+        position: "top-right"
+      });
     } else {
       console.error('판매할 수 있는 주식 수가 부족합니다.'); // 에러 메시지
+      // 판매 실패 메시지 추가
+      toast.error("판매할 수 있는 주식 수가 부족합니다.", {
+        timeout: 5000,
+        closeOnClick: true,
+        position: "top-right"
+      });
     }
   }
 };

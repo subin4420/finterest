@@ -47,11 +47,13 @@
               />
             </div>
             <div class="stock-info" v-if="userStocks && userStocks.length > 0">
-              <h3>📈 가장 많이 보유한 주식</h3>
+              <h3 class="stock-title">📈다다익선</h3>
               <div class="stock-item">
-                <span>{{ getMaxStock().stockName }}</span>
+                <span class="stock-name">{{ getMaxStock().stockName }}</span>
                 <!-- 주식 이름 -->
-                <span>{{ getMaxStock().totalStockHoldings }}주</span>
+                <span class="stock-holdings"
+                  >{{ getMaxStock().totalStockHoldings }}주</span
+                >
                 <!-- 보유 주식 수 -->
               </div>
             </div>
@@ -240,12 +242,11 @@ export default {
 }
 
 .spacer {
-  background-color: #ffffff;
+  background-color: #f5f5f5;
   height: 100%;
   margin-left: 10px;
   margin-right: 10px;
   border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -263,7 +264,7 @@ export default {
 }
 
 .guide-info {
-  display: flex; /* 플렉스 박스 사용 */
+  display: absolute; /* 플렉스 박스 사용 */
   flex-direction: column; /* 세로 방향으로 정렬 */
   align-items: center; /* 중앙 정렬 */
   margin: 20px 0; /* 위아래 여백 추가 */
@@ -283,5 +284,50 @@ export default {
 
 .guide-button:hover {
   background-color: #2c4b9e; /* 호버 시 배경색 변화 */
+}
+
+.stock-info {
+  display: flex; /* 플렉스 박스 사용 */
+  flex-direction: column; /* 세로 방향으로 정렬 */
+  align-items: center; /* 중앙 정렬 */
+  margin: 20px 0; /* 위아래 여백 추가 */
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  max-width: 200px;
+  margin-left: 10px;
+
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.stock-title {
+  font-size: 1.5rem; /* 제목 크기 */
+  font-weight: bold; /* 두껍게 */
+  color: #3858d6; /* 제목 색상 */
+  margin-bottom: 10px; /* 아래쪽 여백 */
+  text-align: center; /* 중앙 정렬 */
+}
+
+.stock-item {
+  display: flex; /* 플렉스 박스 사용 */
+  justify-content: space-between; /* 아이템 간격 조정 */
+  align-items: center; /* 중앙 정렬 */
+  background-color: #f0f0f0; /* 배경 색상 */
+  border-radius: 8px; /* 둥글게 */
+  padding: 10px; /* 패딩 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  margin-top: 10px; /* 위쪽 여백 */
+}
+
+.stock-name {
+  font-size: 1.2rem; /* 주식 이름 크기 */
+  font-weight: 600; /* 두껍게 */
+}
+
+.stock-holdings {
+  font-size: 1rem; /* 보유 주식 수 크기 */
+  color: #666; /* 색상 */
 }
 </style>

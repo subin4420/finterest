@@ -22,7 +22,11 @@
     "sass-loader": "^16.0.2",
     "vue": "^3.4.21",
     "vue-awesome-paginate": "^1.2.0",
+    "vue-chart": "^2.0.0",
+    "vue-echart": "^1.0.5",
+    "vue-echarts": "^7.0.3",
     "vue-router": "^4.3.0",
+    "vue-toastification": "^2.0.0-rc.5",
     "vuetify": "^3.7.2"
   },
   "devDependencies": {
