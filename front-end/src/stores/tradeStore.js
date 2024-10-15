@@ -7,6 +7,7 @@ export const useTradeStore = defineStore('trade', {
     stockPrice: 0, // 주식 가격
     stockName: '', // 주식 이름 추가
     tradeHistory: [], // 거래 기록
+    userStocks: [], // 초기화: 빈 배열로 설정
   }),
   getters: {
     // 선택된 주식 코드를 반환하는 getter
@@ -83,8 +84,9 @@ export const useTradeStore = defineStore('trade', {
     async fetchUserFunds() {
       try {
         const funds = await TradeService.getUserFunds(); // 자산 정보 가져오기
-        // 필요한 경우 상태에 자산 정보를 저장하는 로직 추가 가능
-        console.log('사용자 자산 정보:', funds); // 자산 정보 출력
+        console.log('API 응답:', funds); // API 응답 출력
+        this.userStocks = funds.stock; // 주식 정보를 상태에 저장
+        console.log('사용자 자산 정보:', this.userStocks); // 주식 정보 출력
       } catch (error) {
         console.error('자산 정보를 가져오는 데 실패했습니다:', error.message);
       }

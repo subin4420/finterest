@@ -1,11 +1,15 @@
 <template>
   <div class="portfolio-chart-container">
-    <h2 class="chart-title">보유 자산</h2>
+    <h2 class="chart-title"></h2>
     <p class="total-assets">
-      총자산
+      자산
       <span class="highlight total-assets-highlight"
         >{{ formatCurrency(totalAssets) }} 원</span
       >
+    </p>
+    <p class="money">
+      주식
+      <span class="highlight">{{ formatCurrency(totalStockValue) }} 원</span>
     </p>
     <!-- 총자산 차트 추가 -->
     <canvas
@@ -14,10 +18,7 @@
       height="200"
       style="margin-top: 0px"
     ></canvas>
-    <p class="money">
-      주식 총합:
-      <span class="highlight">{{ formatCurrency(totalStockValue) }} 원</span>
-    </p>
+
     <!-- 주식별 보유량 추가 -->
     <!-- <ul class="funds-list">
       <li v-for="(fund, index) in sortedFunds" :key="index" class="fund-item">
@@ -81,7 +82,7 @@ export default defineComponent({
           labels: [''],
           datasets: [
             {
-              label: '보유 머니',
+              label: '모의투자금',
               data: [money.value],
               backgroundColor: '#36A2EB',
               barThickness: 20, // 막대그래프의 두께 조정
@@ -89,7 +90,7 @@ export default defineComponent({
               borderWidth: 2, // 테두리 두께 추가
             },
             {
-              label: '주식 총합',
+              label: '주식',
               data: [
                 funds.value.reduce((sum, fund) => sum + fund.totalPrice, 0),
               ],
@@ -161,61 +162,52 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* 일 추가 */
 .portfolio-chart-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: #ffffff; /* 배경색을 흰색으로 변경 */
+  background-color: #f9f9f9; /* 배경색을 연한 회색으로 변경 */
   border-radius: 12px; /* 모서리 둥글게 */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 그림자 강도 증가 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* 그림자 강도 감소 */
 }
 
 .chart-title {
-  font-size: 30px; /* 제목 크기 증가 */
+  font-size: 32px; /* 제목 크기 증가 */
   color: #2c3e50; /* 제목 색상 변경 */
   margin-bottom: 20px; /* 제목과 차트 사이의 여백 증가 */
   font-weight: bold; /* 제목 두껍게 */
   text-align: center; /* 제목 중앙 정렬 */
+  text-transform: uppercase; /* 제목 대문자 변환 */
 }
 
 .total-assets,
 .money {
-  font-size: 22px; /* 텍스트 크기 증가 */
+  font-size: 24px; /* 텍스트 크기 증가 */
   color: #34495e; /* 텍스트 색상 변경 */
   margin-bottom: 15px; /* 텍스트 사이의 여백 증가 */
   font-family: 'Arial', sans-serif; /* 폰트 변경 */
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* 텍스트 그림자 추가 */
 }
 
-.funds-list {
-  list-style-type: none; /* 목록 스타일 제거 */
-  padding: 0; /* 목록 여백 제거 */
-  width: 100%; /* 목록 너비 100%로 설정 */
-}
-
-.fund-item {
-  font-size: 18px; /* 목록 텍스트 크기 증가 */
-  color: #000000; /* 목록 텍스트 색상 변경 */
-  margin-bottom: 15px; /* 목록 항목 사이의 여백 증가 */
-  padding: 12px; /* 항목 패딩 증가 */
-  border-radius: 8px; /* 항목 모서리 둥글게 */
-  background-color: #ecf0f1; /* 항목 배경색 추가 */
-  transition: background-color 0.3s, transform 0.3s; /* 배경색 및 크기 전환 효과 */
-}
-
-.fund-item .total-price {
-  float: right; /* fund.totalPrice를 오른쪽 정렬 */
-}
-
 .highlight {
   font-weight: bold; /* 강조된 텍스트 두껍게 */
   color: #e74c3c; /* 강조된 텍스트 색상 변경 */
-  font-size: 24px; /* 강조된 텍스트 크기 증가 */
+  font-size: 26px; /* 강조된 텍스트 크기 증가 */
 }
 
 .total-assets-highlight {
   color: #2ecc71; /* 보유 자산 색상 변경 (예: 초록색) */
+}
+
+/* 기호 추가 스타일 */
+.money::before {
+  content: '💰'; /* 돈 기호 추가 */
+  margin-right: 5px; /* 기호와 텍스트 사이의 여백 */
+}
+
+.total-assets::before {
+  content: '📈'; /* 상승 기호 추가 */
+  margin-right: 5px; /* 기호와 텍스트 사이의 여백 */
 }
 </style>

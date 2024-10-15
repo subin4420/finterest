@@ -2,19 +2,13 @@
 <template>
   <div class="modal" v-if="isVisible">
     <div class="card">
-      <svg
-        id="cookieSvg"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 50 50"
-      >
-        <g>
-          <path
-            d="M25 0C11.2 0 0 11.2 0 25s11.2 25 25 25 25-11.2 25-25S38.8 0 25 0zm0 46.5c-11.8 0-21.5-9.7-21.5-21.5S13.2 3.5 25 3.5 46.5 13.2 46.5 25 36.8 46.5 25 46.5z"
-          />
-        </g>
-      </svg>
+      <div class="iconContainer">
+        <span class="investmentIcon">💰</span>
+        <!-- 모의투자와 관련된 기호 추가 -->
+      </div>
+
       <h2 class="cookieHeading">모의투자 가이드</h2>
-      <p class="cookieDescription">{{ steps[currentStep].text }}</p>
+      <p class="cookieDescription" v-html="steps[currentStep].text"></p>
       <img :src="steps[currentStep].image" alt="Step Image" class="stepImage" />
       <div class="buttonContainer">
         <button class="acceptButton" @click="nextStep">다음</button>
@@ -25,6 +19,9 @@
 </template>
 
 <script>
+import News from '@/assets/images/trade/news.png';
+import Comment from '@/assets/images/trade/comment.png';
+
 export default {
   props: {
     isVisible: {
@@ -34,17 +31,38 @@ export default {
   },
   data() {
     return {
-      currentStep: 0,
+      currentStep: 0, // 현재 단계 초기화
       steps: [
         {
-          text: '여기는 실전 모의투자를 경험할 수 있는 페이지입니다. 출석과 퀴즈를 통해 얻은 포인트를 모의투자금으로 전환하여 투자해보세요!',
+          text: '여기는 실전 모의투자를 경험할 수 있는 페이지입니다.<br>출석과 퀴즈를 통해 얻은 포인트를 모의투자금으로 전환하여 투자해보세요!',
         },
         {
-          text: '모실제 주식 데이터를 바탕으로 한 차트를 확인할 수 있습니다.',
+          text: '실시간 주식 데이터를 바탕으로 한 모의 투자를 할 수 있습니다.',
           image: 'url_to_image_2.jpg',
         },
         {
-          text: '마지막 단계의 내용입니다.',
+          text: '투자 현황과 수익률을 한 눈에 볼 수 있습니다.',
+          image: 'url_to_image_3.jpg',
+        },
+        {
+          text: '관심 종목과 뉴스를 검색할 수 있는 뉴스 페이지입니다.',
+          image: News, // 수정된 부분: 이미지 경로를 올바르게 설정
+        },
+        {
+          text: '다양한 투자 정보를 공유할 수 있는 커뮤니티 페이지입니다.',
+          image: 'url_to_image_3.jpg',
+        },
+        {
+          text: '게시글에 대해서 자유롭게 댓글을 남기고 의견을 나눠보세요!',
+          image: Comment, // 수정된 부분: 이미지 경로를 올바르게 설정
+        },
+        {
+          text: '출석과 퀴즈를 통해 얻은 포인트를 모의투자금으로 전환해보세요!<br>투자를 통해 얻은 모의투자금을 포인트로 변경해 랭킹을 올려보세요!.',
+          image: 'url_to_image_3.jpg',
+        },
+
+        {
+          text: '투자 시장 마감 시,<br>투자 경험을 쌓을 수 있는 턴제 모의투자 페이지입니다.',
           image: 'url_to_image_3.jpg',
         },
       ],
@@ -52,6 +70,7 @@ export default {
   },
   methods: {
     closeModal() {
+      this.currentStep = 0; // 모달 닫을 때 단계 초기화
       this.$emit('update:isVisible', false);
     },
     nextStep() {
@@ -88,7 +107,7 @@ export default {
 
 .card {
   width: 600px;
-  height: 220px;
+  height: 500px;
   background-color: rgb(255, 255, 255);
   border-radius: 8px;
   display: flex;
@@ -160,7 +179,7 @@ export default {
   transition-duration: 0.2s;
   color: rgb(46, 46, 46);
   border: none;
-  cursor: not-allowed;
+  cursor: pointer;
   font-weight: 600;
   border-radius: 20px;
   box-shadow: 0 4px 6px -1px #bebdbd, 0 2px 4px -1px #bebdbd;

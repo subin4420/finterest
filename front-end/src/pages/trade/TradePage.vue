@@ -14,7 +14,6 @@
             style="background-color: #ffffff"
           >
             <h2 class="balance-title">현재 보유 잔고</h2>
-            <!-- 변경: 포인트와 모의투자금을 각각 따로 관리 -->
             <div class="balance-box" @click="navigateToPointConversion">
               <div class="balance-item">
                 <i class="fas fa-coins"></i>
@@ -39,12 +38,22 @@
           </div>
           <div class="spacer" style="flex-grow: 1">
             <div class="guide-info">
-              <h2>모의투자 가이드</h2>
-              <button @click="openModal">모의투자 사용설명서</button>
+              <button @click="openModal" class="guide-button">
+                <i class="fas fa-book"></i> 모의투자 페이지 사용설명서
+              </button>
               <GuideModal
                 :isVisible="showModal"
                 @update:isVisible="showModal = $event"
               />
+            </div>
+            <div class="stock-info" v-if="userStocks && userStocks.length > 0">
+              <h3>📈 가장 많이 보유한 주식</h3>
+              <div class="stock-item">
+                <span>{{ getMaxStock().stockName }}</span>
+                <!-- 주식 이름 -->
+                <span>{{ getMaxStock().totalStockHoldings }}주</span>
+                <!-- 보유 주식 수 -->
+              </div>
             </div>
           </div>
           <HoldTotalAssets />
@@ -71,6 +80,7 @@ import { useConversionStore } from '@/stores/conversionStore';
 import HoldTotalAssets from '@/components/trade/portfolioChart/HoldTotalAssets.vue';
 import { useRouter } from 'vue-router'; // 추가: 라우터 사용
 import GuideModal from '@/components/trade/GuideModal.vue';
+import { useTradeStore } from '@/stores/tradeStore'; // 추가: tradeStore 가져오기
 
 export default {
   name: 'TradePage',
@@ -86,13 +96,26 @@ export default {
     const conversionStore = useConversionStore();
     const loading = ref(true); // 로딩 상태 변수 추가
     const router = useRouter(); // 추가: 라우터 인스턴스 생성
+    const tradeStore = useTradeStore();
+    const userStocks = tradeStore.userStocks; // 사용자 주식 정보 가져오기
 
     onMounted(async () => {
       if (authStore.isLogin) {
         await conversionStore.fetchUserBalance();
       }
+      await fetchUserFunds(); // 사용자 자산 정보 가져오기
       loading.value = false; // 데이터 로드 완료 후 로딩 상태 변경
     });
+
+    // 사용자 자산 정보를 가져오는 함수
+    const fetchUserFunds = async () => {
+      try {
+        const userFunds = await tradeStore.fetchUserFunds(); // 사용자 자산 정보 가져오기
+        console.log('사용자 자산 정보:', userFunds); // 콘솔에 출력
+      } catch (error) {
+        console.error('자산 정보를 가져오는 데 실패했습니다:', error.message);
+      }
+    };
 
     function formatCurrency(value) {
       return new Intl.NumberFormat('ko-KR').format(value);
@@ -103,12 +126,22 @@ export default {
       router.push({ name: 'pointconversion' }); // 라우터를 사용하여 페이지 이동
     }
 
+    // 가장 많이 보유한 주식 찾기
+    function getMaxStock() {
+      if (userStocks.length === 0) return {}; // 주식이 없을 경우 빈 객체 반환
+      return userStocks.reduce((max, stock) => {
+        return stock.totalStockHoldings > max.totalStockHoldings ? stock : max;
+      });
+    }
+
     return {
       authStore,
       conversionStore,
       formatCurrency,
       loading, // 로딩 상태 반환
       navigateToPointConversion, // 추가: 함수 반환
+      userStocks,
+      getMaxStock,
     };
   },
   data() {
@@ -225,5 +258,28 @@ export default {
 
 .balance-box:hover {
   background-color: #f0f0f0;
+}
+
+.guide-info {
+  display: flex; /* 플렉스 박스 사용 */
+  flex-direction: column; /* 세로 방향으로 정렬 */
+  align-items: center; /* 중앙 정렬 */
+  margin: 20px 0; /* 위아래 여백 추가 */
+}
+
+.guide-button {
+  background-color: #3858d6; /* 버튼 배경색 */
+  color: #ffffff; /* 버튼 텍스트 색상 */
+  border: none; /* 테두리 제거 */
+  border-radius: 5px; /* 둥근 모서리 */
+  padding: 15px 25px; /* 패딩 증가 */
+  font-size: 1.2rem; /* 글자 크기 증가 */
+  cursor: pointer; /* 커서 변경 */
+  transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
+  margin-top: 10px; /* 버튼과 제목 간격 추가 */
+}
+
+.guide-button:hover {
+  background-color: #2c4b9e; /* 호버 시 배경색 변화 */
 }
 </style>
