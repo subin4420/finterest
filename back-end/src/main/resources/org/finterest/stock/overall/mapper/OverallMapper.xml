@@ -18,7 +18,9 @@
 
     <!-- 모든 KOSPI 주식 리스트 조회 -->
     <select id="selectAllKOSPIStockLists" resultType="org.finterest.invest.stock.overall.dto.kospi.KOSPIStockListDTO">
-        SELECT * FROM KOSPI_STOCK_LIST
+        SELECT *
+        FROM KOSPI_STOCK_LIST
+        ORDER BY basDt DESC
     </select>
 
     <!-- 모든 KOSPI 주식 지수 조회 -->

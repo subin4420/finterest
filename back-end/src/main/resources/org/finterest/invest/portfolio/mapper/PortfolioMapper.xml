@@ -28,7 +28,7 @@
         SELECT stock_code, price, quantity FROM trade
         WHERE user_id = #{userId}
           AND DATE_FORMAT(created_at, '%Y%m%d') = #{date}
-          AND trade_type = 'buy'
+          AND trade_type = '매수'
     </select>
 
     <select id="getUserMoney"
@@ -57,6 +57,6 @@
             resultType="org.finterest.invest.portfolio.domain.PortfolioDTO">
         SELECT * FROM trade
         WHERE user_id = #{userId}
-          AND trade_type = 'buy'
+          AND trade_type = '매수'
     </select>
 </mapper>
