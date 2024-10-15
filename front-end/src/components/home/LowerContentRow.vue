@@ -53,6 +53,19 @@ const getRankIconClass = (rankTitle) => {
   }
 };
 
+const getAvatarColor = (username) => {
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F06292', '#AED581', '#FFD54F'];
+  const index = username.charCodeAt(0) % colors.length;
+  return colors[index];
+};
+
+const getRankMedalClass = (position) => {
+  if (position === 1) return 'gold';
+  if (position === 2) return 'silver';
+  if (position === 3) return 'bronze';
+  return '';
+};
+
 onMounted(() => {
   fetchCompletedQuizSets();
   fetchAndSetRankings();
@@ -61,14 +74,19 @@ onMounted(() => {
 const handleQuizCardClick = (cardData) => {
   console.log('Quiz card clicked:', cardData);
 };
+
+// completedQuizSets를 6개로 제한하는 computed 속성 추가
+const topSixCompletedQuizSets = computed(() => {
+  return completedQuizSets.value.slice(0, 6);
+});
 </script>
 
 <template>
   <div class="lower-content">
     <div class="ranking-section">
-      <h2>랭킹</h2>
+      <h2 class="section-title">랭킹</h2>
       <div class="ranking-card__content">
-        <table>
+        <table class="ranking-table">
           <thead>
             <tr>
               <th>순위</th>
@@ -79,32 +97,50 @@ const handleQuizCardClick = (cardData) => {
           </thead>
           <tbody>
             <tr 
-              v-for="rank in topRankings" 
+              v-for="(rank, index) in topRankings" 
               :key="rank.userId"
               :class="{ 'highlight': isUserInRankings(rank.userId) }"
             >
-              <td>{{ rank.rankPosition }}</td>
-              <td>{{ rank.username }}</td>
-              <td>{{ rank.totalPoints }}</td>
+              <td class="rank-position">
+                <span :class="['rank-medal', getRankMedalClass(index + 1)]">{{ index + 1 }}</span>
+              </td>
+              <td>
+                <div class="user-info">
+                  <span class="user-avatar" :style="{ backgroundColor: getAvatarColor(rank.username) }">
+                    {{ rank.username.charAt(0).toUpperCase() }}
+                  </span>
+                  {{ rank.username }}
+                </div>
+              </td>
+              <td class="points">{{ rank.totalPoints.toLocaleString() }}</td>
               <td>
                 <span class="rank-icon" :class="getRankIconClass(rank.rankTitle)"></span>
-                {{ rank.rankTitle }}
+                <span class="rank-title">{{ rank.rankTitle }}</span>
               </td>
             </tr>
           </tbody>
         </table>
 
         <div v-if="userRanking && !isUserInTopRankings" class="user-ranking">
-          <h3>내 랭킹</h3>
-          <table>
+          <div class="ranking-ellipsis">...</div>
+          <table class="ranking-table">
             <tbody>
               <tr>
-                <td>{{ userRanking.rankPosition }}</td>
-                <td>{{ userRanking.username }}</td>
-                <td>{{ userRanking.totalPoints }}</td>
+                <td class="rank-position">
+                  <span class="rank-number">{{ userRanking.rankPosition }}</span>
+                </td>
+                <td>
+                  <div class="user-info">
+                    <span class="user-avatar" :style="{ backgroundColor: getAvatarColor(userRanking.username) }">
+                      {{ userRanking.username.charAt(0).toUpperCase() }}
+                    </span>
+                    {{ userRanking.username }}
+                  </div>
+                </td>
+                <td class="points">{{ userRanking.totalPoints.toLocaleString() }}</td>
                 <td>
                   <span class="rank-icon" :class="getRankIconClass(userRanking.rankTitle)"></span>
-                  {{ userRanking.rankTitle }}
+                  <span class="rank-title">{{ userRanking.rankTitle }}</span>
                 </td>
               </tr>
             </tbody>
@@ -114,10 +150,10 @@ const handleQuizCardClick = (cardData) => {
     </div>
 
     <div class="quiz-section">
-      <h2>완료된 퀴즈 세트 TOP 3</h2>
+      <h2 class="section-title">완료된 퀴즈 세트 TOP 6</h2>
       <div class="quiz-set-list">
         <QuizCard
-          v-for="quizSet in completedQuizSets.slice(0, 3)"
+          v-for="quizSet in topSixCompletedQuizSets"
           :key="quizSet.setId"
           :cardData="quizSet"
           @click="handleQuizCardClick"
@@ -154,67 +190,113 @@ h2 {
   overflow-x: auto;
 }
 
-table {
+.ranking-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0;
+  border-spacing: 0 0.5rem;
 }
 
-th, td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-th {
-  font-weight: bold;
+.ranking-table th {
   background-color: #f8f9fa;
   color: #495057;
+  font-weight: bold;
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 0.5px;
+  padding: 1rem 0.75rem;
 }
 
-tr:last-child td {
-  border-bottom: none;
+.ranking-table td {
+  background-color: #ffffff;
+  padding: 1rem 0.75rem;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.highlight {
-  background-color: #e8f5e9;
+.ranking-table tr td:first-child {
+  border-left: 1px solid #e0e0e0;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 
-.user-ranking {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 2px solid #e0e0e0;
+.ranking-table tr td:last-child {
+  border-right: 1px solid #e0e0e0;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
-.user-ranking h3 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+.rank-position {
+  text-align: center;
+  font-weight: bold;
+}
+
+.rank-medal {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  color: white;
+  font-weight: bold;
+}
+
+.rank-medal.gold { background-color: #FFD700; }
+.rank-medal.silver { background-color: #C0C0C0; }
+.rank-medal.bronze { background-color: #CD7F32; }
+
+.rank-number {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #f0f0f0;
   color: #333;
+  font-weight: bold;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: white;
+  font-weight: bold;
+}
+
+.points {
+  font-weight: bold;
+  color: #28a745;
 }
 
 .rank-icon {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
 }
 
-.icon-bronze { background-image: url('@/assets/images/icons/브론즈.jpeg'); }
-.icon-silver { background-image: url('@/assets/images/icons/실버.jpeg'); }
-.icon-gold { background-image: url('@/assets/images/icons/골드.jpeg'); }
-.icon-platinum { background-image: url('@/assets/images/icons/플레티넘.jpeg'); }
-.icon-diamond { background-image: url('@/assets/images/icons/다이아몬드.jpeg'); }
-.icon-challenger { background-image: url('@/assets/images/icons/챌린저.jpeg'); }
+.rank-title {
+  font-weight: bold;
+  color: #495057;
+}
+
+.highlight {
+  background-color: #e8f5e9 !important;
+}
 
 .quiz-set-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
 }
 
@@ -228,14 +310,70 @@ tr:last-child td {
     flex-direction: column;
   }
 
+  .quiz-set-list {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
   .quiz-set-list > * {
     flex: 1 1 calc(50% - 1rem);
   }
 }
 
 @media (max-width: 480px) {
+  .quiz-set-list {
+    grid-template-columns: 1fr;
+  }
+
   .quiz-set-list > * {
     flex: 1 1 100%;
   }
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+}
+
+.icon-bronze { background-image: url('@/assets/images/icons/브론즈.jpeg'); }
+.icon-silver { background-image: url('@/assets/images/icons/실버.jpeg'); }
+.icon-gold { background-image: url('@/assets/images/icons/골드.jpeg'); }
+.icon-platinum { background-image: url('@/assets/images/icons/플레티넘.jpeg'); }
+.icon-diamond { background-image: url('@/assets/images/icons/다이아.jpeg'); }
+.icon-challenger { background-image: url('@/assets/images/icons/챌린저.jpeg'); }
+
+.ranking-ellipsis {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #999;
+  margin: 10px 0;
+  position: relative;
+}
+
+.ranking-ellipsis::before,
+.ranking-ellipsis::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.ranking-ellipsis::before {
+  left: 0;
+}
+
+.ranking-ellipsis::after {
+  right: 0;
+}
+
+.user-ranking {
+  margin-top: 1rem;
+  border-top: 1px dashed #e0e0e0;
+  padding-top: 1rem;
 }
 </style>
