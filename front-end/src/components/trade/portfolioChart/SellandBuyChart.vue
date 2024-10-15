@@ -27,9 +27,9 @@ export default {
           tradeSummary[date] = { buy: 0, sell: 0 }; // 날짜별 초기화
         }
 
-        if (trade.tradeType === '매수') {
+        if (trade.tradeType === 'buy') {
           tradeSummary[date].buy += trade.quantity;
-        } else if (trade.tradeType === '매도') {
+        } else if (trade.tradeType === 'sell') {
           tradeSummary[date].sell += trade.quantity;
         }
       });

@@ -17,7 +17,7 @@ const isUserInRankings = (userId) => {
 };
 
 const isUserInTopRankings = computed(() => {
-  return topRankings.value.some(r => isUserInRankings(r.userId));
+  return topRankings.value.some((r) => isUserInRankings(r.userId));
 });
 
 const fetchAndSetRankings = async () => {
@@ -43,13 +43,20 @@ const fetchAndSetRankings = async () => {
 
 const getRankIconClass = (rankTitle) => {
   switch (rankTitle) {
-    case 'Bronze': return 'icon-bronze';
-    case 'Silver': return 'icon-silver';
-    case 'Gold': return 'icon-gold';
-    case 'Platinum': return 'icon-platinum';
-    case 'Diamond': return 'icon-diamond';
-    case 'Challenger': return 'icon-challenger';
-    default: return '';
+    case 'Bronze':
+      return 'icon-bronze';
+    case 'Silver':
+      return 'icon-silver';
+    case 'Gold':
+      return 'icon-gold';
+    case 'Platinum':
+      return 'icon-platinum';
+    case 'Diamond':
+      return 'icon-diamond';
+    case 'Challenger':
+      return 'icon-challenger';
+    default:
+      return '';
   }
 };
 
@@ -78,16 +85,19 @@ const handleQuizCardClick = (cardData) => {
             </tr>
           </thead>
           <tbody>
-            <tr 
-              v-for="rank in topRankings" 
+            <tr
+              v-for="rank in topRankings"
               :key="rank.userId"
-              :class="{ 'highlight': isUserInRankings(rank.userId) }"
+              :class="{ highlight: isUserInRankings(rank.userId) }"
             >
               <td>{{ rank.rankPosition }}</td>
               <td>{{ rank.username }}</td>
               <td>{{ rank.totalPoints }}</td>
               <td>
-                <span class="rank-icon" :class="getRankIconClass(rank.rankTitle)"></span>
+                <span
+                  class="rank-icon"
+                  :class="getRankIconClass(rank.rankTitle)"
+                ></span>
                 {{ rank.rankTitle }}
               </td>
             </tr>
@@ -103,7 +113,10 @@ const handleQuizCardClick = (cardData) => {
                 <td>{{ userRanking.username }}</td>
                 <td>{{ userRanking.totalPoints }}</td>
                 <td>
-                  <span class="rank-icon" :class="getRankIconClass(userRanking.rankTitle)"></span>
+                  <span
+                    class="rank-icon"
+                    :class="getRankIconClass(userRanking.rankTitle)"
+                  ></span>
                   {{ userRanking.rankTitle }}
                 </td>
               </tr>
@@ -134,7 +147,8 @@ const handleQuizCardClick = (cardData) => {
   flex-wrap: wrap;
 }
 
-.ranking-section, .quiz-section {
+.ranking-section,
+.quiz-section {
   flex: 1;
   min-width: 300px;
   background-color: #ffffff;
@@ -160,7 +174,8 @@ table {
   border-spacing: 0;
 }
 
-th, td {
+th,
+td {
   padding: 0.75rem;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;
@@ -205,12 +220,24 @@ tr:last-child td {
   vertical-align: middle;
 }
 
-/* .icon-bronze { background-image: url('@/assets/images/icons/브론즈.jpeg'); }
-.icon-silver { background-image: url('@/assets/images/icons/실버.jpeg'); }
-.icon-gold { background-image: url('@/assets/images/icons/골드.jpeg'); }
-.icon-platinum { background-image: url('@/assets/images/icons/플레티넘.jpeg'); }
-.icon-diamond { background-image: url('@/assets/images/icons/다이아몬드.jpeg'); }
-.icon-challenger { background-image: url('@/assets/images/icons/챌린저.jpeg'); } */
+.icon-bronze {
+  background-image: url('@/assets/images/icons/브론즈.jpeg');
+}
+.icon-silver {
+  background-image: url('@/assets/images/icons/실버.jpeg');
+}
+.icon-gold {
+  background-image: url('@/assets/images/icons/골드.jpeg');
+}
+.icon-platinum {
+  background-image: url('@/assets/images/icons/플레티넘.jpeg');
+}
+.icon-diamond {
+  background-image: url('@/assets/images/icons/다이아.jpeg');
+}
+.icon-challenger {
+  background-image: url('@/assets/images/icons/첼린저.jpeg');
+}
 
 .quiz-set-list {
   display: flex;

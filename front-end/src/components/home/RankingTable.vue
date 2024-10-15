@@ -13,7 +13,7 @@ const isUserInRankings = (userId) => {
 };
 
 const isUserInTopRankings = computed(() => {
-  return topRankings.value.some(r => isUserInRankings(r.userId));
+  return topRankings.value.some((r) => isUserInRankings(r.userId));
 });
 
 const fetchAndSetRankings = async () => {
@@ -43,13 +43,20 @@ onMounted(() => {
 
 const getRankIconClass = (rankTitle) => {
   switch (rankTitle) {
-    case 'Bronze': return 'icon-bronze';
-    case 'Silver': return 'icon-silver';
-    case 'Gold': return 'icon-gold';
-    case 'Platinum': return 'icon-platinum';
-    case 'Diamond': return 'icon-diamond';
-    case 'Challenger': return 'icon-challenger';
-    default: return '';
+    case 'Bronze':
+      return 'icon-bronze';
+    case 'Silver':
+      return 'icon-silver';
+    case 'Gold':
+      return 'icon-gold';
+    case 'Platinum':
+      return 'icon-platinum';
+    case 'Diamond':
+      return 'icon-diamond';
+    case 'Challenger':
+      return 'icon-challenger';
+    default:
+      return '';
   }
 };
 </script>
@@ -90,7 +97,7 @@ const getRankIconClass = (rankTitle) => {
         </tbody>
       </table>
     </div>
-    
+
     <!-- 새로운 트레이드 기능 카드 -->
     <div class="trade-features-card">
       <h2 class="trade-features-card__title">트레이드 기능</h2>
@@ -142,7 +149,9 @@ const getRankIconClass = (rankTitle) => {
   flex-wrap: wrap;
 }
 
-.ranking-card, .point-policy-card, .trade-features-card {
+.ranking-card,
+.point-policy-card,
+.trade-features-card {
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -152,7 +161,9 @@ const getRankIconClass = (rankTitle) => {
   min-width: 300px;
 }
 
-.ranking-card__title, .point-policy-card__title, .trade-features-card__title {
+.ranking-card__title,
+.point-policy-card__title,
+.trade-features-card__title {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   font-weight: bold;
@@ -214,7 +225,8 @@ table {
   border-spacing: 0;
 }
 
-th, td {
+th,
+td {
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;
@@ -249,7 +261,8 @@ tr:last-child td {
   color: #333;
 }
 
-.point-policy-table th, .point-policy-table td {
+.point-policy-table th,
+.point-policy-table td {
   padding: 0.75rem;
   font-size: 0.9rem;
 }
@@ -268,12 +281,24 @@ tr:last-child td {
   vertical-align: middle;
 }
 
-/* .icon-bronze { background-image: url('@/assets/images/icons/브론즈.jpeg'); }
-.icon-silver { background-image: url('@/assets/images/icons/실버.jpeg'); }
-.icon-gold { background-image: url('@/assets/images/icons/골드.jpeg'); }
-.icon-platinum { background-image: url('@/assets/images/icons/플레티넘.jpeg'); }
-.icon-diamond { background-image: url('@/assets/images/icons/다이아몬드.jpeg'); }
-.icon-challenger { background-image: url('@/assets/images/icons/챌린저.jpeg'); } */
+.icon-bronze {
+  background-image: url('@/assets/images/icons/브론즈.jpeg');
+}
+.icon-silver {
+  background-image: url('@/assets/images/icons/실버.jpeg');
+}
+.icon-gold {
+  background-image: url('@/assets/images/icons/골드.jpeg');
+}
+.icon-platinum {
+  background-image: url('@/assets/images/icons/플레티넘.jpeg');
+}
+.icon-diamond {
+  background-image: url('@/assets/images/icons/다이아몬드.jpeg');
+}
+.icon-challenger {
+  background-image: url('@/assets/images/icons/챌린저.jpeg');
+}
 
 td:last-child {
   display: flex;
@@ -285,11 +310,16 @@ td:last-child {
     flex-direction: column;
   }
 
-  .ranking-card, .point-policy-card, .trade-features-card {
+  .ranking-card,
+  .point-policy-card,
+  .trade-features-card {
     padding: 1rem;
   }
 
-  th, td, .point-policy-table th, .point-policy-table td {
+  th,
+  td,
+  .point-policy-table th,
+  .point-policy-table td {
     padding: 0.75rem 0.5rem;
   }
 
