@@ -113,39 +113,6 @@
       </div>
 
       <button type="submit">거래하기</button>
-
-      <!-- 보유 주식 수와 수익률 표시를 주문하기 안에 추가 -->
-      <div class="order-summary">
-        <div class="summary-card">
-          <div class="summary-item">
-            <p>
-              보유 주식 수:
-              <span class="highlight">{{ holdingStockAcount }} 주</span>
-            </p>
-          </div>
-          <div class="summary-item">
-            <p>
-              수익률:
-              <span
-                :style="{ color: profitRate >= 0 ? 'red' : 'blue' }"
-                class="highlight"
-                >{{ profitRate }}%</span
-              >
-            </p>
-          </div>
-          <div class="summary-item">
-            <p>
-              총 평가 금액:
-              <span class="highlight"
-                >{{
-                  isNaN(assessedAssets) ? 0 : assessedAssets.toLocaleString()
-                }}
-                원</span
-              >
-            </p>
-          </div>
-        </div>
-      </div>
     </form>
   </div>
 </template>
@@ -154,8 +121,9 @@
 import { ref, computed, onMounted, defineProps, watch } from 'vue';
 import axios from 'axios';
 import { useToast } from 'vue-toastification';
+import StockSummary from './StockSummary.vue'; // StockSummary 컴포넌트 import
 
-const emit = defineEmits(['next-turn']);
+const emit = defineEmits(['next-turn', 'update-stock-data']);
 const turn = ref(0);
 const currentTurn = ref(1);
 const totalTurn = ref(50);
@@ -281,17 +249,17 @@ const handleOrder = async () => {
       availableFunds.value -= total;
       holdingStockAcount.value += amount.value;
       // 구매 성공 메시지 추가
-      toast.success("구매가 완료되었습니다.", {
+      toast.success('구매가 완료되었습니다.', {
         timeout: 5000,
         closeOnClick: true,
-        position: "top-right"
+        position: 'top-right',
       });
     } else {
       // 구매 실패 메시지 추가
-      toast.error("구매 가능 금액이 부족합니다.", {
+      toast.error('구매 가능 금액이 부족합니다.', {
         timeout: 5000,
         closeOnClick: true,
-        position: "top-right"
+        position: 'top-right',
       });
     }
   } else {
@@ -302,21 +270,28 @@ const handleOrder = async () => {
       availableFunds.value += total;
       holdingStockAcount.value -= amount.value;
       // 판매 성공 메시지 추가
-      toast.success("판매가 완료되었습니다.", {
+      toast.success('판매가 완료되었습니다.', {
         timeout: 5000,
         closeOnClick: true,
-        position: "top-right"
+        position: 'top-right',
       });
     } else {
       console.error('판매할 수 있는 주식 수가 부족합니다.'); // 에러 메시지
       // 판매 실패 메시지 추가
-      toast.error("판매할 수 있는 주식 수가 부족합니다.", {
+      toast.error('판매할 수 있는 주식 수가 부족합니다.', {
         timeout: 5000,
         closeOnClick: true,
-        position: "top-right"
+        position: 'top-right',
       });
     }
   }
+
+  // 주문 처리 후 데이터 업데이트
+  emit('update-stock-data', {
+    holdingStockAcount: holdingStockAcount.value,
+    profitRate: profitRate.value,
+    assessedAssets: assessedAssets.value,
+  });
 };
 const currentStockPrice = () => {
   console.log('현재 시가:', price.value.stck_oprc); // 다른 메서드에서 접근 가능

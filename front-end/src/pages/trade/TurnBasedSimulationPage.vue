@@ -4,19 +4,29 @@
       <div class="trade-header"></div>
       <div class="content-wrapper">
         <SideTradeNavigationBar />
+
         <div class="content">
+          <StockSummary
+            :holdingStockAcount="holdingStockAcount"
+            :profitRate="profitRate"
+            :assessedAssets="assessedAssets"
+          />
+
           <div class="community-page">
             <ScenarioChart @loaded="onChartLoaded" :stockData="stockData" />
             <ScenarioOrder
               v-if="isChartLoaded"
               @next-turn="handleNextTurn"
+              @update-stock-data="updateStockData"
               :stockData="stockData"
             />
             <ScenarioModal
+              class="modal-background"
               :isVisible="isModalVisible"
               :data="modalData"
               @close="isModalVisible = false"
             />
+            <!-- StockSummary 컴포넌트 추가 -->
           </div>
         </div>
       </div>
@@ -29,6 +39,7 @@ import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vu
 import ScenarioModal from '@/components/trade/scenario/ScenarioModal.vue';
 import ScenarioChart from '@/components/trade/scenario/ScenarioChart.vue';
 import ScenarioOrder from '@/components/trade/scenario/ScenarioOrder.vue';
+import StockSummary from '@/components/trade/scenario/StockSummary.vue';
 import { ref } from 'vue';
 import axios from 'axios';
 
@@ -39,14 +50,17 @@ const modalData = ref({});
 // ScenarioChart 로딩 상태 추적
 const isChartLoaded = ref(false);
 const stockData = ref([]);
-const processData = (result) => {
-  stockData.value = [
-    result.stck_bsop_date,
-    result.stck_oprc,
-    result.stck_clpr,
-    result.stck_lwpr,
-    result.stck_hgpr,
-  ];
+
+// 필요한 데이터 정의
+const holdingStockAcount = ref(0);
+const profitRate = ref(0);
+const assessedAssets = ref(0);
+
+// 데이터 업데이트 함수
+const updateStockData = (data) => {
+  holdingStockAcount.value = data.holdingStockAcount;
+  profitRate.value = data.profitRate;
+  assessedAssets.value = data.assessedAssets;
 };
 
 // ScenarioChart 로딩 완료 후 호출될 메서드
@@ -59,7 +73,13 @@ const handleNextTurn = (newTurnValue) => {
     .post(`/api/scenario/next/${newTurnValue}`)
     .then((response) => {
       const result = response.data;
-      processData(result);
+      stockData.value = [
+        result.stck_bsop_date,
+        result.stck_oprc,
+        result.stck_clpr,
+        result.stck_lwpr,
+        result.stck_hgpr,
+      ];
       modalData.value = result;
       isModalVisible.value = true;
     })
@@ -108,5 +128,14 @@ ScenarioChart,
 ScenarioOrder {
   flex-grow: 1; /* 모든 컴포넌트가 같은 너비를 차지하도록 */
   margin: 0; /* 각 컴포넌트의 마진 제거 */
+}
+
+.modal-background {
+  background: url('src/assets/images/quiz_img/newspaper.png') no-repeat center
+    center;
+  background-size: contain; /* 이미지 크기를 contain으로 설정 */
+  max-width: 80%; /* 최대 너비를 80%로 제한 */
+  max-height: 80%; /* 최대 높이를 80%로 제한 */
+  margin: 0 auto; /* 중앙 정렬 */
 }
 </style>

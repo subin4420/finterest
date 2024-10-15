@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div ref="chartDom" id="main" style="width: 800px; height: 600px"></div>
+    <div ref="chartDom" id="main"></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import * as echarts from "echarts";
-import axios from "axios";
+import { ref, onMounted } from 'vue';
+import * as echarts from 'echarts';
+import axios from 'axios';
 
 const chartDom = ref(null);
 let myChart = null; // 차트 인스턴스 저장
@@ -17,7 +17,7 @@ const calculateMA = (dayCount, data0) => {
   const result = [];
   for (let i = 0, len = data0.values.length; i < len; i++) {
     if (i < dayCount) {
-      result.push("-");
+      result.push('-');
       continue;
     }
     let sum = 0;
@@ -38,59 +38,59 @@ const renderChart = () => {
 
     myChart = echarts.init(chartDom.value);
 
-    const upColor = "#ed2926";
-    const upBorderColor = "#d01411";
-    const downColor = "#2679ed";
-    const downBorderColor = "#1160d0";
+    const upColor = '#ed2926';
+    const upBorderColor = '#d01411';
+    const downColor = '#2679ed';
+    const downBorderColor = '#1160d0';
 
     // 차트 초기 옵션 설정
     const option = {
       title: {
-        text: "모의 투자",
+        text: '모의 투자',
         left: 0,
       },
       tooltip: {
-        trigger: "axis",
+        trigger: 'axis',
         axisPointer: {
-          type: "cross",
+          type: 'cross',
         },
       },
       legend: {
-        data: ["Candlestick", "Volume", "MA5", "MA10", "MA20", "MA30"],
+        data: ['Candlestick', 'Volume', 'MA5', 'MA10', 'MA20', 'MA30'],
       },
       grid: [
         {
-          left: "10%",
-          right: "8%",
-          height: "60%", // 캔들스틱 차트 높이
-          top: "10%",
+          left: '10%',
+          right: '8%',
+          height: '60%', // 캔들스틱 차트 높이
+          top: '10%',
         },
         {
-          left: "10%", // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
-          right: "8%", // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
-          top: "75%", // 거래량 차트 위치
-          height: "10%", // 거래량 차트 높이
+          left: '10%', // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
+          right: '8%', // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
+          top: '75%', // 거래량 차트 위치
+          height: '10%', // 거래량 차트 높이
         },
       ],
       xAxis: [
         {
-          type: "category",
+          type: 'category',
           data: data0.categoryData,
           boundaryGap: true, // 동일하게 설정
           axisLine: { onZero: false },
           splitLine: { show: false },
-          min: "dataMin",
-          max: "dataMax",
+          min: 'dataMin',
+          max: 'dataMax',
           gridIndex: 0, // 캔들 차트 x축
           axisLabel: {
             formatter: (value) => {
               // 'yyyyMMdd' 형식의 데이터를 'mm-dd' 형식으로 변환
-              return value.slice(4, 6) + "-" + value.slice(6, 8);
+              return value.slice(4, 6) + '-' + value.slice(6, 8);
             },
           },
         },
         {
-          type: "category",
+          type: 'category',
           data: data0.categoryData,
           boundaryGap: true, // 동일하게 설정
           gridIndex: 1, // 거래량 차트 x축
@@ -124,26 +124,26 @@ const renderChart = () => {
       ],
       dataZoom: [
         {
-          type: "inside",
+          type: 'inside',
           xAxisIndex: [0, 1], // 두 개의 xAxis에 동일하게 적용
           start: 50,
           end: 100,
         },
         {
           show: true,
-          type: "slider",
+          type: 'slider',
           xAxisIndex: [0, 1], // 두 개의 xAxis에 동일하게 적용
-          top: "90%",
+          top: '90%',
           start: 50,
           end: 100,
         },
       ],
       series: [
         {
-          name: "Candlestick",
-          type: "candlestick",
+          name: 'Candlestick',
+          type: 'candlestick',
           data: data0.values,
-          barWidth: "30%", // 캔들스틱 차트의 너비 설정
+          barWidth: '30%', // 캔들스틱 차트의 너비 설정
           itemStyle: {
             color: upColor,
             color0: downColor,
@@ -152,12 +152,12 @@ const renderChart = () => {
           },
         },
         {
-          name: "Volume",
-          type: "bar",
+          name: 'Volume',
+          type: 'bar',
           xAxisIndex: 1, // 거래량 차트의 x축 인덱스
           yAxisIndex: 1, // 거래량 차트의 y축 인덱스
           data: data0.volumes,
-          barWidth: "30%", // 거래량 차트의 너비 설정 (캔들 차트와 동일하게 설정)
+          barWidth: '30%', // 거래량 차트의 너비 설정 (캔들 차트와 동일하게 설정)
           itemStyle: {
             color: function (params) {
               return data0.values[params.dataIndex][1] >
@@ -168,29 +168,29 @@ const renderChart = () => {
           },
         },
         {
-          name: "MA5",
-          type: "line",
+          name: 'MA5',
+          type: 'line',
           data: calculateMA(5, data0),
           smooth: true,
           lineStyle: { opacity: 0.5 },
         },
         {
-          name: "MA10",
-          type: "line",
+          name: 'MA10',
+          type: 'line',
           data: calculateMA(10, data0),
           smooth: true,
           lineStyle: { opacity: 0.5 },
         },
         {
-          name: "MA20",
-          type: "line",
+          name: 'MA20',
+          type: 'line',
           data: calculateMA(20, data0),
           smooth: true,
           lineStyle: { opacity: 0.5 },
         },
         {
-          name: "MA30",
-          type: "line",
+          name: 'MA30',
+          type: 'line',
           data: calculateMA(30, data0),
           smooth: true,
           lineStyle: { opacity: 0.5 },
@@ -215,12 +215,12 @@ const updateChartData = (newData) => {
         { data: data0.categoryData }, // 거래량 차트의 xAxis 업데이트
       ],
       series: [
-        { name: "Candlestick", data: data0.values },
-        { name: "Volume", data: data0.volumes },
-        { name: "MA5", data: calculateMA(5, data0) },
-        { name: "MA10", data: calculateMA(10, data0) },
-        { name: "MA20", data: calculateMA(20, data0) },
-        { name: "MA30", data: calculateMA(30, data0) },
+        { name: 'Candlestick', data: data0.values },
+        { name: 'Volume', data: data0.volumes },
+        { name: 'MA5', data: calculateMA(5, data0) },
+        { name: 'MA10', data: calculateMA(10, data0) },
+        { name: 'MA20', data: calculateMA(20, data0) },
+        { name: 'MA30', data: calculateMA(30, data0) },
       ],
     });
   }
@@ -244,7 +244,7 @@ const loadChartData = async () => {
       updateChartData(newData);
     });
   } catch (error) {
-    console.error("Error loading chart data:", error);
+    console.error('Error loading chart data:', error);
   }
 };
 onMounted(() => {
@@ -255,7 +255,7 @@ onMounted(() => {
 
 <style scoped>
 #main {
-  width: 100%;
+  width: 800px;
   height: 600px;
 }
 </style>
