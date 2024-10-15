@@ -91,6 +91,7 @@ export default {
     const allQuizSets = ref([]);
     const currentQuestionIndex = ref(0);
     const userAnswers = ref([]);
+    const score = ref(0); // score 변수를 정의하고 초기화
 
     // props.quizSet을 반응형 참조로 변환
     const currentQuizSet = toRef(props, 'quizSet');
@@ -177,35 +178,35 @@ export default {
     const detailedAnswers = ref(null);
 
     const submitQuiz = async () => {
-  if (!allQuestionsAnswered.value) return;
+      if (!allQuestionsAnswered.value) return;
 
-  const answers = questions.value.map((question, index) => {
-    return {
-      quizId: question.id || question.quizId, // id나 quizId 중 존재하는 것을 사용
-      selectedChoice: userAnswers.value[index]
+      const answers = questions.value.map((question, index) => {
+        return {
+          quizId: question.id || question.quizId, // id나 quizId 중 존재하는 것을 사용
+          selectedChoice: userAnswers.value[index]
+        };
+      });
+
+      const submitData = {
+        answers: answers
+      };
+
+      try {
+        const result = await quizStore.submitQuizAnswers(props.quizSet.setId, submitData);
+        console.log("Quiz submission result:", result);
+
+        // 퀴즈 결과 모달을 열고 점수를 반영
+        quizResult.value = result;
+        showResultModal.value = true;
+
+        // 점수 반영
+        score.value = result.score || 0; // 서버에서 받은 점수를 반영
+        emit('quizSubmitted', result); // 제출된 퀴즈 결과를 전달
+
+      } catch (error) {
+        console.error('퀴즈 제출 실패:', error);
+      }
     };
-  });
-
-  const submitData = {
-    answers: answers
-  };
-
-  try {
-    const result = await quizStore.submitQuizAnswers(props.quizSet.setId, submitData);
-    console.log("Quiz submission result:", result);
-
-    // 퀴즈 결과 모달을 열고 점수를 반영
-    quizResult.value = result;
-    showResultModal.value = true;
-
-    // 점수 반영
-    score.value = result.score || 0; // 서버에서 받은 점수를 반영
-    emit('quizSubmitted', result); // 제출된 퀴즈 결과를 전달
-
-  } catch (error) {
-    console.error('퀴즈 제출 실패:', error);
-  }
-};
 
 
     const closeResultModal = () => {
@@ -253,7 +254,8 @@ export default {
       detailedAnswers,
       openAnswersModal,
       closeAnswersModal,
-      goToQuizList
+      goToQuizList,
+      score 
     };
   }
 }

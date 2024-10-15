@@ -146,11 +146,11 @@ export default {
     };
 
     const handleQuizSubmitted = (result) => {
-  console.log('퀴즈가 성공적으로 제출되었습니다.');
+      console.log('퀴즈가 성공적으로 제출되었습니다.');
 
-  // 점수 업데이트
-  score.value = result.score || 0; // 서버에서 받은 점수를 업데이트
-};
+      // 점수 업데이트
+      score.value = result.score || 0; // 서버에서 받은 점수를 업데이트
+    };
 
 
     const updateQuizProgress = (progress) => {
