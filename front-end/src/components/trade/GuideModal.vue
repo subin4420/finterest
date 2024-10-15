@@ -26,6 +26,7 @@ import Turn from '@/assets/images/trade/turn.png';
 import Conversion from '@/assets/images/trade/conversion.png';
 import Invest from '@/assets/images/trade/invest.png';
 import Main from '@/assets/images/trade/main.png';
+import Portfolio from '@/assets/images/trade/portfolio.png';
 
 export default {
   props: {
@@ -48,7 +49,7 @@ export default {
         },
         {
           text: '투자 현황과 수익률을 한 눈에 볼 수 있는 포트폴리오 페이지입니다.',
-          image: 'url_to_image_3.jpg',
+          image: Portfolio, // 수정된 부분: 이미지 경로를 올바르게 설정
         },
         {
           text: '관심 종목과 뉴스를 검색할 수 있는 뉴스 페이지입니다.',
