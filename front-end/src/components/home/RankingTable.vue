@@ -63,39 +63,35 @@ const getRankIconClass = (rankTitle) => {
 
 <template>
   <div class="ranking-container">
+    <!-- 포인트 지급 정책 카드 -->
     <div class="point-policy-card">
       <h2 class="point-policy-card__title">포인트 지급 정책</h2>
-      <table class="point-policy-table">
-        <thead>
-          <tr>
-            <th>활동</th>
-            <th>포인트</th>
-            <th>설명</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>회원가입</td>
-            <td>1000 포인트</td>
-            <td>신규 회원 유치를 위한 보상 (1포인트당 1000원 가정)</td>
-          </tr>
-          <tr>
-            <td>출석체크</td>
-            <td>100 포인트</td>
-            <td>지속적인 참여를 유도하기 위한 인센티브 (매일)</td>
-          </tr>
-          <tr>
-            <td>학습자료 1회 학습</td>
-            <td>100 포인트</td>
-            <td>학습을 장려하기 위한 보상</td>
-          </tr>
-          <tr>
-            <td>퀴즈 정답 1문제</td>
-            <td>30 포인트</td>
-            <td>퀴즈 참여 독려</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="point-policy-grid">
+        <div class="policy-item">
+          <i class="fas fa-user-plus"></i>
+          <h3>회원가입</h3>
+          <p>1000 포인트</p>
+          <span>신규 회원 유치를 위한 보상</span>
+        </div>
+        <div class="policy-item">
+          <i class="fas fa-calendar-check"></i>
+          <h3>출석체크</h3>
+          <p>100 포인트</p>
+          <span>지속적인 참여를 유도하기 위한 인센티브 (매일)</span>
+        </div>
+        <div class="policy-item">
+          <i class="fas fa-book-reader"></i>
+          <h3>학습자료 1회 학습</h3>
+          <p>100 포인트</p>
+          <span>학습을 장려하기 위한 보상</span>
+        </div>
+        <div class="policy-item">
+          <i class="fas fa-question-circle"></i>
+          <h3>퀴즈 정답 1문제</h3>
+          <p>30 포인트</p>
+          <span>퀴즈 참여 독려</span>
+        </div>
+      </div>
     </div>
 
     <!-- 새로운 트레이드 기능 카드 -->
@@ -327,6 +323,77 @@ td:last-child {
     width: 20px;
     height: 20px;
     margin-right: 4px;
+  }
+}
+
+.point-policy-card {
+  background-color: #ffffff; /* 연한 파란색 배경 */
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  flex: 1;
+  min-width: 300px;
+}
+
+.point-policy-card__title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  color: #000; /* 진한 파란색 */
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.75rem;
+}
+
+.point-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.policy-item {
+  text-align: center;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.policy-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.policy-item i {
+  font-size: 2rem;
+  color: #4169e1; /* 로얄 블루 */
+  margin-bottom: 0.5rem;
+}
+
+.policy-item h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.policy-item p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1e90ff; /* 진한 파란색 */
+  margin-bottom: 0.5rem;
+}
+
+.policy-item span {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .point-policy-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 }
 </style>
