@@ -1,7 +1,7 @@
 <template>
   <form class="order-form" @submit.prevent="handleOrder">
     <h4>주문하기</h4>
-    <div class="order-form__togglebox">
+    <div class="order-form__togglebox" style="margin-top: 10px">
       <div class="order-form__togglebox--section">
         <div
           class="order-form__togglebox--purchase"
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <label for="purchase-price">거래 가격</label>
+    <label for="purchase-price" style="margin-top: 15px">거래 가격</label>
     <input
       class="order-form__price"
       :value="isNaN(Number(price)) ? '0' : Number(price).toLocaleString()"
@@ -27,7 +27,7 @@
     />
     <!-- 현재가를 표시 -->
 
-    <label for="purchase-amount">거래 수량</label>
+    <label for="purchase-amount" style="margin-top: 15px">거래 수량</label>
     <div class="order-form__input">
       <input class="no-border no-arrow" v-model.number="amount" type="number" />
       <span> 주 </span>
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <div class="order-form__buttonbox">
+    <div class="order-form__buttonbox" style="margin-bottom: 15px">
       <input
         class="order-form__button"
         type="button"
@@ -67,28 +67,29 @@
     </div>
 
     <div class="order-form__state">
-      <div class="order-form__state--line">
+      <div class="order-form__state--line" style="margin-top: 10px">
         <p>거래가능 금액</p>
         <p>
           {{ isNaN(availableFunds) ? 0 : availableFunds.toLocaleString() }} 원
         </p>
       </div>
-      <div class="order-form__state--line">
+      <div class="order-form__state--line" style="margin-top: 10px">
         <p>총 금액</p>
         <p>{{ isNaN(totalAmount) ? 0 : totalAmount.toLocaleString() }} 원</p>
       </div>
+      <button type="submit" style="margin-top: 30px">거래하기</button>
     </div>
-
-    <button type="submit">거래하기</button>
   </form>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useTradeStore } from "@/stores/tradeStore";
-import TradeService from "@/services/tradeService"; // TradeService import
-import auth from "@/router/auth";
-import { useAuthStore } from "@/stores/auth";
+import { ref, computed, onMounted } from 'vue';
+import { useTradeStore } from '@/stores/tradeStore';
+import TradeService from '@/services/tradeService'; // TradeService import
+import { useAuthStore } from '@/stores/auth';
+import { useToast } from 'vue-toastification'; // vue-toastification import
+
+const toast = useToast(); // toast 초기화
 
 const authStore = useAuthStore();
 
@@ -107,9 +108,9 @@ const viewStockHeld = async () => {
   try {
     const response = await TradeService.getUserFunds(); // 자산 정보 가져오기
     availableFunds.value = response.money; // API에서 가져온 money 값으로 설정
-    console.log("조회 성공:", response);
+    console.log('조회 성공:', response);
   } catch (error) {
-    console.error("조회 실패:", error);
+    console.error('조회 실패:', error);
   }
 };
 
@@ -165,14 +166,16 @@ const handleOrder = async () => {
       quantity: amount.value,
       totalPrice: totalAmount.value,
     };
-    console.log("구매 요청 데이터:", requestData); // 요청 데이터 출력
+    console.log('구매 요청 데이터:', requestData); // 요청 데이터 출력
 
     try {
       const response = await TradeService.buyStock(requestData); // TradeService를 사용하여 요청
-      console.log("서버 응답:", response.data);
+      console.log('서버 응답:', response.data);
+      toast.success('구매가 완료되었습니다.'); // 구매 성공 메시지
     } catch (error) {
-      console.error("구매 요청 중 오류 발생:", error);
-      console.error("응답 데이터:", error.response.data); // 응답 데이터 출력
+      console.error('구매 요청 중 오류 발생:', error);
+      console.error('응답 데이터:', error.response.data); // 응답 데이터 출력
+      toast.error('구매 요청 중 오류가 발생했습니다.'); // 오류 메시지 추가
     }
   } else {
     console.log(`종목 코드: ${selectStockcode.value}`);
@@ -187,33 +190,42 @@ const handleOrder = async () => {
       quantity: amount.value,
       totalPrice: totalAmount.value,
     };
-    console.log("판매 요청 데이터:", requestData); // 요청 데이터 출력
+    console.log('판매 요청 데이터:', requestData); // 요청 데이터 출력
 
     try {
       const response = await TradeService.sellStock(requestData); // TradeService를 사용하여 요청
-      console.log("서버 응답:", response.data);
+      console.log('서버 응답:', response.data);
+      toast.success('판매가 완료되었습니다.', {
+        // 추가된 옵션: 빨간색 계열로 설정
+        timeout: 5000,
+        closeOnClick: true,
+        position: 'top-right',
+        type: 'error', // 오류 타입으로 설정하여 빨간색으로 표시
+      });
     } catch (error) {
-      console.error("판매 요청 중 오류 발생:", error);
-      console.error("응답 데이터:", error.response.data); // 응답 데이터 출력
+      console.error('판매 요청 중 오류 발생:', error);
+      console.error('응답 데이터:', error.response.data); // 응답 데이터 출력
+      toast.error('판매 요청 중 오류가 발생했습니다.'); // 오류 메시지 추가
     }
   }
+  viewStockHeld();
 };
 
 onMounted(() => {
   viewStockHeld(); // 컴포넌트가 로드되면 API 요청을 실행
 });
 
-console.log("현재가:", price.value); // price가 업데이트될 때마다 로그 출력
+console.log('현재가:', price.value); // price가 업데이트될 때마다 로그 출력
 </script>
 
 <style lang="scss" scoped>
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield; /* Firefox용 */
 }
 /* 테두리 제거 */

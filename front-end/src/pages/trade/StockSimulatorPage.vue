@@ -27,13 +27,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { useTradeStore } from '@/stores/tradeStore';
-import axios from 'axios';
-import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vue';
-import StockSearch from '@/components/trade/StockSearch.vue';
-import StockChart from '@/components/trade/StockChart.vue';
-import OrderStock from '@/components/trade/OrderStock.vue';
+import { ref, onMounted, watch } from "vue";
+import { useTradeStore } from "@/stores/tradeStore";
+import axios from "axios";
+import SideTradeNavigationBar from "@/components/trade/SideTradeNavigationBar.vue";
+import StockSearch from "@/components/trade/StockSearch.vue";
+import StockChart from "@/components/trade/StockChart.vue";
+import OrderStock from "@/components/trade/OrderStock.vue";
 
 const kospiStockList = ref([]);
 const showStockChart = ref(true);
@@ -42,10 +42,10 @@ const tradeStore = useTradeStore();
 
 const fetchKOSPIStockList = async () => {
   try {
-    const response = await axios.get('/api/stock/list/KOSPI');
+    const response = await axios.get("/api/stock/list/KOSPI");
     kospiStockList.value = Array.isArray(response.data) ? response.data : [];
   } catch (error) {
-    console.error('KOSPI 주식 목록 가져오기 오류:', error);
+    console.error("KOSPI 주식 목록 가져오기 오류:", error);
   }
 };
 
@@ -56,7 +56,7 @@ onMounted(async () => {
 watch(
   () => tradeStore.selectedStockCode,
   (newCode) => {
-    console.log('선택된 주식 코드 변경:', newCode);
+    console.log("선택된 주식 코드 변경:", newCode);
     showStockChart.value = false;
     setTimeout(() => {
       chartKey.value++;
@@ -133,7 +133,7 @@ watch(
   flex: 1;
   min-width: 200px; /* 최소 너비 조정 */
   max-width: 200px; /* 최대 너비 설정 */
-  height: 400px; /* 높이 설정 */
+  height: 600px; /* 높이 설정 */
   border-radius: 8px; /* 주문 컴포넌트에 둥근 모서리 추가 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 주문 컴포넌트에 그림자 추가 */
   background-color: #f9f9f9; /* 배경색 추가 */

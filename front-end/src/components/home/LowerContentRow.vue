@@ -97,7 +97,7 @@ const topSixCompletedQuizSets = computed(() => {
           </thead>
           <tbody>
             <tr 
-              v-for="(rank, index) in topRankings" 
+              v-for="(rank, index) in topRankings"
               :key="rank.userId"
               :class="{ 'highlight': isUserInRankings(rank.userId) }"
             >
@@ -290,9 +290,12 @@ h2 {
   color: #495057;
 }
 
-.highlight {
-  background-color: #e8f5e9 !important;
-}
+/* .icon-bronze { background-image: url('@/assets/images/icons/브론즈.jpeg'); }
+.icon-silver { background-image: url('@/assets/images/icons/실버.jpeg'); }
+.icon-gold { background-image: url('@/assets/images/icons/골드.jpeg'); }
+.icon-platinum { background-image: url('@/assets/images/icons/플레티넘.jpeg'); }
+.icon-diamond { background-image: url('@/assets/images/icons/다이아몬드.jpeg'); }
+.icon-challenger { background-image: url('@/assets/images/icons/챌린저.jpeg'); } */
 
 .quiz-set-list {
   display: grid;

@@ -19,22 +19,25 @@
             resultType="java.lang.String">
         SELECT clpr FROM kospi_stock_list
         WHERE srtnCd = #{srtnCd}
-          AND basDt = #{date}
+          AND basDt = #{basDt}
+            LIMIT 1
     </select>
 
-    <select id="getPreviousDayTotalPrice"
-            resultType="BigDecimal">
-        SELECT total_price FROM trade
-        WHERE srtnCd = #{srtnCd}
-          AND basDt = #{date}
-          AND user_id = #{userId}
+    <select id="getPreviousDayTradeData"
+            resultType="java.util.List">
+        SELECT stock_code, price, quantity FROM trade
+        WHERE user_id = #{userId}
+          AND DATE_FORMAT(created_at, '%Y%m%d') = #{date}
+          AND trade_type = 'buy'
     </select>
+
     <select id="getUserMoney"
             resultType="java.math.BigDecimal">
         SELECT money FROM users
         WHERE user_id = #{userId}
     </select>
-    <select id="viewStockHeld"
+
+    <select id="viewTotalAssets"
             parameterType="Integer"
             resultType="org.finterest.invest.portfolio.domain.PortfolioDTO">
         SELECT t.stock_code, t.stock_name, t.total_price, t.total_stock_holdings
@@ -47,5 +50,13 @@
         ) latest_trade
                             ON t.stock_name = latest_trade.stock_name AND t.created_at = latest_trade.latest
         WHERE t.user_id = #{VALUE}
+    </select>
+
+    <select id="getUserTradeData"
+            parameterType="Integer"
+            resultType="org.finterest.invest.portfolio.domain.PortfolioDTO">
+        SELECT * FROM trade
+        WHERE user_id = #{userId}
+          AND trade_type = 'buy'
     </select>
 </mapper>

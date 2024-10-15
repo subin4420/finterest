@@ -90,13 +90,14 @@ export default {
 <style scoped>
 /* 스타일 추가 */
 .chart-container {
-  width: 650px; /* 너비 증가 */
-  height: 470px; /* 높이 증가 */
+  width: 500px;
+  height: 470px;
   margin: 20px 0;
-  border: 1px solid #ddd;
+  border: 1px solid #ffffff;
   border-radius: 10px;
   padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgb(254, 254, 254);
+  padding-bottom: 10px;
 }
 
 .chart-title {

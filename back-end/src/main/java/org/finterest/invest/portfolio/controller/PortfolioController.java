@@ -2,6 +2,7 @@ package org.finterest.invest.portfolio.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.finterest.invest.portfolio.domain.PortfolioDTO;
 import org.finterest.invest.portfolio.mapper.PortfolioMapper;
 import org.finterest.invest.portfolio.service.PortfolioService;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ import java.util.Map;
 @RequestMapping("/api/portfolio")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
 public class PortfolioController {
 
     private final PortfolioService service;
@@ -32,6 +32,13 @@ public class PortfolioController {
     private ResponseEntity<Map<String, Object>> viewTotalAssets() {
         Integer userId = 1;
         Map<String, Object> response = service.viewTotalAssets(userId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/daily")
+    public ResponseEntity<List<String[]>> viewDailyIncome() {
+        Integer userId = 5;
+        List<String[]> response = service.viewDailyIncome(userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

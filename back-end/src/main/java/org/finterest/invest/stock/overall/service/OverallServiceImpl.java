@@ -39,7 +39,7 @@ public class OverallServiceImpl implements OverallService {
     @Override
     public String fetchAndSaveKOSPIStockList() {
         try {
-            String yesterday = LocalDate.now().minusDays(3).format(DateTimeFormatter.ofPattern("yyyyMMdd")); // 전날 날짜
+            String yesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd")); // 전날 날짜
 
             UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(KOSPI_STOCK_LIST_URL)
                     .queryParam("serviceKey", serviceKey)
@@ -119,7 +119,7 @@ public class OverallServiceImpl implements OverallService {
     @Override
     public String fetchAndSaveKOSPIStockIndex() {
         try {
-            String yesterday = LocalDate.now().minusDays(3).format(DateTimeFormatter.ofPattern("yyyyMMdd")); // 전날 날짜
+            String yesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd")); // 전날 날짜
 
             UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(KOSPI_STOCK_INDEX_URL)
                     .queryParam("serviceKey", serviceKey)

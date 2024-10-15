@@ -5,14 +5,21 @@
       <SideTradeNavigationBar />
       <div class="content">
         <h1 class="page-title">포트폴리오 페이지</h1>
-
         <!-- SellandBuyChart와 HoldStockDomChart를 따로 배치 -->
         <div class="charts-container">
           <div class="chart-row">
-            <SellandBuyChart :tradeData="heldStockData" class="chart" />
+            <DaliyProfitChart class="chart" />
           </div>
           <div class="chart-row" style="margin-left: 20px">
             <HoldStockDomChart class="chart" />
+          </div>
+        </div>
+        <div class="charts-container">
+          <div class="chart-row">
+            <CumulativeProfitChart class="chart" />
+          </div>
+          <div class="chart-row" style="margin-left: 20px">
+            <SellandBuyChart :tradeData="heldStockData" class="chart" />
           </div>
         </div>
 
@@ -31,7 +38,7 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(record, index) in tradeHistory"
+                  v-for="(record, index) in tradeHistory.slice(0, 5)"
                   :key="index"
                   class="trade-record"
                 >
@@ -61,6 +68,8 @@
 import SideTradeNavigationBar from '@/components/trade/SideTradeNavigationBar.vue';
 import HoldStockDomChart from '@/components/trade/portfolioChart/HoldStockDomChart.vue';
 import SellandBuyChart from '@/components/trade/portfolioChart/SellandBuyChart.vue';
+import DaliyProfitChart from '@/components/trade/portfolioChart/DaliyProfitChart.vue';
+import CumulativeProfitChart from '@/components/trade/portfolioChart/CumulativeProfitChart.vue';
 import { reactive, onMounted, ref } from 'vue';
 import axios from 'axios';
 import TradeService from '@/services/tradeService';
@@ -70,6 +79,8 @@ export default {
   components: {
     SideTradeNavigationBar,
     HoldStockDomChart,
+    DaliyProfitChart,
+    CumulativeProfitChart,
     SellandBuyChart,
   },
   setup() {
@@ -98,6 +109,7 @@ export default {
     const fetchUserTradeHistory = async () => {
       try {
         tradeHistory.value = await TradeService.getUserTradeHistory(); // 거래 기록 가져오기
+        tradeHistory.value = tradeHistory.value.slice(0, 5); // 최근 5개 내역만 저장
       } catch (error) {
         console.error('거래 기록을 가져오는 데 실패했습니다:', error.message);
       }

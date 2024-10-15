@@ -9,6 +9,14 @@
         SET token = #{VALUE}
     </update>
 
+    <update id="updateUserMoney">
+        UPDATE users
+        SET money = #{money},
+            update_date = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+
     <select id="selectTotalQuantity" resultType="Long">
         SELECT total_stock_holdings
         FROM trade
@@ -48,9 +56,11 @@
         SELECT money FROM users
         WHERE user_id = #{VALUE}
     </select>
+
     <select id="getOauthToken" resultType="java.lang.String">
         SELECT * FROM oauth_token
     </select>
+
     <select id="getStockName"
             parameterType="string"
             resultType="java.lang.String">
@@ -62,7 +72,7 @@
         INSERT INTO trade (stock_code, stock_name, price, quantity, trade_type, total_price, total_stock_holdings, user_id, created_at, updated_at)
         VALUES (#{stockCode}, #{stockName}, #{price}, #{quantity}, #{tradeType}, #{totalPrice}, #{totalStockHoldings}, #{userId}, NOW(), NOW());
     </insert>
-    <select id="getUserTradeHistory" parameterType="int" resultType="org.finterest.invest.stock.simulator.domain.SimulatorVO">
+    <select id="getUserTradeHistory" parameterType="Integer" resultType="org.finterest.invest.stock.simulator.domain.SimulatorVO">
         SELECT
             trade_id AS tradeId,
             stock_code AS stockCode,
