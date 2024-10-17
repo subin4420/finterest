@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.invest.conversion.mapper.ConversionMapper">
+
+
+    <!-- 최신 환전 비율 조회 -->
+    <select id="getLatestRate" resultType="org.finterest.invest.conversion.dto.ConversionRateDTO">
+        SELECT * FROM conversion_rates
+        ORDER BY created_at DESC
+            LIMIT 1
+    </select>
+
+
+    <!-- 환전비율 입력 -->
+    <insert id="insertConversionRate">
+        INSERT INTO Conversion_Rates (conversion_type, conversion_rate, created_at)
+        VALUES (#{conversionType}, #{conversionRate}, #{rateDate})
+    </insert>
+
+    <!-- 환전비율 업데이트 -->
+    <update id="updateConversionRate">
+        UPDATE Conversion_Rates
+        SET conversion_rate = #{conversionRate}, updated_at = #{rateDate}
+        WHERE conversion_type = #{conversionType}
+    </update>
+
+    <!-- 환전비율 기록 조회 -->
+    <select id="getAllRates" resultType="org.finterest.invest.conversion.dto.ConversionRateDTO">
+        SELECT * FROM Conversion_Rates
+    </select>
+
+    <!-- 환전내역 저장 -->
+    <insert id="insertConversionTransaction">
+        INSERT INTO Conversion_Transactions (user_id, money_change, point_change, conversion_type, conversion_date, rate_id)
+        VALUES (#{userId}, #{moneyChange}, #{pointChange}, #{conversionType}, #{conversionDate}, #{rateId})
+    </insert>
+
+    <!-- 사용자 ID로 거래내역 조회 -->
+    <select id="getConversionTransactionsByUserId" resultType="org.finterest.invest.conversion.domain.ConversionTransactionVO">
+        SELECT * FROM Conversion_Transactions WHERE user_id = #{userId}
+    </select>
+
+    <!-- 사용자 잔액 조회 쿼리 추가 -->
+    <select id="getUserBalance" resultType="org.finterest.invest.conversion.dto.UserBalanceDTO">
+        SELECT money, total_points AS totalPoints
+        FROM Users
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.archive.mapper.ArchiveMapper">
+
+    <!-- 공통 칼럼 정의 -->
+    <sql id="ArchiveColumns">
+        lm.material_id AS materialId,
+        lm.title AS title,
+        lm.material_img AS materialImg,
+        lm.link AS link,
+        lm.description AS description,
+        lm.content AS content,
+        lm.created_at AS createdAt,
+        lm.updated_at AS updatedAt,
+        c.category_name AS categoryName,
+        CASE
+        WHEN f.favorite_id IS NOT NULL THEN TRUE
+        ELSE FALSE
+        END AS favorite  <!-- 즐겨찾기 여부 확인 -->
+    </sql>
+
+    <!-- 학습 진행 상태 필드 정의 -->
+    <sql id="ProgressFields">
+        lp.progress_id AS progressId,
+        lp.status AS status,
+        lp.started_at AS startedAt,
+        lp.completed_at AS completedAt
+    </sql>
+
+    <!-- 기본 쿼리 구조 -->
+    <sql id="BaseQuery">
+        FROM learning_materials lm
+        JOIN categories c ON lm.category_id = c.category_id
+        LEFT JOIN favorites f ON lm.material_id = f.material_id AND f.user_id = #{userId} <!-- 즐겨찾기 여부 확인 -->
+    </sql>
+
+    <!-- 학습 상태 조회 시 필요한 조인 정의 -->
+    <sql id="ProgressFromJoin">
+        FROM learning_progress lp
+        JOIN learning_materials lm ON lp.material_id = lm.material_id
+        JOIN categories c ON lm.category_id = c.category_id
+        LEFT JOIN favorites f ON lm.material_id = f.material_id AND f.user_id = #{userId} <!-- 즐겨찾기 여부 확인 -->
+        WHERE lp.user_id = #{userId}
+    </sql>
+
+    <!-- 모든 항목 조회 -->
+    <select id="selectAllArchive"  resultType="org.finterest.archive.domain.ArchiveDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+    </select>
+
+
+    <!-- 특정 ID로 조회 -->
+    <select id="selectArchiveById" parameterType="int" resultType="org.finterest.archive.domain.ArchiveDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.material_id = #{material_id}
+    </select>
+
+    <!-- 카테고리로 필터링 -->
+    <select id="selectArchiveByCategory" parameterType="int" resultType="org.finterest.archive.domain.ArchiveDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE c.category_id = #{categoryId}
+    </select>
+
+    <!-- 로그인한 사용자의 카테고리 필터링 -->
+    <select id="selectArchiveByCategoryWithFavorites" parameterType="map" resultType="org.finterest.archive.domain.ArchiveDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.category_id = #{categoryId}
+    </select>
+
+
+    <!-- 텍스트 자료만 조회 (link가 NULL) -->
+    <select id="selectTextArchive" resultType="org.finterest.archive.domain.ArchiveDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.link IS NULL
+    </select>
+
+    <!-- 영상 자료만 조회 (link가 NULL이 아닌 경우) -->
+    <select id="selectVideoArchive" resultType="org.finterest.archive.domain.ArchiveDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.link IS NOT NULL
+    </select>
+
+    <!-- 즐겨찾기한 자료만 조회 -->
+    <select id="selectFavoritesArchive" parameterType="int" resultType="org.finterest.archive.domain.ArchiveDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE f.user_id = #{userId}  <!-- 사용자의 즐겨찾기 자료만 조회 -->
+    </select>
+
+
+    <!-- 특정 자료의 학습 진행 상태 조회 -->
+    <select id="getProgressForMaterial" parameterType="int" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT
+            progress_id AS progressId,
+            material_id AS materialId,
+            status,
+            started_at AS startedAt,
+            completed_at AS completedAt
+        FROM Learning_Progress
+        WHERE material_id = #{materialId} AND user_id = #{userId}
+    </select>
+
+
+    <!-- 즐겨찾기 추가 -->
+    <insert id="insertFavorite">
+        INSERT INTO favorites (user_id, material_id, added_at)
+        VALUES (#{userId}, #{materialId}, NOW())
+    </insert>
+
+    <!-- 즐겨찾기 삭제 -->
+    <delete id="deleteFavorite">
+        DELETE FROM favorites
+        WHERE user_id = #{userId} AND material_id = #{materialId}
+    </delete>
+
+    <!-- 전체 학습 진행 상태 조회 -->
+    <select id="selectAllProgress" parameterType="int" resultType="org.finterest.archive.domain.ProgressDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />,
+        <include refid="ProgressFields" />
+        <include refid="ProgressFromJoin" />
+    </select>
+
+    <!-- 학습 상태별 조회 (완료/미완료) -->
+    <select id="selectProgressByStatus" parameterType="map" resultType="org.finterest.archive.domain.ProgressDetailVO">
+        SELECT
+        <include refid="ArchiveColumns" />,
+        <include refid="ProgressFields" />
+        <include refid="ProgressFromJoin" />
+        AND lp.status = #{status}
+    </select>
+
+
+    <!-- 학습 진행 상태(incomplete) 추가 -->
+    <insert id="insertProgressStatus" parameterType="org.finterest.archive.domain.ProgressVO">
+        INSERT INTO Learning_Progress (user_id, material_id, status, started_at)
+        VALUES (#{userId}, #{materialId}, 'incomplete', NOW())
+    </insert>
+
+    <!-- 학습 진행 상태(completed) 업데이트 -->
+    <update id="updateProgressStatus">
+        UPDATE Learning_Progress
+        SET status = #{status},
+            completed_at = CASE WHEN #{status} = 'completed' THEN NOW() ELSE NULL END
+        WHERE user_id = #{userId}
+          AND material_id = #{materialId}
+    </update>
+
+    <!-- 퀴즈 포인트 저장 -->
+    <insert id="insertPoint" parameterType="map">
+        INSERT INTO Points (user_id, source, points_change, created_at)
+        SELECT #{userId}, rule_id, points_awarded, NOW()
+        FROM Point_Rules
+        WHERE activity_name = '학습자료'
+    </insert>
+
+    <!-- 특정 학습 자료와 사용자의 진행 상태 조회 -->
+    <select id="getProgressForMaterialAndUser" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT *
+        FROM Learning_Progress
+        WHERE material_id = #{materialId} AND user_id = #{userId}
+    </select>
+
+    <select id="getProgressForUserId" parameterType="Integer" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT *
+        FROM Learning_Progress
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="getProgressForUserAndMaterial" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT *
+        FROM Learning_Progress
+        WHERE material_id = #{materialId} AND user_id = #{userId}
+    </select>
+
+    <!-- 학습 진행 상태 추가 -->
+    <insert id="insertProgress">
+        INSERT INTO Learning_Progress (user_id, material_id, status, started_at)
+        VALUES (#{userId}, #{materialId}, #{status}, #{startedAt})
+    </insert>
+
+    <!-- 최근 업데이트된 텍스트 자료 8개 조회 (link가 NULL) -->
+    <select id="selectRecentTextArchives" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        WHERE lm.link IS NULL
+        ORDER BY lm.updated_at DESC
+        LIMIT 8 <!-- 최근 업데이트된 텍스트 자료 8개 -->
+    </select>
+
+    <!-- 완료 횟수가 많은 영상 자료 8개 조회 (link가 NOT NULL) -->
+    <select id="selectMostCompletedVideoArchives" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+            lm.material_id AS materialId,
+            lm.title AS title,
+            lm.material_img AS materialImg,
+            lm.link AS link,
+            lm.description AS description,
+            lm.content AS content,
+            lm.created_at AS createdAt,
+            lm.updated_at AS updatedAt,
+            c.category_name AS categoryName,
+            COUNT(lp.material_id) AS completionCount
+        FROM learning_materials lm
+                 JOIN categories c ON lm.category_id = c.category_id
+                 LEFT JOIN learning_progress lp ON lm.material_id = lp.material_id AND lp.status = 'completed'
+        WHERE lm.link IS NOT NULL
+        GROUP BY lm.material_id, lm.title, lm.material_img, lm.link, lm.description, lm.content, lm.created_at, lm.updated_at, c.category_name
+        ORDER BY completionCount DESC
+            LIMIT 8
+    </select>
+
+</mapper>

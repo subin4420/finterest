@@ -15,7 +15,8 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
+/
+WebConfig.java
 ### Eclipse ###
 .apt_generated
 .classpath
@@ -27,6 +28,7 @@ out/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+
 
 ### NetBeans ###
 /nbproject/private/

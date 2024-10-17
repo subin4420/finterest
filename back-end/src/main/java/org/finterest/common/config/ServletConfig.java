@@ -1,22 +1,34 @@
-package org.scoula.common.config;
+package org.finterest.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @ComponentScan(basePackages = {
-        "org.scoula.controller",
-        "org.scoula.exception",
-        "org.scoula.member.controller",
-        "org.scoula.board.controller",
-        "org.scoula.invest.domain.stock.overall.controller",
-        "org.scoula.invest.domain.stock.overall.service",
-        "org.scoula.invest.domain.conversion."
+        "org.finterest.controller",
+        "org.finterest.exception",
+
+        //B_Team
+        "org.finterest.quiz.controller",
+        "org.finterest.archive.controller",
+        "org.finterest.user.controller",
+        "org.finterest.point.controller",
+        "org.finterest.notice.controller",
+        "org.finterest.adminChart.controller",
+        "org.finterest.ranking.controller",
+        //A_Team
+        "org.finterest.invest.board.controller",
+        "org.finterest.invest.stock.overall.controller",
+        "org.finterest.invest.stock.simulator.controller",
+        "org.finterest.invest.conversion.controller",
+        "org.finterest.invest.comment.controller",
+        "org.finterest.invest.scenario.controller",
+        "org.finterest.invest.portfolio.controller"
+
+
 })
 public class ServletConfig  implements WebMvcConfigurer {
 

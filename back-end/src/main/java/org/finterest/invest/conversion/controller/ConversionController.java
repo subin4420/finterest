@@ -1,35 +1,65 @@
 package org.finterest.invest.conversion.controller;
 
-import org.finterest.invest.conversion.dto.ConversionTransactionDTO;
+import lombok.extern.log4j.Log4j;
+import org.finterest.invest.conversion.dto.*;
 import org.finterest.invest.conversion.service.ConversionService;
+import org.finterest.security.util.TokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
+import java.util.List;
 
+@Log4j
 @RestController
-@RequestMapping("/conversion")
+@RequestMapping("/api/conversion")
 public class ConversionController {
-    private final ConversionService conversionService;
 
-    public ConversionController(ConversionService conversionService) {
-        this.conversionService = conversionService;
-    }
+    @Autowired
+    private ConversionService conversionService;
 
-    // 포인트를 가상 돈으로 환전하는 엔드포인트
+    @Autowired
+    private TokenUtil tokenUtil;
+
     @PostMapping("/points-to-money")
-    public ConversionTransactionDTO convertPointsToMoney(@RequestParam int userId, @RequestParam int points) {
-        return conversionService.convertPointsToMoney(userId, points);
+    public ResponseEntity<String> convertPointsToMoney(@RequestBody ConversionRequestDTO request, @RequestHeader("Authorization") String authToken) {
+        Integer userId = tokenUtil.getUserIdFromToken(authToken);
+        return ResponseEntity.ok(conversionService.convertPointsToMoney(userId, request.getPointAmount()));
     }
 
-    // 가상 돈을 포인트로 환전하는 엔드포인트
     @PostMapping("/money-to-points")
-    public ConversionTransactionDTO convertMoneyToPoints(@RequestParam int userId, @RequestParam BigDecimal money) {
-        return conversionService.convertMoneyToPoints(userId, money);
+    public ResponseEntity<String> convertMoneyToPoints(@RequestBody ConversionRequestDTO request, @RequestHeader("Authorization") String authToken) {
+        Integer userId = tokenUtil.getUserIdFromToken(authToken);
+        return ResponseEntity.ok(conversionService.convertMoneyToPoints(userId, request.getMoneyAmount()));
     }
 
-    // 실시간으로 전환 비율을 가져오는 엔드포인트
-    @GetMapping("/current-rate")
-    public BigDecimal getCurrentConversionRate() {
-        return conversionService.getCurrentConversionRate();
+    @GetMapping("/transactions")
+    public ResponseEntity<List<ConversionTransactionDTO>> getConversionTransactions(@RequestHeader("Authorization") String authToken) {
+        Integer userId = tokenUtil.getUserIdFromToken(authToken);
+        return ResponseEntity.ok(conversionService.getConversionTransactions(userId));
+    }
+
+    @GetMapping("/rate/latest")
+    public ResponseEntity<ConversionRateDTO> getLatestConversionRate() {
+        return ResponseEntity.ok(conversionService.getLatestConversionRate());
+    }
+
+    @PutMapping("/rate/update")
+    public ResponseEntity<String> updateConversionRate(@RequestBody ConversionRateDTO rateDTO) {
+        conversionService.updateConversionRate(rateDTO);
+        return ResponseEntity.ok("환전 비율이 업데이트되었습니다.");
+    }
+
+    @GetMapping("/rates")
+    public ResponseEntity<List<ConversionRateDTO>> getAllConversionRates() {
+        return ResponseEntity.ok(conversionService.getAllConversionRates());
+    }
+
+    // 사용자 잔액 조회 엔드포인트 추가
+    @GetMapping("/balance")
+    public ResponseEntity<UserBalanceDTO> getUserBalance(@RequestHeader("Authorization") String authToken) {
+        log.info(authToken);
+        Integer userId = tokenUtil.getUserIdFromToken(authToken);
+        return ResponseEntity.ok(conversionService.getUserBalance(userId));
     }
 }

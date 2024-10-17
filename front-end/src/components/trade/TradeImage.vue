@@ -4,7 +4,7 @@ import { ref } from 'vue';
 const currentSlide = ref(0);
 const slides = ref([
   {
-    image: '/src/assets/images/모의투자페이지.png',
+    image: '/src/assets/images/imgslide/tradepage.png',
     title: '모의투자, 연습도 실전처럼',
   },
 ]);
@@ -40,6 +40,7 @@ const formatTitle = (title) => {
   height: 60vh;
   overflow: hidden;
   margin-top: -60px;
+  background-color: #F5F5F5;
 }
 
 .slider {

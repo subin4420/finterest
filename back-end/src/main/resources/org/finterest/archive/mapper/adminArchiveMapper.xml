@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.archive.mapper.AdminArchiveMapper">
+    <!-- 카테고리 이름으로 category_id 가져오기 -->
+    <select id="selectCategoryIdByName" parameterType="string" resultType="int">
+        SELECT category_id
+        FROM Categories
+        WHERE category_name = #{categoryName}
+    </select>
+
+    <!-- 학습 자료 삽입 -->
+    <insert id="insertArchive">
+        INSERT INTO Learning_Materials (category_id, title, material_img, link, description, content, created_at)
+        VALUES (#{categoryId}, #{title}, #{materialImg}, #{link}, #{description}, #{content}, NOW())
+    </insert>
+
+    <!-- 학습 자료 컬럼 정의 -->
+    <sql id="ArchiveColumns">
+        lm.material_id AS materialId,
+        lm.title AS title,
+        lm.material_img AS materialImg,
+        lm.link AS link,
+        lm.description AS description,
+        lm.content AS content,
+        lm.created_at AS createdAt,
+        lm.updated_at AS updatedAt,
+        c.category_name AS categoryName  <!-- 카테고리 이름을 가져옴 -->
+    </sql>
+
+    <!-- 기본 FROM 및 JOIN 구조 -->
+    <sql id="BaseQuery">
+        FROM learning_materials lm
+        LEFT JOIN categories c ON lm.category_id = c.category_id
+    </sql>
+
+    <!-- 전체 학습 자료 목록 조회 -->
+    <select id="selectAllArchive" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />,
+        (SELECT COALESCE(COUNT(*), 0)  -- 만약 COUNT가 NULL이면 0을 반환
+        FROM Learning_Progress lp
+        WHERE lp.material_id = lm.material_id
+        AND lp.status = 'completed') AS completionCount
+        <include refid="BaseQuery" />
+        ORDER BY lm.created_at, c.category_id
+    </select>
+
+    <!-- 즐겨찾기된 학습 자료 조회 (특정 사용자) -->
+    <select id="selectFavoritesByUser" parameterType="int" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        JOIN Favorites f ON lm.material_id = f.material_id
+        WHERE f.user_id = #{userId}  <!-- userId 필터링 -->
+        ORDER BY f.added_at DESC
+    </select>
+
+
+    <!-- 카테고리 이름 및 즐겨찾기 필터링이 적용된 학습 자료 조회 -->
+    <select id="selectArchiveByCategoryAndFavorites" parameterType="map" resultType="org.finterest.archive.domain.ArchiveVO">
+        SELECT
+        <include refid="ArchiveColumns" />
+        <include refid="BaseQuery" />
+        LEFT JOIN Favorites f ON lm.material_id = f.material_id
+        WHERE 1=1
+        <if test="categoryName != null">
+            AND c.category_name = #{categoryName}
+        </if>
+        <if test="favorites != null and favorites == true">
+            AND f.material_id IS NOT NULL
+        </if>
+        ORDER BY lm.created_at, c.category_id
+    </select>
+
+    <!-- 학습 자료 수정 (카테고리명을 기반으로 업데이트) -->
+    <update id="updateArchive">
+        UPDATE Learning_Materials
+        SET
+            title = #{title},
+            material_img = #{materialImg},
+            link = #{link},
+            description = #{description},
+            content = #{content},
+            updated_at = NOW()
+        WHERE material_id = #{materialId}
+    </update>
+
+    <!-- 학습 자료 관련 데이터 삭제 -->
+    <delete id="deleteProgress" parameterType="int">
+        DELETE FROM Learning_Progress WHERE material_id = #{materialId};
+    </delete>
+
+    <delete id="deleteFavorites" parameterType="int">
+        DELETE FROM Favorites WHERE material_id = #{materialId};
+    </delete>
+
+    <delete id="deleteArchive" parameterType="int">
+        DELETE FROM Learning_Materials WHERE material_id = #{materialId};
+    </delete>
+
+
+    <select id="getProgressForMaterialAndUser" parameterType="map" resultType="org.finterest.archive.domain.ProgressVO">
+        SELECT
+            progress_id AS progressId,
+            material_id AS materialId,
+            status,
+            started_at AS startedAt,
+            completed_at AS completedAt
+        FROM Learning_Progress
+        WHERE material_id = #{materialId} AND user_id = #{userId}
+    </select>
+</mapper>

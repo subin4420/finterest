@@ -2,33 +2,109 @@
     <div class="content-card">
         <!-- 이미지 섹션 -->
         <div class="image-wrapper">
-            <img :src="cardData.image || defaultImage" alt="썸네일 이미지" />
+            <img :src="getImageUrl" alt="썸네일 이미지" />
+            <button 
+             v-if="showFavoriteButton"
+            class="favorite-button" 
+            @click.stop="toggleFavorite"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 50 50">
+                    <path :d="favoriteIcon" />
+                </svg>
+            </button>
         </div>
 
         <!-- 카드 내용 섹션 -->
         <div class="card-info">
-            <div class="category-title">[{{ cardData.categoryName }}]</div>
-            <div class="title">{{ cardData.title }}</div>
-            <p class="summary">{{ cardData.content }}</p>
+            <div class="category-status-wrapper">
+                <div class="category-title">[{{ cardData.categoryName }}]</div>
+                <div v-if="cardData.status" :class="['status', statusClass]">{{ statusText }}</div>
+            </div>
+            <div class="title" v-html="cardData.title"></div>
+            <div class="summary"></div>
         </div>
     </div>
 </template>
 
 <script>
+import { useArchiveStore } from '@/stores/archiveStore';
+import { IMAGE_PATHS } from '@/constants/imagePaths';
+
 export default {
     name: 'ArchiveCard',
     props: {
         cardData: {
             type: Object,
             required: true
+        },
+        showFavoriteButton: {
+            type: Boolean,
+            default: true
         }
     },
     data() {
         return {
-            defaultImage: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.inflearn.com%2Fpages%2Fweekly-inflearn-26%3Futm_source%3Dpinpoint%26utm_medium%3Demail%26utm_campaign%3Dweekly-inflearn%26utm_content%3D26&psig=AOvVaw1_vJrJYp_LGdLzAVgYMQOA&ust=1727313427008000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCMjm_4v23IgDFQAAAAAdAAAAABAE' // 대체 이미지 URL
+            ARCHIVE_IMAGE_PATHS: IMAGE_PATHS.ARCHIVE_IMG,
+            defaultImage: 'https://cdn.pixabay.com/photo/2021/12/28/11/38/trees-6899050_1280.jpg',
+            isFavorite: this.cardData.favorite
         };
+    },
+    computed: {
+        getImageUrl() {
+            if (this.isYouTubeId(this.cardData.materialImg)) {
+                return `https://img.youtube.com/vi/${this.cardData.materialImg}/hqdefault.jpg`;
+            } else if (this.cardData.materialImg) {
+                return this.ARCHIVE_IMAGE_PATHS + this.cardData.materialImg;
+            } else {
+                return this.defaultImage;
+            }
+        },
+        statusText() {
+            console.log('cardData.status:', this.cardData.status); // 상태 값 로깅
+            switch ('status: ',this.cardData.status) {
+                case 'completed':
+                    return '완료';
+                case 'incomplete':
+                    return '학습중';
+                default:
+                    return this.cardData.status;
+            }
+        },
+        statusClass() {
+            return {
+                'status-completed': this.cardData.status === 'completed',
+                'status-incomplete': this.cardData.status === 'incomplete'
+            };
+        },
+        favoriteIcon() {
+            return this.isFavorite
+                ? "M 37 48 C 36.824219 48 36.652344 47.953125 36.496094 47.863281 L 25 41.15625 L 13.503906 47.863281 C 13.195313 48.042969 12.8125 48.046875 12.503906 47.867188 C 12.191406 47.6875 12 47.359375 12 47 L 12 3 C 12 2.449219 12.449219 2 13 2 L 37 2 C 37.554688 2 38 2.449219 38 3 L 38 47 C 38 47.359375 37.808594 47.6875 37.496094 47.867188 C 37.34375 47.957031 37.171875 48 37 48 Z"
+                : "M 12.8125 2 C 12.335938 2.089844 11.992188 2.511719 12 3 L 12 47 C 11.996094 47.359375 12.1875 47.691406 12.496094 47.871094 C 12.804688 48.054688 13.1875 48.054688 13.5 47.875 L 25 41.15625 L 36.5 47.875 C 36.8125 48.054688 37.195313 48.054688 37.503906 47.871094 C 37.8125 47.691406 38.003906 47.359375 38 47 L 38 3 C 38 2.449219 37.550781 2 37 2 L 13 2 C 12.96875 2 12.9375 2 12.90625 2 C 12.875 2 12.84375 2 12.8125 2 Z M 14 4 L 36 4 L 36 45.25 L 25.5 39.125 C 25.191406 38.945313 24.808594 38.945313 24.5 39.125 L 14 45.25 Z";
+        }
+    },
+    mounted() {
+        console.log('ArchiveCard mounted. cardData:', this.cardData);
+    },
+    methods: {
+        isYouTubeId(str) {
+            // YouTube ID는 일반적으로 11자리의 문자열입니다.
+            return str && str.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(str);
+        },
+        async toggleFavorite() {
+            const archiveStore = useArchiveStore();
+            this.isFavorite = !this.isFavorite; // 로컬 상태 업데이트
+
+            // 즐겨찾기 추가 또는 제거
+            if (this.isFavorite) {
+                await archiveStore.addToFavorites(this.cardData.materialId);
+                this.cardData.favorite = true; // UI에 즉시 반영
+            } else {
+                await archiveStore.removeFromFavorites(this.cardData.materialId);
+                this.cardData.favorite = false; // UI에 즉시 반영
+            }
+        }
     }
-}
+};
 </script>
 
 <style scoped>
@@ -44,6 +120,11 @@ export default {
     border-radius: 8px; /* 모서리를 둥글게 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
     transition: transform 0.2s; /* 호버 시 부드러운 효과 */
+
+     width: 100%; /* 부모 요소의 크기를 기준으로 자동 조정 */
+    height: 200px; /* 카드 높이를 150px로 설정 */
+    padding: 10px; /* 카드 내부에 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함된 전체 크기 설정 */
 }
 
 .content-card:hover {
@@ -52,13 +133,14 @@ export default {
 
 .image-wrapper {
     width: 100%;
-    height: 120px; /* 고정된 높이 */
-    background-color: #f0f0f0; /* 배경색을 연한 회색으로 변경 */
+    height: 120px;
+    background-color: #f0f0f0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px; /* 모서리를 둥글게 */
-    overflow: hidden; /* 이미지가 영역을 넘지 않도록 설정 */
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative; /* 추가: 상대 위치 설정 */
 }
 
 .image-wrapper img {
@@ -68,8 +150,56 @@ export default {
     transition: transform 0.3s; /* 이미지에 부드러운 효과 추가 */
 }
 
+.favorite-button {
+    position: absolute;
+    top: 10px;
+    right: 10px; /* left: 10px에서 right: 10px로 변경 */
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.favorite-button svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #000;
+    stroke-width: 0.5px;
+    transition: fill 0.3s ease;
+}
+
+.favorite-button:hover svg {
+    fill: #00C4D1;
+
+}
+
+.favorite-button svg path {
+    fill: #00C4D1;
+
+}
+
 .image-wrapper img:hover {
     transform: scale(1.1); /* 이미지 호버 시 확대 효과 */
+}
+
+.status {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.status-completed {
+    color: #00C4D1; /* 완료 상태 색상 */
+}
+
+.status-incomplete {
+    color: #888; /* 미완료 상태 색상 */
 }
 
 .card-info {
@@ -77,6 +207,14 @@ export default {
     text-align: left;
     width: 100%;
     flex-grow: 1; /* 공간을 차지하도록 설정 */
+}
+
+.category-status-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 5px;
 }
 
 .category-title {
@@ -122,5 +260,22 @@ export default {
     .summary {
         font-size: 10px; /* 작은 화면에서 글자 크기 줄임 */
     }
+}
+
+.title, .summary {
+    /deep/ h1, /deep/ h2, /deep/ h3 {
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.summary {
+    max-height: 3em; /* 3줄로 제한 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    /* -webkit-line-clamp: 3; */
+    -webkit-box-orient: vertical;
 }
 </style>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.quiz.mapper.AdminQuizMapper">
+
+    <!-- 1-1. Quiz_Sets 생성 -->
+    <insert id="insertQuizSet" useGeneratedKeys="true" keyProperty="setId">
+        INSERT INTO Quiz_Sets (set_name, set_img, category_id, created_at)
+        VALUES (#{setName}, #{setImg}, (SELECT category_id FROM Categories WHERE category_name = #{categoryName}), NOW())
+    </insert>
+
+    <!-- 1-2. 퀴즈 세트와 퀴즈 문제 연결 -->
+    <insert id="insertQuizSetQuestions" parameterType="map">
+        INSERT INTO Quiz_Set_Questions (set_id, quiz_id)
+        VALUES (#{setId}, #{quizId})
+    </insert>
+
+
+    <!-- 2. 퀴즈 세트 목록 조회 -->
+    <select id="selectQuizSets" parameterType="map" resultType="org.finterest.quiz.domain.vo.QuizSetsVO">
+        SELECT
+        qs.set_id AS setId,
+        qs.set_name AS setName,
+        qs.set_img AS setImg,
+        c.category_name AS categoryName,
+        qs.created_at AS createdAt,
+        qs.updated_at AS updatedAt,
+        (SELECT COUNT(*)  -- 참여 횟수
+        FROM Quiz_Sets_Results qr
+        WHERE qr.set_id = qs.set_id) AS participationCount,
+        (SELECT COALESCE(AVG(qr.total_score), 0)  -- 평균 점수
+        FROM Quiz_Sets_Results qr
+        WHERE qr.set_id = qs.set_id) AS averageScore
+        FROM Quiz_Sets qs
+        JOIN Categories c ON qs.category_id = c.category_id
+        WHERE 1=1
+        <if test="categoryId != null">
+            AND qs.category_id = #{categoryId}
+        </if>
+        ORDER BY qs.created_at DESC
+    </select>
+
+
+
+    <!-- 3. 퀴즈 세트 업데이트 -->
+    <update id="updateQuizSet" parameterType="QuizSetsVO">
+        UPDATE Quiz_Sets
+        SET set_name = #{setName},
+            set_img = #{setImg},
+            category_id = (SELECT category_id FROM Categories WHERE category_name = #{categoryName}),
+            updated_at = NOW()
+        WHERE set_id = #{setId}
+    </update>
+
+    <!-- 3-2. 퀴즈 세트와 퀴즈 문제 연결 -->
+    <update id="updateQuizSetQuestions" parameterType="map">
+        UPDATE Quiz_Set_Questions
+        SET quiz_id = #{quizId}
+        WHERE set_id = #{setId}
+    </update>
+
+
+    <!-- 4. 퀴즈 세트 삭제 -->
+    <!-- quiz_sets_results 테이블에서 set_id에 해당하는 데이터 삭제 -->
+    <delete id="deleteQuizSetResultsBySetId" parameterType="int">
+        DELETE FROM quiz_sets_results
+        WHERE set_id = #{setId};
+    </delete>
+
+    <!-- user_answers 테이블에서 set_id에 해당하는 결과 데이터 삭제 -->
+    <delete id="deleteUserAnswersBySetId" parameterType="int">
+        DELETE FROM user_answers
+        WHERE result_id IN (
+            SELECT result_id
+            FROM quiz_sets_results
+            WHERE set_id = #{setId}
+        );
+    </delete>
+
+    <!-- quiz_set_questions 테이블에서 set_id에 해당하는 데이터 삭제 -->
+    <delete id="deleteQuizSetQuestionsBySetId" parameterType="int">
+        DELETE FROM quiz_set_questions
+        WHERE set_id = #{setId};
+    </delete>
+
+    <!-- quiz_sets 테이블에서 set_id에 해당하는 데이터 삭제 -->
+    <delete id="deleteQuizSetBySetId" parameterType="int">
+        DELETE FROM quiz_sets
+        WHERE set_id = #{setId};
+    </delete>
+
+
+    <!-- 6. 퀴즈 생성 -->
+    <insert id="insertQuiz" parameterType="QuizVO" useGeneratedKeys="true" keyProperty="quizId">
+        INSERT INTO Quizzes (question, choice1, choice2, choice3, choice4, correct_choice, category_id, created_at, updated_at)
+        VALUES (#{question}, #{choice1}, #{choice2}, #{choice3}, #{choice4}, #{correctChoice}, #{categoryId}, NOW(), NOW())
+    </insert>
+
+
+    <!-- 특정 퀴즈 조회 -->
+    <select id="selectQuizById" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizVO">
+        SELECT quiz_id AS quizId, question, choice1, choice2, choice3, choice4, correct_choice AS correctChoice, category_id AS categoryId
+        FROM Quizzes
+        WHERE quiz_id = #{quizId}
+    </select>
+
+    <!-- 5. 모든 퀴즈 조회 -->
+    <select id="selectAllQuizzes" resultType="org.finterest.quiz.domain.vo.QuizVO">
+        SELECT quiz_id AS quizId, question, choice1, choice2, choice3, choice4, correct_choice AS correctChoice, category_id AS categoryId
+        FROM Quizzes
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 카테고리별 퀴즈 조회 -->
+    <select id="selectQuizzesByCategoryId" parameterType="int" resultType="org.finterest.quiz.domain.vo.QuizVO">
+        SELECT quiz_id AS quizId, question, choice1, choice2, choice3, choice4, correct_choice AS correctChoice, category_id AS categoryId
+        FROM Quizzes
+        WHERE category_id = #{categoryId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 7. 퀴즈 업데이트 -->
+    <update id="updateQuiz" parameterType="org.finterest.quiz.domain.vo.QuizVO">
+        UPDATE Quizzes
+        SET question = #{question}, choice1 = #{choice1}, choice2 = #{choice2}, choice3 = #{choice3}, choice4 = #{choice4},
+            correct_choice = #{correctChoice}, category_id = #{categoryId}, updated_at = NOW()
+        WHERE quiz_id = #{quizId}
+    </update>
+
+    <!-- 8. 퀴즈 삭제 -->
+    <!-- User_Answers 테이블에서 quiz_id로 삭제 -->
+    <delete id="deleteUserAnswersByQuizId" parameterType="int">
+        DELETE FROM User_Answers
+        WHERE quiz_id = #{quizId}
+    </delete>
+
+    <!-- Quiz_Sets_Results 테이블에서 quiz_id로 삭제 -->
+    <delete id="deleteQuizSetResultsByQuizId" parameterType="int">
+        DELETE FROM Quiz_Sets_Results
+        WHERE set_id IN (
+            SELECT set_id FROM Quiz_Set_Questions WHERE quiz_id = #{quizId}
+        )
+    </delete>
+
+    <!-- Quiz_Set_Questions 테이블에서 quiz_id로 삭제 -->
+    <delete id="deleteQuizSetQuestionsByQuizId" parameterType="int">
+        DELETE FROM Quiz_Set_Questions
+        WHERE quiz_id = #{quizId}
+    </delete>
+
+    <!--  Quiz_Sets 테이블에서 quiz_id에 해당하는 세트 삭제 -->
+    <delete id="deleteQuizSetByQuizId" parameterType="int">
+        DELETE FROM Quiz_Sets
+        WHERE set_id IN (
+            SELECT set_id FROM Quiz_Set_Questions WHERE quiz_id = #{quizId}
+        )
+    </delete>
+
+    <!-- Quizzes 테이블에서 quiz_id로 삭제 -->
+    <delete id="deleteQuiz" parameterType="int">
+        DELETE FROM Quizzes
+        WHERE quiz_id = #{quizId}
+    </delete>
+
+
+
+</mapper>

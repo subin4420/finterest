@@ -1,271 +1,444 @@
 <template>
-    <div>
-      <!-- 차트가 렌더링될 div에 ref 속성 추가 -->
-      <div ref="chartDom" id="main" style="width: 100%; height: 600px;"></div>
-    </div>
-    </template>
-  
-  <script>
-  import { ref, onMounted } from 'vue';
-  import * as echarts from 'echarts';
-  
-  export default {
-    name: 'StockChart',
-    setup() {
-      const chartDom = ref(null);
-  
-      // 차트 데이터를 가공하는 함수
-      const splitData = (rawData) => {
-        const categoryData = [];
-        const values = [];
-        for (let i = 0; i < rawData.length; i++) {
-          categoryData.push(rawData[i].splice(0, 1)[0]);
-          values.push(rawData[i]);
-        }
-        return {
-          categoryData: categoryData,
-          values: values
-        };
-      };
-  
-      const calculateMA = (dayCount, data0) => {
-        const result = [];
-        for (let i = 0, len = data0.values.length; i < len; i++) {
-          if (i < dayCount) {
-            result.push('-');
-            continue;
-          }
-          let sum = 0;
-          for (let j = 0; j < dayCount; j++) {
-            sum += +data0.values[i - j][1];
-          }
-          result.push(sum / dayCount);
-        }
-        return result;
-      };
-  
-      const renderChart = () => {
-        // 차트 DOM 요소가 존재하는지 확인 후 초기화
-        if (chartDom.value) {
-          const myChart = echarts.init(chartDom.value);
-  
-          const upColor = '#ed2926';
-          const upBorderColor = '#d01411';
-          const downColor = '#2679ed';
-          const downBorderColor = '#1160d0';
-  
-          // 차트 데이터
-          const data0 = splitData([
-          ['2013/1/24', 2320.26, 2320.26, 2287.3, 2362.94],
-  ['2013/1/25', 2300, 2291.3, 2288.26, 2308.38],
-  ['2013/1/28', 2295.35, 2346.5, 2295.35, 2346.92],
-  ['2013/1/29', 2347.22, 2358.98, 2337.35, 2363.8],
-  ['2013/1/30', 2360.75, 2382.48, 2347.89, 2383.76],
-  ['2013/1/31', 2383.43, 2385.42, 2371.23, 2391.82],
-  ['2013/2/1', 2377.41, 2419.02, 2369.57, 2421.15],
-  ['2013/2/4', 2425.92, 2428.15, 2417.58, 2440.38],
-  ['2013/2/5', 2411, 2433.13, 2403.3, 2437.42],
-  ['2013/2/6', 2432.68, 2434.48, 2427.7, 2441.73],
-  ['2013/2/7', 2430.69, 2418.53, 2394.22, 2433.89],
-  ['2013/2/8', 2416.62, 2432.4, 2414.4, 2443.03],
-  ['2013/2/18', 2441.91, 2421.56, 2415.43, 2444.8],
-  ['2013/2/19', 2420.26, 2382.91, 2373.53, 2427.07],
-  ['2013/2/20', 2383.49, 2397.18, 2370.61, 2397.94],
-  ['2013/2/21', 2378.82, 2325.95, 2309.17, 2378.82],
-  ['2013/2/22', 2322.94, 2314.16, 2308.76, 2330.88],
-  ['2013/2/25', 2320.62, 2325.82, 2315.01, 2338.78],
-  ['2013/2/26', 2313.74, 2293.34, 2289.89, 2340.71],
-  ['2013/2/27', 2297.77, 2313.22, 2292.03, 2324.63],
-  ['2013/2/28', 2322.32, 2365.59, 2308.92, 2366.16],
-  ['2013/3/1', 2364.54, 2359.51, 2330.86, 2369.65],
-  ['2013/3/4', 2332.08, 2273.4, 2259.25, 2333.54],
-  ['2013/3/5', 2274.81, 2326.31, 2270.1, 2328.14],
-  ['2013/3/6', 2333.61, 2347.18, 2321.6, 2351.44],
-  ['2013/3/7', 2340.44, 2324.29, 2304.27, 2352.02],
-  ['2013/3/8', 2326.42, 2318.61, 2314.59, 2333.67],
-  ['2013/3/11', 2314.68, 2310.59, 2296.58, 2320.96],
-  ['2013/3/12', 2309.16, 2286.6, 2264.83, 2333.29],
-  ['2013/3/13', 2282.17, 2263.97, 2253.25, 2286.33],
-  ['2013/3/14', 2255.77, 2270.28, 2253.31, 2276.22],
-  ['2013/3/15', 2269.31, 2278.4, 2250, 2312.08],
-  ['2013/3/18', 2267.29, 2240.02, 2239.21, 2276.05],
-  ['2013/3/19', 2244.26, 2257.43, 2232.02, 2261.31],
-  ['2013/3/20', 2257.74, 2317.37, 2257.42, 2317.86],
-  ['2013/3/21', 2318.21, 2324.24, 2311.6, 2330.81],
-  ['2013/3/22', 2321.4, 2328.28, 2314.97, 2332],
-  ['2013/3/25', 2334.74, 2326.72, 2319.91, 2344.89],
-  ['2013/3/26', 2318.58, 2297.67, 2281.12, 2319.99],
-  ['2013/3/27', 2299.38, 2301.26, 2289, 2323.48],
-  ['2013/3/28', 2273.55, 2236.3, 2232.91, 2273.55],
-  ['2013/3/29', 2238.49, 2236.62, 2228.81, 2246.87],
-  ['2013/4/1', 2229.46, 2234.4, 2227.31, 2243.95],
-  ['2013/4/2', 2234.9, 2227.74, 2220.44, 2253.42],
-  ['2013/4/3', 2232.69, 2225.29, 2217.25, 2241.34],
-  ['2013/4/8', 2196.24, 2211.59, 2180.67, 2212.59],
-  ['2013/4/9', 2215.47, 2225.77, 2215.47, 2234.73],
-  ['2013/4/10', 2224.93, 2226.13, 2212.56, 2233.04],
-  ['2013/4/11', 2236.98, 2219.55, 2217.26, 2242.48],
-  ['2013/4/12', 2218.09, 2206.78, 2204.44, 2226.26],
-  ['2013/4/15', 2199.91, 2181.94, 2177.39, 2204.99],
-  ['2013/4/16', 2169.63, 2194.85, 2165.78, 2196.43],
-  ['2013/4/17', 2195.03, 2193.8, 2178.47, 2197.51],
-  ['2013/4/18', 2181.82, 2197.6, 2175.44, 2206.03],
-  ['2013/4/19', 2201.12, 2244.64, 2200.58, 2250.11],
-  ['2013/4/22', 2236.4, 2242.17, 2232.26, 2245.12],
-  ['2013/4/23', 2242.62, 2184.54, 2182.81, 2242.62],
-  ['2013/4/24', 2187.35, 2218.32, 2184.11, 2226.12],
-  ['2013/4/25', 2213.19, 2199.31, 2191.85, 2224.63],
-  ['2013/4/26', 2203.89, 2177.91, 2173.86, 2210.58],
-  ['2013/5/2', 2170.78, 2174.12, 2161.14, 2179.65],
-  ['2013/5/3', 2179.05, 2205.5, 2179.05, 2222.81],
-  ['2013/5/6', 2212.5, 2231.17, 2212.5, 2236.07],
-  ['2013/5/7', 2227.86, 2235.57, 2219.44, 2240.26],
-  ['2013/5/8', 2242.39, 2246.3, 2235.42, 2255.21],
-  ['2013/5/9', 2246.96, 2232.97, 2221.38, 2247.86],
-  ['2013/5/10', 2228.82, 2246.83, 2225.81, 2247.67],
-  ['2013/5/13', 2247.68, 2241.92, 2231.36, 2250.85],
-  ['2013/5/14', 2238.9, 2217.01, 2205.87, 2239.93],
-  ['2013/5/15', 2217.09, 2224.8, 2213.58, 2225.19],
-  ['2013/5/16', 2221.34, 2251.81, 2210.77, 2252.87],
-  ['2013/5/17', 2249.81, 2282.87, 2248.41, 2288.09],
-  ['2013/5/20', 2286.33, 2299.99, 2281.9, 2309.39],
-  ['2013/5/21', 2297.11, 2305.11, 2290.12, 2305.3],
-  ['2013/5/22', 2303.75, 2302.4, 2292.43, 2314.18],
-  ['2013/5/23', 2293.81, 2275.67, 2274.1, 2304.95],
-  ['2013/5/24', 2281.45, 2288.53, 2270.25, 2292.59],
-  ['2013/5/27', 2286.66, 2293.08, 2283.94, 2301.7],
-  ['2013/5/28', 2293.4, 2321.32, 2281.47, 2322.1],
-  ['2013/5/29', 2323.54, 2324.02, 2321.17, 2334.33],
-  ['2013/5/30', 2316.25, 2317.75, 2310.49, 2325.72],
-  ['2013/5/31', 2320.74, 2300.59, 2299.37, 2325.53],
-  ['2013/6/3', 2300.21, 2299.25, 2294.11, 2313.43],
-  ['2013/6/4', 2297.1, 2272.42, 2264.76, 2297.1],
-  ['2013/6/5', 2270.71, 2270.93, 2260.87, 2276.86],
-  ['2013/6/6', 2264.43, 2242.11, 2240.07, 2266.69],
-  ['2013/6/7', 2242.26, 2210.9, 2205.07, 2250.63],
-  ['2013/6/13', 2190.1, 2148.35, 2126.22, 2190.1]
-          ]);
-  
-          // 옵션 설정
-          const option = {
-            title: {
-              text: 'Stock Candlestick Chart',
-              left: 0
-            },
-            tooltip: {
-              trigger: 'axis',
-              axisPointer: {
-                type: 'cross'
-              }
-            },
-            legend: {
-              data: ['Candlestick', 'MA5', 'MA10', 'MA20', 'MA30']
-            },
-            grid: {
-              left: '10%',
-              right: '10%',
-              bottom: '15%'
-            },
-            xAxis: {
-              type: 'category',
-              data: data0.categoryData,
-              boundaryGap: false,
-              axisLine: { onZero: false },
-              splitLine: { show: false },
-              min: 'dataMin',
-              max: 'dataMax'
-            },
-            yAxis: {
-              scale: true,
-              splitArea: {
-                show: true
-              }
-            },
-            dataZoom: [
-              {
-                type: 'inside',
-                start: 50,
-                end: 100
-              },
-              {
-                show: true,
-                type: 'slider',
-                top: '90%',
-                start: 50,
-                end: 100
-              }
-            ],
-            series: [
-              {
-                name: 'Candlestick',
-                type: 'candlestick',
-                data: data0.values,
-                itemStyle: {
-                  color: upColor,
-                  color0: downColor,
-                  borderColor: upBorderColor,
-                  borderColor0: downBorderColor
-                }
-              },
-              {
-                name: 'MA5',
-                type: 'line',
-                data: calculateMA(5, data0),
-                smooth: true,
-                lineStyle: {
-                  opacity: 0.5
-                }
-              },
-              {
-                name: 'MA10',
-                type: 'line',
-                data: calculateMA(10, data0),
-                smooth: true,
-                lineStyle: {
-                  opacity: 0.5
-                }
-              },
-              {
-                name: 'MA20',
-                type: 'line',
-                data: calculateMA(20, data0),
-                smooth: true,
-                lineStyle: {
-                  opacity: 0.5
-                }
-              },
-              {
-                name: 'MA30',
-                type: 'line',
-                data: calculateMA(30, data0),
-                smooth: true,
-                lineStyle: {
-                  opacity: 0.5
-                }
-              }
-            ]
-          };
-  
-          myChart.setOption(option);
-        }
-      };
-  
-      // onMounted에서 차트를 렌더링
-      onMounted(() => {
-        renderChart();
-      });
-  
-      return {
-        chartDom
-      };
-    }
-  };
-  </script>
-  
-  <style scoped>
-  #main {
-    width: 100%;
-    height: 600px;
+  <div>
+    <div ref="chartDom" id="main" style="width: 800px; height: 600px"></div>
+  </div>
+</template>
+
+<script setup>
+import {
+  ref,
+  onMounted,
+  watch,
+  defineProps,
+  toRef,
+  onBeforeUnmount,
+  defineEmits,
+} from "vue";
+import * as echarts from "echarts";
+import { useTradeStore } from "@/stores/tradeStore";
+import axios from "axios";
+
+const chartDom = ref(null);
+let myChart = null; // 차트 인스턴스 저장
+let data0 = { categoryData: [], values: [], volumes: [] }; // 초기 차트 데이터
+const tradeStore = useTradeStore();
+var w = null;
+
+const props = defineProps({
+  selectStockCode: String,
+});
+
+const emit = defineEmits(["updatePrice"]); // 이벤트 정의
+
+const stockCode = toRef(props, "selectStockCode");
+const stockName = toRef(tradeStore, "stockName"); // stockName 가져오기
+
+// 차트 데이터를 가공하는 함수
+const splitData = (rawData) => {
+  const categoryData = [];
+  const values = [];
+  const volumes = [];
+
+  for (let i = 0; i < rawData.length; i++) {
+    categoryData.push(rawData[i][0]);
+    values.push([rawData[i][1], rawData[i][2], rawData[i][3], rawData[i][4]]);
+    volumes.push(rawData[i][5]); // 거래량 데이터도 추가
   }
-  </style>
-  
+  return {
+    categoryData: categoryData,
+    values: values,
+    volumes: volumes, // 거래량 데이터 포함
+  };
+};
+
+const calculateMA = (dayCount, data0) => {
+  const result = [];
+  for (let i = 0, len = data0.values.length; i < len; i++) {
+    if (i < dayCount) {
+      result.push("-");
+      continue;
+    }
+    let sum = 0;
+    for (let j = 0; j < dayCount; j++) {
+      sum += +data0.values[i - j][1];
+    }
+    result.push(sum / dayCount);
+  }
+  return result;
+};
+
+const renderChart = () => {
+  if (chartDom.value) {
+    // 기존에 차트 인스턴스가 있으면 삭제
+    if (myChart) {
+      myChart.dispose();
+    }
+
+    myChart = echarts.init(chartDom.value);
+
+    const upColor = "#ed2926";
+    const upBorderColor = "#d01411";
+    const downColor = "#2679ed";
+    const downBorderColor = "#1160d0";
+
+    // 차트 초기 옵션 설정
+    const option = {
+      title: {
+        text: "모의 투자",
+        left: 0,
+      },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "cross",
+        },
+      },
+      legend: {
+        data: ["Candlestick", "Volume", "MA5", "MA10", "MA20", "MA30"],
+      },
+      grid: [
+        {
+          left: "10%",
+          right: "8%",
+          height: "60%", // 캔들스틱 차트 높이
+          top: "10%",
+        },
+        {
+          left: "10%", // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
+          right: "8%", // 거래량 차트와 캔들 차트의 간격을 동일하게 맞춤
+          top: "75%", // 거래량 차트 위치
+          height: "10%", // 거래량 차트 높이
+        },
+      ],
+      xAxis: [
+        {
+          type: "category",
+          data: data0.categoryData,
+          boundaryGap: true, // 동일하게 설정
+          axisLine: { onZero: false },
+          splitLine: { show: false },
+          min: "dataMin",
+          max: "dataMax",
+          gridIndex: 0, // 캔들 차트 x축
+          axisLabel: {
+            formatter: (value) => {
+              // 'HHMMSS' 형식의 데이터를 'HH:MM' 형식으로 변환
+              return value.slice(0, 2) + ":" + value.slice(2, 4);
+            },
+          },
+        },
+        {
+          type: "category",
+          data: data0.categoryData,
+          boundaryGap: true, // 동일하게 설정
+          gridIndex: 1, // 거래량 차트 x축
+          axisLabel: { show: false }, // 거래량 차트에서 x축 라벨 숨김
+          axisLine: { onZero: false },
+        },
+      ],
+      yAxis: [
+        {
+          scale: true,
+          splitArea: { show: true },
+          gridIndex: 0, // 캔들 차트 y축
+          min: function (value) {
+            // 최소값을 데이터 최소값보다 약간 낮게 설정하고, 내림으로 처리
+            return Math.floor(value.min * 0.999);
+          },
+          max: function (value) {
+            // 최대값을 데이터 최대값보다 약간 높게 설정하고, 올림으로 처리
+            return Math.ceil(value.max * 1.001);
+          },
+        },
+        {
+          scale: true,
+          gridIndex: 1, // 거래량 차트 y축
+          axisLabel: { show: true },
+          min: 0, // 막대 차트의 최소값 설정 (음수 방지)
+          max: function (value) {
+            return value.max * 1.1; // 막대 차트 최대값을 자동으로 데이터의 10% 상향
+          },
+        },
+      ],
+      dataZoom: [
+        {
+          type: "inside",
+          xAxisIndex: [0, 1], // 두 개의 xAxis에 동일하게 적용
+          start: 50,
+          end: 100,
+        },
+        {
+          show: true,
+          type: "slider",
+          xAxisIndex: [0, 1], // 두 개의 xAxis에 동일하게 적용
+          top: "90%",
+          start: 50,
+          end: 100,
+        },
+      ],
+      series: [
+        {
+          name: "Candlestick",
+          type: "candlestick",
+          data: data0.values,
+          barWidth: "30%", // 캔들스틱 차트의 너비 설정
+          itemStyle: {
+            color: upColor,
+            color0: downColor,
+            borderColor: upBorderColor,
+            borderColor0: downBorderColor,
+          },
+        },
+        {
+          name: "Volume",
+          type: "bar",
+          xAxisIndex: 1, // 거래량 차트의 x축 인덱스
+          yAxisIndex: 1, // 거래량 차트의 y축 인덱스
+          data: data0.volumes,
+          barWidth: "30%", // 거래량 차트의 너비 설정 (캔들 차트와 동일하게 설정)
+          itemStyle: {
+            color: function (params) {
+              return data0.values[params.dataIndex][1] >
+                data0.values[params.dataIndex][0]
+                ? upColor
+                : downColor;
+            },
+          },
+        },
+        {
+          name: "MA5",
+          type: "line",
+          data: calculateMA(5, data0),
+          smooth: true,
+          lineStyle: { opacity: 0.5 },
+        },
+        {
+          name: "MA10",
+          type: "line",
+          data: calculateMA(10, data0),
+          smooth: true,
+          lineStyle: { opacity: 0.5 },
+        },
+        {
+          name: "MA20",
+          type: "line",
+          data: calculateMA(20, data0),
+          smooth: true,
+          lineStyle: { opacity: 0.5 },
+        },
+        {
+          name: "MA30",
+          type: "line",
+          data: calculateMA(30, data0),
+          smooth: true,
+          lineStyle: { opacity: 0.5 },
+        },
+      ],
+    };
+
+    myChart.setOption(option);
+  }
+};
+
+// 실시간 데이터를 차트에 업데이트하는 함수
+const updateChartData = (newData) => {
+  data0.categoryData.push(newData[0]); // 시간
+  data0.values.push([newData[1], newData[2], newData[3], newData[4]]); // 시가, 현재가, 저가, 고가
+  data0.volumes.push(newData[5]); // 거래량 추가
+
+  // 현재가를 tradeStore에 저장 (newData[2] 사용)
+
+  tradeStore.setStockPrice(newData[2]); // newData[2]를 현재가로 사용
+
+  if (myChart) {
+    myChart.setOption({
+      xAxis: [
+        { data: data0.categoryData },
+        { data: data0.categoryData }, // 거래량 차트의 xAxis 업데이트
+      ],
+      series: [
+        { name: "Candlestick", data: data0.values },
+        { name: "Volume", data: data0.volumes },
+        { name: "MA5", data: calculateMA(5, data0) },
+        { name: "MA10", data: calculateMA(10, data0) },
+        { name: "MA20", data: calculateMA(20, data0) },
+        { name: "MA30", data: calculateMA(30, data0) },
+      ],
+    });
+  }
+};
+
+// 차트에 과거 데이터를 렌더링
+const loadChartData = async (selectStockcode) => {
+  console.log(selectStockcode);
+  try {
+    const pastData = await axios.get(`/api/chart/data/${selectStockcode}`); // 비동기 데터 수신을 기다림
+    const formattedData = pastData.data.map((data) => [
+      data[0], // 시간
+      data[1], // 시가
+      data[2], // 현재가
+      data[3], // 저가
+      data[4], // 고가
+      data[5], // 거래량
+    ]);
+
+    // 가공된 데이터를 updateChartData에 전달하여 차트를 업데이트
+    formattedData.forEach((newData) => {
+      updateChartData(newData);
+    });
+  } catch (error) {
+    console.error("Error loading chart data:", error);
+  }
+};
+
+// WebSocket 연결 및 실시간 데이터 수신
+const connectWebSocketForBid = (stockcode) => {
+  if (!stockcode) {
+    console.log(
+      "Stock code is null or undefined, skipping WebSocket connection."
+    );
+    return;
+  }
+  const g_app_key = "PSRXymebdmx9Kvgesb6qEHaj3zo5j6FHIftE";
+  const g_appsecret =
+    "1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=";
+  const g_personalseckey =
+    "1JhEewe7fshUrv42mE0enQSzTRIj/awR2RImFyplwmUiu3mDYrh5quUSna1Stdkw4JFOqJMT/gkwj05e8grWAjHUM+t8EOsp1Lx48L4uVA1t/bY5oUQuGd5h4D5Dg8A7zHQxFWkNfiewHEVJXguLWrcHxRC2j0zKdTcZgg1p3wyqBqJ1vG0=";
+  // var w;
+
+  try {
+    const url = "ws://ops.koreainvestment.com:31000"; // WebSocket 서버 주소
+    w = new WebSocket(url);
+
+    w.onopen = function () {
+      console.log("[Connection OK]");
+      const result = `{"header":{"authoriztion":"","appkey":"${g_app_key}","appsecret":"${g_appsecret}","personalseckey":"${g_personalseckey}","custtype":"P","tr_type":"1","content-type":"utf-8"},"body": {"input": {"tr_id":"H0STCNT0","tr_key":"${stockcode}"}}}`;
+      w.send(result);
+    };
+
+    w.onmessage = function (e) {
+      handleBidData(e); // 데이터 수신 및 처리
+    };
+
+    w.onerror = function (e) {
+      console.log("WebSocket Error: ", e);
+    };
+
+    w.onclose = function () {
+      console.log("[Connection Closed]");
+      w = null;
+    };
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// WebSocket에서 받은 데이터를 처리하는 함수
+let highPrice = -Infinity; // 매우 작은 값으로 초기화하여 첫 가격이 무조건 최고가로 설정되게끔
+let lowPrice = Infinity; // 매우 큰 값으로 초기화하여 첫 가격이 무조건 최저가로 설정되게끔
+let deleyTime = false; // 타이머 제어용 플래그
+let savedStartPrice = null; // 딜레이가 시작될 때의 시가 (처음의 curPrice 값 저장)
+let endVolume = 0; // 딜레이 주기 동안 누적 거래량
+let endCurPrice = null; // 딜레이가 끝날 때의 종가 (최종 curPrice 값 저장)
+
+const handleBidData = (e) => {
+  var recvdata = e.data;
+  var parts = recvdata.split("|");
+  var bodydata = parts[3];
+  var bodyParts = bodydata.split("^");
+  const time = bodyParts[1]; // 체결 시간
+  const curPrice = parseFloat(bodyParts[2]); // 현재가 (실시간 데이터)
+  const curVolume = parseFloat(bodyParts[12]); // 거래량을 숫자로 변환
+
+  console.log("현재가:", curPrice, "StockCode: ", stockCode.value); // 현재가와 주식 코드 출력
+
+  if (!deleyTime) {
+    deleyTime = true;
+    savedStartPrice = curPrice; // 딜레이 시작 시의 현재가를 시가로 저장
+    console.log("시가: ", savedStartPrice);
+    tradeStore.setStockPrice(savedStartPrice);
+    endVolume = 0; // 누적 거래량 초기화
+    highPrice = curPrice; // 시작 시 고가 초기화
+    lowPrice = curPrice; // 시작 시 저가 초기화
+
+    setTimeout(() => {
+      deleyTime = false;
+
+      const chartData = [
+        time,
+        savedStartPrice, // 시가 (딜레이 시작 시의 가격)
+        endCurPrice, // 종가 (딜레이 끝난 시점의 가격)
+        lowPrice, // 저가
+        highPrice, // 고가
+        endVolume, // 누적 거래량
+      ];
+
+      console.log("누적 거래량: ", endVolume);
+      console.log(
+        "차트 데이트 - 시가:",
+        savedStartPrice,
+        "종가:",
+        endCurPrice,
+        "최고가: ",
+        highPrice,
+        "최저가: ",
+        lowPrice
+      );
+
+      updateChartData(chartData);
+
+      // 초기화
+      savedStartPrice = null;
+      highPrice = curPrice;
+      lowPrice = curPrice;
+    }, 60000); // 1분 딜레이
+  } else {
+    endCurPrice = curPrice;
+    // 딜레이 중에도 curPrice가 계속 갱신됨
+    endVolume += curVolume; // 누적 거래량 계산
+    // 딜레이 중에도 최고가와 최저가를 갱신
+    if (curPrice > highPrice) {
+      highPrice = curPrice; // 최고가 갱신
+    }
+    if (curPrice < lowPrice) {
+      lowPrice = curPrice; // 최저가 갱신
+    }
+  }
+};
+
+onMounted(() => {
+  console.log("onMounted에서 받은 주식 코드:", stockCode.value);
+  console.log("선택된 주식 이름:", stockName.value); // stockName 출력
+  renderChart(); // 초기 차트 렌더링
+  loadChartData(stockCode.value); // 과거 데이터 로딩
+  connectWebSocketForBid(stockCode.value); // 실시간 데이터 WebSocket 연결
+});
+onBeforeUnmount(() => {
+  if (w) {
+    console.log("컴포넌트 언마운트 시 WebSocket 닫기");
+    w.close();
+    w = null;
+    deleyTime = true;
+  }
+});
+watch(stockCode, (newStockCode, oldStockCode) => {
+  // WebSocket이 이미 열려 있으면 먼저 닫기
+  if (w) {
+    console.log("기존 WebSocket 연결 닫기");
+    w.close();
+    w = null;
+  }
+
+  if (newStockCode) {
+    console.log("새로운 주식 코드로 WebSocket 연결:", newStockCode);
+    connectWebSocketForBid(newStockCode);
+  }
+});
+</script>
+
+<style scoped>
+#main {
+  width: 100%;
+  height: 600px;
+}
+</style>

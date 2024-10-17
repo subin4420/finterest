@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.finterest.adminChart.mapper.AdminChartMapper">
+    <!-- 오늘의 가입자 수 조회 -->
+    <select id="getTodaySignupCount" resultType="int">
+        SELECT COUNT(*)
+        FROM Users
+        WHERE signup_date = CURDATE()
+    </select>
+
+    <select id="getActiveUser" resultType="int">
+        SELECT COUNT(*)
+        FROM Users
+        WHERE account_status = 'active'
+    </select>
+
+    <!-- 등록된 퀴즈 수 조회 -->
+    <select id="getTotalQuizCount" resultType="int">
+        SELECT COUNT(*)
+        FROM Quizzes
+    </select>
+
+    <!-- 등록된 용어 사전 수 조회 -->
+    <select id="getTotalArchiveCount" resultType="int">
+        SELECT COUNT(*)
+        FROM Learning_Materials
+    </select>
+
+
+    <!-- 특정 월의 주별 퀴즈 완료 횟수 조회 -->
+    <select id="getWeeklyQuizCompletionCounts" parameterType="map" resultType="map">
+        SELECT
+            CONCAT(WEEK(MIN(completed_at), 1) - WEEK(DATE_SUB(MIN(completed_at), INTERVAL DAYOFMONTH(MIN(completed_at)) - 1 DAY), 1) + 1, '주차') AS week,  -- 10월 내의 주차 계산
+            COUNT(*) AS count
+        FROM
+            Quiz_Sets_Results
+        WHERE
+            YEAR(completed_at) = #{year}  -- 연도를 필터링
+          AND MONTH(completed_at) = #{month}  -- 월을 필터링
+        GROUP BY
+            WEEK(completed_at, 1)  -- 주 단위로 그룹화
+        ORDER BY
+            WEEK(completed_at, 1)  -- 주 순서대로 정렬
+    </select>
+
+
+    <!-- 월별 퀴즈 완료 횟수 조회 -->
+    <select id="getMonthlyQuizCompletionCounts" parameterType="map" resultType="map">
+        SELECT
+            DATE_FORMAT(completed_at, '%Y-%m') AS month,
+            COUNT(*) AS count
+        FROM Quiz_Sets_Results
+        WHERE YEAR(completed_at) = #{year}
+        GROUP BY DATE_FORMAT(completed_at, '%Y-%m')
+        ORDER BY DATE_FORMAT(completed_at, '%Y-%m')
+    </select>
+
+    <!-- 특정 월의 주별 학습자료 완료 횟수 조회 -->
+    <select id="getWeeklyArchiveCompletionCounts" parameterType="map" resultType="map">
+        SELECT
+            CONCAT(WEEK(MIN(completed_at), 1) - WEEK(DATE_SUB(MIN(completed_at), INTERVAL DAYOFMONTH(MIN(completed_at)) - 1 DAY), 1) + 1, '주차') AS week,  -- 10월 내의 주차 계산
+            COUNT(*) AS count
+        FROM
+            Learning_Progress
+        WHERE
+            YEAR(completed_at) = #{year}  -- 연도 필터
+          AND MONTH(completed_at) = #{month}  -- 월 필터
+          AND status = 'completed'
+        GROUP BY
+            WEEK(completed_at, 1)  -- 주 단위로 그룹화
+        ORDER BY
+            WEEK(completed_at, 1)  -- 주 순서대로 정렬
+    </select>
+
+
+    <!-- 월별 학습자료 완료 횟수 조회 -->
+    <select id="getMonthlyArchiveCompletionCounts" parameterType="map" resultType="map">
+        SELECT
+            DATE_FORMAT(completed_at, '%Y-%m') AS month,
+        COUNT(*) AS count
+        FROM
+            Learning_Progress
+        WHERE
+            YEAR(completed_at) = #{year}  -- 연도 필터
+          AND status = 'completed'
+        GROUP BY
+            DATE_FORMAT(completed_at, '%Y-%m')  -- 월별 그룹화
+        ORDER BY
+            DATE_FORMAT(completed_at, '%Y-%m')  -- 월 순서대로 정렬
+    </select>
+
+
+    <!-- 활동별 포인트 획득 비율 조회 -->
+    <select id="getActivityPointsBreakdown" resultType="map">
+        SELECT
+            pr.activity_name AS activityName,
+            SUM(p.points_change) AS points
+        FROM
+            Points p
+                JOIN
+            Point_Rules pr ON p.source = pr.rule_id
+        WHERE
+            p.points_change > 0
+        GROUP BY
+            pr.activity_name
+        ORDER BY
+            points DESC
+    </select>
+
+    <!-- 총 포인트 획득량 조회 -->
+    <select id="getTotalPointsEarned" resultType="int">
+        SELECT
+            SUM(p.points_change)
+        FROM
+            Points p
+        WHERE
+            p.points_change > 0
+    </select>
+
+    <!-- 4.2 퀴즈 및 학습자료 통계 -->
+    <!-- 모든 사용자 이름 조회 -->
+    <select id="getAllUserNames" resultType="string">
+        SELECT username FROM Users
+    </select>
+
+    <select id="getAllUserIds" resultType="int">
+        SELECT user_id FROM Users
+    </select>
+
+
+    <!-- 사용자별 퀴즈 참여 수 조회 -->
+    <select id="getQuizParticipationCountByUser" parameterType="int" resultType="map">
+        SELECT
+            user_id,
+            COUNT(*) AS quizParticipationCount
+        FROM
+            Quiz_Sets_Results
+        WHERE
+            user_id = #{userId}
+        GROUP BY user_id
+    </select>
+
+    <!-- 사용자별 퀴즈 평균 점수 조회 -->
+    <select id="getAverageQuizScoreByUser" parameterType="int" resultType="map">
+        SELECT
+            user_id,
+            AVG(total_score) AS averageQuizScore
+        FROM
+            Quiz_Sets_Results
+        WHERE
+            user_id = #{userId}
+        GROUP BY user_id
+    </select>
+
+    <!-- 사용자별 학습 자료 완료 횟수 조회 -->
+    <select id="getLearningMaterialCompletionCountByUser" parameterType="int" resultType="map">
+        SELECT
+            user_id,
+            COUNT(*) AS learningMaterialCompletionCount
+        FROM
+            Learning_Progress
+        WHERE
+            user_id = #{userId}
+          AND status = 'completed'
+        GROUP BY user_id
+    </select>
+
+    <!-- 사용자별 학습 자료 완료 비율 조회 -->
+    <select id="getCompletionRateByUser" parameterType="int" resultType="map">
+        SELECT
+            user_id,
+            CONCAT(ROUND((SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2), '%') AS completionRate
+        FROM
+            Learning_Progress
+        WHERE
+            user_id = #{userId}
+        GROUP BY user_id
+    </select>
+
+
+
+
+</mapper>

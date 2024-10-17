@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.finterest.invest.stock.simulator.mapper.SimulatorMapper">
+    <update id="updateOauthToken" parameterType="String">
+        UPDATE oauth_token
+        SET token = #{VALUE}
+    </update>
+
+    <update id="updateUserMoney">
+        UPDATE users
+        SET money = #{money},
+            update_date = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <select id="selectTotalQuantity" resultType="Long">
+        SELECT total_stock_holdings
+        FROM trade
+        WHERE stock_code = #{stockCode}
+          AND user_id = #{userId}
+        ORDER BY created_at DESC
+            LIMIT 1
+    </select>
+
+    <select id="selectTotalPrice" resultType="java.math.BigDecimal">
+        SELECT total_price
+        FROM trade
+        WHERE stock_code = #{stockCode}
+          AND user_id = #{userId}
+        ORDER BY created_at DESC
+            LIMIT 1
+    </select>
+
+    <select id="viewStockHeld"
+            parameterType="Integer"
+            resultType="org.finterest.invest.stock.simulator.domain.SimulatorVO">
+        SELECT t.stock_name, t.total_price, t.total_stock_holdings
+        FROM trade t
+                 INNER JOIN (
+            SELECT stock_name, MAX(created_at) as latest
+            FROM trade
+            WHERE user_id = #{VALUE}
+            GROUP BY stock_name
+        ) latest_trade
+                            ON t.stock_name = latest_trade.stock_name AND t.created_at = latest_trade.latest
+        WHERE t.user_id = #{VALUE}
+    </select>
+
+    <select id="getUserMoney"
+            parameterType="Integer"
+            resultType="java.math.BigDecimal">
+        SELECT money FROM users
+        WHERE user_id = #{VALUE}
+    </select>
+
+    <select id="getOauthToken" resultType="java.lang.String">
+        SELECT * FROM oauth_token
+    </select>
+
+    <select id="getStockName"
+            parameterType="string"
+            resultType="java.lang.String">
+        SELECT itmsNm FROM kospi_stock_list
+        WHERE srtnCd = #{VALUE}
+    </select>
+
+    <insert id="tradeStock" parameterType="org.finterest.invest.stock.simulator.domain.SimulatorVO">
+        INSERT INTO trade (stock_code, stock_name, price, quantity, trade_type, total_price, total_stock_holdings, user_id, created_at, updated_at)
+        VALUES (#{stockCode}, #{stockName}, #{price}, #{quantity}, #{tradeType}, #{totalPrice}, #{totalStockHoldings}, #{userId}, NOW(), NOW());
+    </insert>
+    <select id="getUserTradeHistory" parameterType="Integer" resultType="org.finterest.invest.stock.simulator.domain.SimulatorVO">
+        SELECT
+            trade_id AS tradeId,
+            stock_code AS stockCode,
+            stock_name AS stockName,
+            price,
+            quantity,
+            trade_type AS tradeType,
+            total_price AS totalPrice,
+            total_stock_holdings AS totalStockHoldings,
+            user_id AS userId,
+            created_at AS createdAt,
+            updated_at AS updatedAt
+        FROM
+            Trade
+        WHERE
+            user_id = #{userId}
+        ORDER BY
+            created_at DESC
+    </select>
+
+</mapper>

@@ -14,10 +14,10 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class ConversionRateDTO {
-    private int rateId;
-    private BigDecimal conversionRate;
-    private Date createdAt;
-    private Date updatedAt;
+    private int rateId;                // 환전 비율 ID
+    private BigDecimal conversionRate;  // 환전 비율
+    private Date createdAt;            // 생성일
+    private Date updatedAt;            // 수정일
 
     // VO -> DTO 변환
     public static ConversionRateDTO of(ConversionRateVO vo) {

@@ -1,10 +1,12 @@
-package org.scoula.common.config;
+package org.finterest.common.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.finterest.invest.stock.overall.listener.AppStartupListener;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,17 +23,47 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
-    "org.scoula.board.mapper",
-    "org.scoula.member.mapper",
-        "org.scoula.invest.domain.stock.overall.mapper",
-        "org.scoula.invest.domain.conversion.mapper",
-        "org.scoula.invest.domain.board.mapper"
-})
+        //B팀
+        "org.finterest.archive.mapper",
+        "org.finterest.quiz.mapper",
+        "org.finterest.user.mapper",
+        "org.finterest.point.mapper",
+        "org.finterest.notice.mapper",
+        "org.finterest.adminChart.mapper",
+        "org.finterest.ranking.mapper",
 
+        //A팀
+        "org.finterest.invest.stock.overall.mapper",
+        "org.finterest.invest.conversion.mapper",
+        "org.finterest.invest.board.mapper",
+        "org.finterest.invest.comment.mapper",
+        "org.finterest.invest.stock.simulator.mapper",
+        "org.finterest.invest.scenario.mapper",
+        "org.finterest.invest.portfolio.mapper"
+
+})
 @ComponentScan(basePackages = {
-//    "org.scoula.board.service",
-//    "org.scoula.member.service",
-        "org.scoula.invest"
+        "org.finterest.security.config",
+        "org.finterest.common.config",
+
+        "org.finterest.user",
+        "org.finterest.archive",
+        "org.finterest.quiz",
+        "org.finterest.point",
+        "org.finterest.notice",
+        "org.finterest.adminChart",
+        "org.finterest.ranking",
+
+
+        "org.finterest.invest.stock.overall.service",
+        "org.finterest.invest.stock.simulator.service",
+        "org.finterest.invest.board.service",
+        "org.finterest.invest.conversion.service",
+        "org.finterest.invest.comment.service",
+        "org.finterest.invest.scenario.service",
+        "org.finterest.invest.stock.simulator.service", //서버시작시에 데이터를 미리 로드하기 위해 추가
+        "org.finterest.invest.portfolio.service"
+
 
 })
 @Slf4j
@@ -41,6 +73,12 @@ public class RootConfig {
     @Value("${jdbc.url}") String url;
     @Value("${jdbc.username}") String username;
     @Value("${jdbc.password}") String password;
+
+    @Bean
+    public AppStartupListener appStartupListener() {
+        return new AppStartupListener();
+    }
+
 
     @Bean
     public DataSource dataSource() {
@@ -71,6 +109,11 @@ public class RootConfig {
     public DataSourceTransactionManager transactionManager(){
         DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
         return manager;
+    }
+
+    @Bean
+    public SqlSessionTemplate sqlSessionTemplate1(SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
     }
 
 }

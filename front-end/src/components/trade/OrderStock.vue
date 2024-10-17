@@ -1,0 +1,394 @@
+<template>
+  <form class="order-form" @submit.prevent="handleOrder">
+    <h4>주문하기</h4>
+    <div class="order-form__togglebox" style="margin-top: 10px">
+      <div class="order-form__togglebox--section">
+        <div
+          class="order-form__togglebox--purchase"
+          :class="{ selected: isBuying }"
+          @click="toggleBuySell(true)"
+        >
+          <b>구매</b>
+        </div>
+        <div
+          class="order-form__togglebox--sell"
+          :class="{ selected: !isBuying }"
+          @click="toggleBuySell(false)"
+        >
+          <b>판매</b>
+        </div>
+      </div>
+    </div>
+    <label for="purchase-price" style="margin-top: 15px">거래 가격</label>
+    <input
+      class="order-form__price"
+      :value="isNaN(Number(price)) ? '0' : Number(price).toLocaleString()"
+      readonly
+    />
+    <!-- 현재가를 표시 -->
+
+    <label for="purchase-amount" style="margin-top: 15px">거래 수량</label>
+    <div class="order-form__input">
+      <input class="no-border no-arrow" v-model.number="amount" type="number" />
+      <span> 주 </span>
+      <div class="order-form__amountbox">
+        <div class="order-form__amountbox--minus" @click="decreaseAmount">
+          -
+        </div>
+        <div class="order-form__amountbox--plus" @click="increaseAmount">+</div>
+      </div>
+    </div>
+
+    <div class="order-form__buttonbox" style="margin-bottom: 15px">
+      <input
+        class="order-form__button"
+        type="button"
+        value="10%"
+        @click="setPercentage(10)"
+      />
+      <input
+        class="order-form__button"
+        type="button"
+        value="25%"
+        @click="setPercentage(25)"
+      />
+      <input
+        class="order-form__button"
+        type="button"
+        value="50%"
+        @click="setPercentage(50)"
+      />
+      <input
+        class="order-form__button"
+        type="button"
+        value="최대"
+        @click="setMaxAmount"
+      />
+    </div>
+
+    <div class="order-form__state">
+      <div class="order-form__state--line" style="margin-top: 10px">
+        <p>거래가능 금액</p>
+        <p>
+          {{ isNaN(availableFunds) ? 0 : availableFunds.toLocaleString() }} 원
+        </p>
+      </div>
+      <div class="order-form__state--line" style="margin-top: 10px">
+        <p>총 금액</p>
+        <p>{{ isNaN(totalAmount) ? 0 : totalAmount.toLocaleString() }} 원</p>
+      </div>
+      <button type="submit" style="margin-top: 30px">거래하기</button>
+    </div>
+  </form>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useTradeStore } from '@/stores/tradeStore';
+import TradeService from '@/services/tradeService'; // TradeService import
+import { useAuthStore } from '@/stores/auth';
+import { useToast } from 'vue-toastification'; // vue-toastification import
+
+const toast = useToast(); // toast 초기화
+
+const authStore = useAuthStore();
+
+const tradeStore = useTradeStore();
+const selectStockcode = computed(() => tradeStore.getSelectedStockCode);
+const price = computed(() => tradeStore.getStockPrice); // tradeStore에서 현재가 가져오기
+const stockName = computed(() => tradeStore.getStockName); // stockName 추가
+const userId = authStore.getUserId;
+
+const isBuying = ref(true); // 구매/판매 토글 상태
+const amount = ref(1); // 구매 수량
+const availableFunds = ref(0); // 초기값을 0으로 설정
+
+// API 요청 함수
+const viewStockHeld = async () => {
+  try {
+    const response = await TradeService.getUserFunds(); // 자산 정보 가져오기
+    availableFunds.value = response.money; // API에서 가져온 money 값으로 설정
+    console.log('조회 성공:', response);
+  } catch (error) {
+    console.error('조회 실패:', error);
+  }
+};
+
+// 구매/판매 토글
+const toggleBuySell = (buying) => {
+  isBuying.value = buying;
+};
+
+// 총 금액 계산
+const totalAmount = computed(() => {
+  const validPrice = isNaN(price.value) ? 0 : price.value; // tradeStore에서 가져온 현재가 사용
+  const validAmount = isNaN(amount.value) ? 0 : amount.value;
+  return validPrice * validAmount;
+});
+
+// 수량 증가/감소
+const increaseAmount = () => {
+  amount.value++;
+};
+
+const decreaseAmount = () => {
+  if (amount.value > 1) {
+    amount.value--;
+  }
+};
+
+// 퍼센트로 구매 수량 설정 (10%, 25%, 50%, 최대)
+const setPercentage = (percentage) => {
+  const calculatedAmount = Math.floor(
+    (availableFunds.value * (percentage / 100)) / price.value
+  );
+  amount.value = calculatedAmount;
+};
+
+// 최대 금액 설정
+const setMaxAmount = () => {
+  const maxAmount = Math.floor(availableFunds.value / price.value);
+  amount.value = maxAmount;
+};
+
+// 주문 처리
+const handleOrder = async () => {
+  if (isBuying.value) {
+    console.log(`종목 코드: ${selectStockcode.value}`);
+    console.log(
+      `구매: ${price.value}원, ${amount.value}주, 총 금액: ${totalAmount.value}`
+    );
+
+    const requestData = {
+      stockCode: selectStockcode.value,
+      stockName: stockName.value, // stockName 추가
+      price: Number(price.value), // 현재가를 숫자로 변환
+      quantity: amount.value,
+      totalPrice: totalAmount.value,
+    };
+    console.log('구매 요청 데이터:', requestData); // 요청 데이터 출력
+
+    try {
+      const response = await TradeService.buyStock(requestData); // TradeService를 사용하여 요청
+      console.log('서버 응답:', response.data);
+      toast.success('구매가 완료되었습니다.'); // 구매 성공 메시지
+    } catch (error) {
+      console.error('구매 요청 중 오류 발생:', error);
+      console.error('응답 데이터:', error.response.data); // 응답 데이터 출력
+      toast.error('구매 요청 중 오류가 발생했습니다.'); // 오류 메시지 추가
+    }
+  } else {
+    console.log(`종목 코드: ${selectStockcode.value}`);
+    console.log(
+      `판매: ${price.value}원, ${amount.value}주, 총 금액: ${totalAmount.value}`
+    );
+
+    const requestData = {
+      stockCode: selectStockcode.value,
+      stockName: stockName.value, // stockName 추가
+      price: Number(price.value), // 현재가를 숫자로 변환
+      quantity: amount.value,
+      totalPrice: totalAmount.value,
+    };
+    console.log('판매 요청 데이터:', requestData); // 요청 데이터 출력
+
+    try {
+      const response = await TradeService.sellStock(requestData); // TradeService를 사용하여 요청
+      console.log('서버 응답:', response.data);
+      toast.success('판매가 완료되었습니다.', {
+        // 추가된 옵션: 빨간색 계열로 설정
+        timeout: 5000,
+        closeOnClick: true,
+        position: 'top-right',
+        type: 'error', // 오류 타입으로 설정하여 빨간색으로 표시
+      });
+    } catch (error) {
+      console.error('판매 요청 중 오류 발생:', error);
+      console.error('응답 데이터:', error.response.data); // 응답 데이터 출력
+      toast.error('판매 요청 중 오류가 발생했습니다.'); // 오류 메시지 추가
+    }
+  }
+  viewStockHeld();
+};
+
+onMounted(() => {
+  viewStockHeld(); // 컴포넌트가 로드되면 API 요청을 실행
+});
+
+console.log('현재가:', price.value); // price가 업데이트될 때마다 로그 출력
+</script>
+
+<style lang="scss" scoped>
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield; /* Firefox용 */
+}
+/* 테두리 제거 */
+input.no-border {
+  border: none; /* 테두리 제거 */
+  outline: none; /* 선택 시 외곽선 제거 */
+  height: 14px;
+}
+.order-form {
+  width: 200px;
+  border-radius: 15px;
+  background-color: lightblue;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  h4 {
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  label {
+    font-size: 13px;
+    color: #020202;
+    opacity: 0.53;
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+  }
+  &__price {
+    border-radius: 4px;
+    border: 1px solid gray;
+    height: 28px;
+  }
+
+  button {
+    width: 100%;
+    background-color: red;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    border-radius: 8px;
+    border: none;
+  }
+
+  &__togglebox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &--section {
+      display: flex;
+      flex-direction: row;
+      width: 128px;
+      height: 34px;
+      border-radius: 17px;
+      background-color: #dcdcdc;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      padding: 0px 8px;
+    }
+
+    &--purchase {
+      color: red;
+    }
+
+    &--sell {
+      color: blue;
+    }
+
+    &--purchase,
+    &--sell {
+      width: fit-content;
+      height: 24px;
+      padding: 0px 4px;
+      border-radius: 11px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &__button,
+  &__input {
+    width: 100%;
+    height: 28px;
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 4px;
+    margin-bottom: 8px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8px;
+
+    p {
+      font-size: 12px;
+      margin-bottom: 0px;
+    }
+  }
+
+  &__amountbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 22px;
+
+    &--plus,
+    &--minus {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__buttonbox {
+    display: grid;
+    flex-direction: row;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__button {
+    padding: 0;
+  }
+
+  &__state {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid gray;
+    margin: 12px 0px 32px 0px;
+    padding-top: 12px;
+    gap: 8px;
+
+    &--line {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      p {
+        font-size: 13px;
+        font-weight: 700;
+        opacity: 0.53;
+        margin-bottom: 0px;
+      }
+    }
+  }
+}
+
+.selected {
+  background-color: white;
+}
+</style>

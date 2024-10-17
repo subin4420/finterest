@@ -2,27 +2,31 @@ package org.finterest.invest.conversion.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.finterest.invest.conversion.domain.ConversionRateVO;
 import org.finterest.invest.conversion.domain.ConversionTransactionVO;
+import org.finterest.invest.conversion.dto.ConversionRateDTO;
+import org.finterest.invest.conversion.dto.UserBalanceDTO;
 
 import java.util.List;
 
 @Mapper
 public interface ConversionMapper {
 
+    // 조회, 비율 조정 관련 mapper
+    ConversionRateDTO getLatestRate(); // 최신 환전 비율
 
-    void updateConversionRate(ConversionRateVO conversionRate); // 환전 비율 업데이트
+    void insertConversionRate(ConversionRateDTO rateDTO); // 환전비율 입력
 
-    ConversionRateVO selectConversionRateById(@Param("rateId") int rateId); // 특정 환전 비율 조회
+    void updateConversionRate(ConversionRateDTO rateDTO); // 환전비율 업데이트
 
-    List<ConversionRateVO> selectAllConversionRates(); // 모든 환전 비율 조회
+    List<ConversionRateDTO> getAllRates(); //환전비율 기록 조회
 
+    // 트랜잭션 추가, 사용자별 거래 내역 조회
+    void insertConversionTransaction(ConversionTransactionVO transactionVO); // 환전내역 저장
 
+    List<ConversionTransactionVO> getConversionTransactionsByUserId(@Param("userId") int userId); // 사용자 ID로 거래내역 조회
 
+    void insertConversionTransaction(int userId, String conversionType, int pointChange, double moneyChange);
 
-
-
-
-    void insertConversionTransaction(ConversionTransactionVO conversionTransaction); // 거래내역 추가
-    List<ConversionTransactionVO> selectTransactionsByUserId(@Param("userId") int userId); // 사용자 ID로 거래내역 조회
+    // 사용자 잔액 조회 메서드 추가
+    UserBalanceDTO getUserBalance(@Param("userId") int userId);
 }

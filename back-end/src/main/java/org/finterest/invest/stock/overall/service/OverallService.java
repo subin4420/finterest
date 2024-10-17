@@ -1,6 +1,5 @@
 package org.finterest.invest.stock.overall.service;
 
-
 import org.finterest.invest.stock.overall.dto.kospi.KOSPIStockIndexDTO;
 import org.finterest.invest.stock.overall.dto.kospi.KOSPIStockListDTO;
 

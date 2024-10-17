@@ -1,39 +1,28 @@
 package org.finterest.invest.board.service;
 
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
+import org.finterest.common.pagination.Page;
+import org.finterest.common.pagination.PageRequest;
+import org.finterest.invest.board.domain.BoardAttachmentVO;
 import org.finterest.invest.board.dto.BoardDTO;
-import org.finterest.invest.board.mapper.BoardMapper;
-import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
-@Log4j
+import java.util.List;
 
-@Service
-public class BoardService {
+public interface BoardService {
+    public List<BoardDTO> getList();
 
-    private final BoardMapper boardMapper;
+    public BoardDTO get(Long no);
 
+    public BoardDTO create(BoardDTO board);
 
-    // 게시물 작성
+    public BoardDTO update(BoardDTO board);
 
-    public void createBoard(BoardDTO boardDTO) {
+    public BoardDTO delete(Long no);
 
+    public BoardAttachmentVO getAttachment(Long no);
 
+    public boolean deleteAttachment(Long no);
 
-    }
+    Page<BoardDTO> getPage(PageRequest pageRequest);
 
-    // 게시물 업데이트
-
-    public void updateBoard(BoardDTO boardDTO) {
-        boardMapper.updateBoard(boardDTO);
-    }
-
-
-
-
-
-
-
+    BoardDTO getWithComments(Long no);
 }

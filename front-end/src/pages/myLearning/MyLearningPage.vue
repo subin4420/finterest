@@ -1,185 +1,604 @@
 <template>
-  <div class="container">
-    <div class="sidebar">
-      <div class="option" data-category="archive">아카이브 이력</div>
-      <div class="option" data-category="quizzes">퀴즈 이력</div>
-      <div class="option" data-category="inquiries">문의사항 이력</div>
-      <div class="option" data-category="points">포인트 이력</div>
-    </div>
-    <div class="content-area">
-      <div class="header">
-        <div class="title">아카이브 이력</div>
-        <div class="filters">
-          <button class="filter-btn active">진행중인 학습</button>
-          <button class="filter-btn">종료된 학습</button>
+  <div class="page-container">
+    <div class="content-wrapper">
+      <!-- 사이드바 -->
+      <div class="sidebar-container">
+        <ul class="list-group">
+          <li class="list-group-item" v-for="tab in tabs" :key="tab.value">
+            <a
+              href="#"
+              class="sidebar-link"
+              :class="{ active: activeTab === tab.value }"
+              @click.prevent="setTab(tab.value)"
+            >
+              {{ tab.label }}
+            </a>
+          </li>
+        </ul>
+
+        <!-- 포인트 이력 탭일 때만 포인트 박스 표시 -->
+        <div v-if="activeTab === 'points'" class="points-summary">
+          <div class="points-box">
+            <div class="points-title">포인트</div>
+            <div class="points-value">
+              <span class="icon">P</span>
+              {{ totalPoints !== undefined ? totalPoints.toLocaleString() : '0' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 모의투자 이력 탭일 때만 가상자금 박스 표시 -->
+        <div v-if="activeTab === 'investment'" class="money-summary">
+          <div class="money-box">
+            <div class="money-title">가상 자금</div>
+            <div class="money-value">
+              <span class="icon">₩</span>
+              {{ totalMoney !== undefined ? totalMoney.toLocaleString() : '0' }}
+            </div>
+          </div>
         </div>
       </div>
-      <hr />
-      <!-- 헤더 내부의 수평선 -->
-      <div class="grid">
-        <!-- 각 카드는 학습 아카이브의 내용을 보여줌 -->
-        <div class="card">
-          <div class="content">카드1</div>
+
+      <!-- 콘텐츠 -->
+      <div class="content">
+        <h3>{{ pageTitle }}</h3>
+
+        <!-- 학습 상태 필터 또는 포인트 상태 필터 -->
+        <div class="tabs" v-if="activeTab === 'archive' || activeTab === 'points'">
+          <button
+            v-for="status in currentStatuses"
+            :key="status.value"
+            :class="{ active: (activeTab === 'archive' && learningStatus === status.value) || 
+                       (activeTab === 'points' && pointStatus === status.value) }"
+            @click="setLearningStatus(status.value)"
+          >
+            {{ status.label }}
+          </button>
         </div>
-        <div class="card">
-          <div class="content">카드2</div>
-        </div>
-        <div class="card">
-          <div class="content">카드3</div>
-        </div>
-        <!-- 추가 카드 -->
+
+        <!-- 선택된 탭에 따라 컴포넌트 렌더링 -->
+        <component 
+          :is="currentComponent" 
+          :learningStatus="learningStatus" 
+          :pointStatus="pointStatus"
+          @openModal="handleCardClick"
+        />
       </div>
     </div>
   </div>
+  
+  <!-- VideoModal 추가 -->
+  <VideoModal 
+    v-if="isVideoModalVisible && selectedCard" 
+    :isVisible="isVideoModalVisible" 
+    :cardData="selectedCard"
+    @close="closeVideoModal"
+    @status-updated="handleStatusUpdate"
+  />
 </template>
 
+<script>
+import { ref, computed, onMounted } from 'vue';
+import ArchiveList from '@/components/archive/ArchiveList.vue';
+import QuizSetList from '@/components/quiz/QuizSetList.vue';
+import InvestmentList from '@/components/invest/InvestmentList.vue';
+import PointHistoryList from '@/components/point/PointList.vue';
+import VideoModal from '@/components/archive/VideoModal.vue'; // VideoModal import 추가
+import { usePointStore } from '@/stores/pointStore';
+import { useUserStore } from '@/stores/userStore';
+
+export default {
+  name: 'MyLearningPage',
+  components: {
+    ArchiveList,
+    QuizSetList,
+    InvestmentList,
+    PointHistoryList,
+    VideoModal // VideoModal 컴포넌트 등록
+  },
+  setup() {
+    const activeTab = ref('archive');
+    const learningStatus = ref('incomplete');
+    const pointStatus = ref('all');
+    const selectedCard = ref(null); // 선택된 카드 데이터
+    const isVideoModalVisible = ref(false); // VideoModal의 상태
+    const pointStore = usePointStore();
+    const totalPoints = ref(); // 총 포인트 값
+    const totalMoney = ref(); // 총 가상 자금 값
+
+    const learningStatuses = ref([
+      { value: 'incomplete', label: '진행중인 학습' },
+      { value: 'completed', label: '완료된 학습' },
+    ]);
+
+    const pointStatuses = ref([
+      { value: 'all', label: '전체' },
+      { value: 'earned', label: '적립' },
+      { value: 'deducted', label: '차감' },
+    ]);
+
+    // 현재 탭에 맞는 상태 목록 반환
+    const currentStatuses = computed(() => {
+      if (activeTab.value === 'archive') {
+        return learningStatuses.value;
+      } else if (activeTab.value === 'points') {
+        return pointStatuses.value;
+      }
+      return [];
+    });
+
+    // 현재 탭에 따른 컴포넌트 렌더링
+    const currentComponent = computed(() => {
+      switch (activeTab.value) {
+        case 'archive':
+          return 'ArchiveList';
+        case 'quiz':
+          return 'QuizSetList';
+        case 'investment':
+          return 'InvestmentList';
+        case 'points':
+          return 'PointHistoryList';
+        default:
+          return null;
+      }
+    });
+
+    // 학습 상태 변경
+    const setLearningStatus = (status) => {
+      if (activeTab.value === 'archive') {
+        learningStatus.value = status;
+      } else if (activeTab.value === 'points') {
+        pointStatus.value = status;
+      }
+    };
+
+    // 탭 변경
+    const setTab = (tab) => {
+      activeTab.value = tab;
+      if (tab === 'archive') {
+        setLearningStatus('incomplete');
+      } else if (tab === 'points') {
+        setLearningStatus('all');
+      }
+    };
+
+    // 총 포인트와 가상 자금 가져오기
+    onMounted(async () => {
+      try {
+        await pointStore.fetchTotalPoints(); // fetchTotalPoints 호출
+        totalPoints.value = pointStore.totalPoints.value; // store에서 totalPoints 값 가져오기
+
+        await pointStore.fetchTotalMoney(); // fetchTotalMoney 호출
+        totalMoney.value = pointStore.totalMoney.value; // store에서 totalMoney 값 가져오기
+      } catch (error) {
+        console.error('Error fetching totals:', error);
+      }
+    });
+
+    // 모달 열기 (영상/텍스트 자료에 따라 VideoModal 또는 다른 모달)
+    const handleCardClick = (card) => {
+      selectedCard.value = card;
+      if (card.type === 'video' || (card.materialImg && card.materialImg.match(/^[a-zA-Z0-9_-]{11}$/))) {
+        isVideoModalVisible.value = true; // VideoModal 열기
+      } else {
+        // 다른 모달 처리
+      }
+    };
+
+    // VideoModal 닫기
+    const closeVideoModal = () => {
+      isVideoModalVisible.value = false;
+      selectedCard.value = null;
+    };
+
+    // 상태 업데이트 처리
+    const handleStatusUpdate = (updatedCard) => {
+      // 상태 업데이트 로직 구현
+      console.log('Status updated:', updatedCard);
+    };
+
+    return {
+      activeTab,
+      currentComponent,
+      currentStatuses,
+      learningStatus,
+      pointStatus,
+      setLearningStatus,
+      setTab,
+      selectedCard,
+      handleCardClick,
+      totalPoints,
+      totalMoney,
+      isVideoModalVisible,
+      closeVideoModal,
+      handleStatusUpdate,
+    };
+  },
+  data() {
+    return {
+      tabs: [
+        { value: 'archive', label: '아카이브 이력' },
+        { value: 'quiz', label: '퀴즈 이력' },
+        { value: 'investment', label: '모의투자 이력' },
+        { value: 'points', label: '포인트 이력' },
+      ],
+    };
+  },
+  computed: {
+    pageTitle() {
+      switch (this.activeTab) {
+        case 'archive':
+          return '아카이브 이력';
+        case 'quiz':
+          return '퀴즈 이력';
+        case 'investment':
+          return '모의투자 이력';
+        case 'points':
+          return '포인트 이력';
+        default:
+          return '이력';
+      }
+    },
+  },
+};
+</script>
+
+
+
 <style scoped>
-/* 기본 스타일 */
-.container {
+h3{
+  font-size: 1.8rem; /* 폰트 크기를 조금 더 키워서 눈에 띄게 */
+  font-weight: bold; /* 텍스트를 굵게 */
+  font-size: 1.8rem; /* 폰트 크기를 조금 더 키워서 눈에 띄게 */
+  font-weight: bold; /* 텍스트를 굵게 */
+  color: #333; /* 짙은 회색으로 시각적으로 부드럽게 */
+  text-align: left; /* 텍스트를 중앙에 배치 */
+  margin-bottom: 1.5rem; /* 제목 아래쪽에 간격 추가 */
+  padding-bottom: 0.5rem; /* 제목과 카드 사이에 간격 */ /* 짙은 회색으로 시각적으로 부드럽게 */
+  text-align: left; /* 텍스트를 중앙에 배치 */
+  margin-bottom: 1.5rem; /* 제목 아래쪽에 간격 추가 */
+  padding-bottom: 1rem; /* 제목과 카드 사이에 간격 */
+  border-bottom: 2px solid #b3b3b3; /* 제목 아래에 구분선 추가 */
+}
+/* 사이드바 및 탭 스타일 */
+.page-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
   min-height: 100vh;
-  /* 뷰포트의 전체 높이 */
-  color: #333;
-  background: #f9f9f9;
-}
-
-.sidebar {
-  width: 100%;
-  height: auto;
-  /* 자동 높이 설정 */
-  background: #fff;
-  display: flex;
-  flex-direction: row;
-  /* 모바일에서는 수평 스크롤 */
-  overflow-x: auto;
-  /* 필요한 경우 수평 스크롤 표시 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.option {
-  flex: 1;
-  padding: 15px;
-  cursor: pointer;
-  text-align: center;
-  border-right: 1px solid #e9ecef;
-}
-
-.option:last-child {
-  border-right: none;
-}
-
-.option.active {
-  background: #e9ecef;
-}
-
-.content-area {
-  flex-grow: 1;
+  background-color: #f5f5f5;
   padding: 20px;
 }
 
-.header {
+.content-wrapper {
   display: flex;
-  flex-direction: column;
-  /* 요소들을 세로로 나열 */
-  align-items: flex-start;
-  /* 왼쪽 정렬 */
   width: 100%;
-  /* header의 너비를 부모 요소에 꽉 차게 설정 */
+  max-width: 1200px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.title {
-  color: #000;
-  font-weight: bold;
-  margin-bottom: 10px;
-  /* 제목과 구분선 사이의 간격 */
+.sidebar-container {
+  width: 25%;
+  padding: 30px;
 }
 
-hr {
-  width: 100%;
-  /* 구분선 너비를 header 너비에 맞춤 */
-  border: 0;
-  height: 1px;
-  background-color: #ccc;
-  /* 구분선 색상 */
-  margin-bottom: 10px;
-  /* 구분선과 필터 사이의 간격 */
+.content {
+  width: 75%;
+  /* width: 75%; */
+  margin-top: 30px;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
 }
 
-.filters {
-  display: flex;
-  justify-content: flex-start;
-  /* 필터 요소들을 왼쪽으로 정렬 */
-  width: 100%;
-  /* 필터의 너비를 부모 요소에 꽉 차게 설정 */
+.list-group {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
 }
 
-.filter-btn {
-  padding: 10px;
-  margin-left: 10px;
-  cursor: pointer;
-  background-color: #e9ecef;
+.list-group-item {
   border: none;
 }
 
-.filter-btn.active {
-  background-color: #00c4d1;
-  color: white;
+.sidebar-link {
+  display: block;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #333;
+  border-radius: 10px;
+  margin: 10px;
+  transition: background-color 0.3s ease;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-  /* 모바일 뷰에서는 1열로 표시 */
-  gap: 15px;
+.sidebar-link.active,
+.sidebar-link:hover {
+  background-color: #f5f5f5;
+  color: #00C4D1;
 }
 
-.card {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.sidebar-link.active::after {
+  content: '';
+  display: block;
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: #00C4D1;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.sidebar-link::after {
+  content: '';
+  display: none;
+}
+
+.sidebar-link.active::after {
+  display: block;
+}
+
+/* 마우스를 올렸을 때 동그라미가 나오지 않도록 설정 */
+.sidebar-link:hover::after {
+  display: none;
+}
+
+.sidebar-link.active {
+  background-color: #f5f5f5;
+  color: #00C4D1;
+}
+.tabs {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 30px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  margin-right: 20px;
+  cursor: pointer;
+  padding: 10px 20px;
+  color: #333;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tabs button.active {
+  font-weight: bold;
+  color: #00C4D1;
+  border-bottom: 2px solid #00C4D1;
+}
+
+/* 반응형 디자인을 위한 미디어 쿼리 */
+@media (max-width: 768px) {
+  .tabs {
+    flex-wrap: wrap;
+  }
+
+  .tabs button {
+    margin-bottom: 10px;
+  }
+}
+
+/* 스타일은 기존과 동일하게 유지 */
+.points-summary, .money-summary {
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.points-box, .money-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #FFFFFF;
+  border-radius: 5px;
 }
 
-/* 미디어 쿼리를 사용한 반응형 디자인 */
-@media (min-width: 768px) {
-  .container {
-    flex-direction: row;
-  }
+.points-title, .money-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+ 
+} 
 
-  .sidebar {
-    width: 200px;
-    /* 데스크탑에서는 고정 폭 */
-    height: auto;
-    /* 자동 높이 */
+.points-value, .money-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  display: flex;
+  align-items: center;
+  border-top: 2px solid #b3b3b3; /* 제목 아래에 구분선 추가 */
+  margin-top: 1rem; /* 제목 아래쪽에 간격 추가 */
+  padding-top: 1rem; /* 제목과 카드 사이에 간격 */
+}
+
+.icon {
+  color: #ffc107;
+  font-size: 20px;
+  margin-right: 5px;
+  background-color: #ffc107; /* 노란 배경 */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white; /* 글자색을 흰색으로 */
+}
+
+/* 탭 버튼과 카드 사이의 간격 조정 */
+.tabs {
+  margin-bottom: 30px; /* 탭 버튼과 카드 사이의 간격 증가 */
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  margin-right: 20px;
+  cursor: pointer;
+  padding: 10px 0;
+  color: #333;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tabs button.active {
+  font-weight: bold;
+  color: #00C4D1;
+  border-bottom: 2px solid #00C4D1;
+}
+
+/* 컨텐츠 영역 패딩 조정 */
+.content {
+  width: 71%;
+  margin-top: 30px;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+}
+
+/* 카드 리스트에 상단 여백 추가 */
+.card-list {
+  margin-top: 20px; /* 카드 리스트 상단 여백 추가 */
+}
+
+/* 개별 카드에 여백 추가 */
+.card {
+  margin-bottom: 20px; /* 카드 간 여백 추가 */
+}
+
+/* 기타 스타일은 그대로 유지 */
+
+/* 반응형 스타일 수정 */
+@media (max-width: 1200px) {
+  .content-wrapper {
     flex-direction: column;
-    /* 세로 배열 */
-    overflow-y: auto;
-    /* 필요한 경우 수직 스크롤 */
-    overflow-x: hidden;
-    /* 수평 스크롤 제거 */
+    align-items: center;
   }
 
-  .option {
-    text-align: left;
-    padding: 20px;
-    border-right: none;
-    border-bottom: 1px solid #e9ecef;
+  .sidebar-container {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    padding: 0;
   }
 
-  .option:last-child {
-    border-bottom: none;
+  .list-group {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px 0;
   }
 
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    /* 데스크탑과 태블릿에서는 여러 열로 표시 */
+  .list-group-item {
+    flex: 0 0 auto;
+    margin: 5px;
   }
 
-  .header .title {
-    font-size: 30px;
-    /* 데스크탑에서의 폰트 크기 */
+  .sidebar-link {
+    padding: 10px 15px;
+    margin: 0;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .sidebar-link.active::after {
+    display: none;
+  }
+
+  .content {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+  }
+
+  .points-summary, .money-summary {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 10px;
+  }
+
+  .points-box, .money-box {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+  }
+
+  .points-title, .money-title {
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 10px;
+  }
+
+  .sidebar-container, .content {
+    padding: 15px;
+  }
+
+  .sidebar-link {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .tabs button {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .list-group {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-container, .content {
+    padding: 10px;
+  }
+
+  .sidebar-link {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .points-box, .money-box {
+    padding: 8px;
+  }
+
+  .points-title, .money-title {
+    font-size: 16px;
+  }
+
+  .points-value, .money-value {
+    font-size: 18px;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+  }
+
+  .tabs button {
+    font-size: 12px;
+    margin-right: 5px;
   }
 }
 </style>

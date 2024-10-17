@@ -2,12 +2,10 @@ package org.finterest.quiz.service;
 
 import org.finterest.quiz.dao.QuizSetsDAO;
 import org.finterest.quiz.domain.dto.QuizSubmissionDTO;
-import org.finterest.quiz.domain.vo.QuizResultVO;
-import org.finterest.quiz.domain.vo.QuizSetsVO;
-import org.finterest.quiz.domain.vo.QuizVO;
-import org.finterest.quiz.domain.vo.UserAnswerVO;
+import org.finterest.quiz.domain.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +26,10 @@ public class QuizSetsService {
     }
 
     public Map<Integer, Map<String, Object>> getQuizResultsForUser(int userId) {
-        List<QuizResultVO> quizResults = quizSetsDAO.selectQuizResultsByUserId(userId);
+        List<QuizResultDetailVO> quizResults = quizSetsDAO.selectQuizResultsByUserId(userId);
         Map<Integer, Map<String, Object>> resultsMap = new HashMap<>();
 
-        for (QuizResultVO result : quizResults) {
+        for (QuizResultDetailVO result : quizResults) {
             Map<String, Object> resultData = new HashMap<>();
             resultData.put("score", result.getTotalScore());  // 점수 맵핑
             resultData.put("completedAt", result.getCompletedAt());  // 완료 날짜 맵핑
@@ -66,42 +64,48 @@ public class QuizSetsService {
 
 
     // 퀴즈 제출 처리
-    public QuizResultVO submitQuiz(int setId, QuizSubmissionDTO submission) {
-        // "퀴즈"에 해당하는 points_awarded 값 가져오기
-        int pointsPerQuestion = quizSetsDAO.selectPointsForQuiz();
+    @Transactional
+    public QuizResultDetailVO submitQuiz(int setId, int userId, QuizSubmissionDTO submission) {
+        // 각 문제당 점수를 10점으로 고정
+        int pointsPerQuestion = 10;
 
         int totalScore = 0;
-        int maxScore = submission.getAnswers().size() * pointsPerQuestion;  // 각 문제는 해당 포인트만큼 점수
-        List<QuizResultVO.CorrectAnswer> correctAnswers = new ArrayList<>();
-        List<QuizResultVO.WrongAnswer> wrongAnswers = new ArrayList<>();
+        int maxScore = submission.getAnswers().size() * pointsPerQuestion;  // 각 문제는 10점씩 계산되어 최대 점수 계산
+        List<QuizResultDetailVO.CorrectAnswer> correctAnswers = new ArrayList<>();
+        List<QuizResultDetailVO.WrongAnswer> wrongAnswers = new ArrayList<>();
 
+        // 제출된 답변을 순회하며 정답 여부 확인 및 점수 계산
         for (QuizSubmissionDTO.AnswerDTO answer : submission.getAnswers()) {
             int correctChoice = quizSetsDAO.selectCorrectChoiceByQuizId(answer.getQuizId());
 
             // 정답 여부 확인 및 점수 계산
             if (correctChoice == answer.getSelectedChoice()) {
-                totalScore += pointsPerQuestion;
-                correctAnswers.add(new QuizResultVO.CorrectAnswer(answer.getQuizId(), correctChoice));
+                totalScore += pointsPerQuestion;  // 정답일 경우 문제당 10점씩 추가
+                correctAnswers.add(new QuizResultDetailVO.CorrectAnswer(answer.getQuizId(), correctChoice));
             } else {
-                wrongAnswers.add(new QuizResultVO.WrongAnswer(answer.getQuizId(), answer.getSelectedChoice()));
+                wrongAnswers.add(new QuizResultDetailVO.WrongAnswer(answer.getQuizId(), answer.getSelectedChoice()));
             }
         }
 
-        // 퀴즈 결과 저장 후 resultId 반환
-        int resultId = quizSetsDAO.insertQuizResult(submission.getUserId(), setId, totalScore, maxScore);
+        // 퀴즈 결과를 데이터베이스에 저장하고 resultId 반환
+        int resultId = quizSetsDAO.insertQuizResult(userId, setId, totalScore, maxScore);
+
+        // 포인트 이력에 추가 (총 점수에 30을 곱하여 포인트 계산)
+        quizSetsDAO.insertPoint(userId, totalScore * quizSetsDAO.selectPointsForQuiz());  // 총 점수에 30을 곱한 값으로 포인트 기록
 
         // 각 사용자의 답변을 resultId와 함께 저장
         for (QuizSubmissionDTO.AnswerDTO answer : submission.getAnswers()) {
-            quizSetsDAO.insertUserAnswer(resultId, answer.getQuizId(), submission.getUserId(),
+            quizSetsDAO.insertUserAnswer(resultId, answer.getQuizId(), userId,
                     answer.getSelectedChoice(), answer.getSelectedChoice() == quizSetsDAO.selectCorrectChoiceByQuizId(answer.getQuizId()));
         }
 
-        // 결과 응답 생성
-        QuizResultVO result = new QuizResultVO();
+        // 퀴즈 결과 응답 생성
+        QuizResultDetailVO result = new QuizResultDetailVO();
         result.setResultId(resultId);  // 새로 생성된 resultId를 설정
         result.setSetId(setId);  // 퀴즈 세트 ID 설정
-        result.setTotalScore(totalScore);
-        result.setMaxScore(maxScore);
+        result.setUserId(userId);  // JWT에서 추출된 userId 설정
+        result.setTotalScore(totalScore);  // 총 점수를 설정
+        result.setMaxScore(maxScore);  // 최대 점수를 설정
         result.setCorrectAnswers(correctAnswers);
         result.setWrongAnswers(wrongAnswers);
 
@@ -111,23 +115,19 @@ public class QuizSetsService {
 
 
 
-    public QuizResultVO getQuizResult(int userId, int setId) {
+    public List<QuizResultVO> getQuizResult(int userId) {
         // 퀴즈 결과 조회
-        QuizResultVO quizResult = quizSetsDAO.getQuizResult(userId, setId);
+      return quizSetsDAO.getQuizResult(userId);
 
-        if (quizResult != null) {
-            // correctAnswers 및 wrongAnswers 필드를 제거하기 위해 null 설정
-            quizResult.setCorrectAnswers(null);
-            quizResult.setWrongAnswers(null);
-        }
-
-        return quizResult;
     }
-
-
 
     public List<UserAnswerVO> getUserAnswers(int resultId, int userId) {
         return quizSetsDAO.selectUserAnswers(resultId, userId);
+    }
+
+    // 7. 완료 횟수가 높은 퀴즈 세트 상위 3개 조회
+    public List<QuizSetsVO> getTopCompletedQuizSets(){
+        return quizSetsDAO.selectTopCompletedQuizSets();
     }
 
 }

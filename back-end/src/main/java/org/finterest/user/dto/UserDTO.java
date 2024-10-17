@@ -1,5 +1,6 @@
 package org.finterest.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import org.finterest.security.account.domain.UserVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -16,14 +18,17 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserDTO {
+    private int userId;
     private String username;  // username
     //private String password;  // password
     private String email;  // email
     private String fullName;  // full_name
     private String accountStatus;  // account_status (Default: 'active')
     private BigDecimal money;  // 보유 금액 (Default: 10,000,000)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date signupDate;  // 가입일
-    private Date lastLogin;  // 마지막 로그인 시간
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    private LocalDate lastLogin;  // 마지막 로그인 시간
     private int totalPoints;  // 누적 포인트 (Default: 0)
 
     MultipartFile avatar;  // 아바타 이미지
@@ -33,6 +38,7 @@ public class UserDTO {
     // UserVO를 UserDTO로 변환
     public static UserDTO of(UserVO u) {
         return UserDTO.builder()
+                .userId(u.getUserId())
                 .username(u.getUsername())
 //                .password(u.getPassword())  // 보안상 주석 처리
                 .email(u.getEmail())
@@ -49,6 +55,7 @@ public class UserDTO {
     // UserDTO를 UserVO로 변환
     public UserVO toVO() {
         return UserVO.builder()
+                .userId(userId)
                 .username(username)
 //                .password(password)  // 보안상 주석 처리
                 .email(email)
